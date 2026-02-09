@@ -1,42 +1,34 @@
 ---
 name: gsd:execute-phase
-description: Execute all plans in a phase with wave-based parallelization
-argument-hint: "<phase-number> [--gaps-only]"
+description: Выполнить все планы фазы параллельными волнами
+argument-hint: "<номер-фазы>"
 allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
   - Bash
+  - Write
   - Task
-  - TodoWrite
-  - AskUserQuestion
 ---
+<context>
+**Аргументы:**
+- `<номер-фазы>` — Номер фазы для выполнения (обязательно)
+</context>
+
 <objective>
-Execute all plans in a phase using wave-based parallel execution.
+Выполнить все планы указанной фазы.
 
-Orchestrator stays lean: discover plans, analyze dependencies, group into waves, spawn subagents, collect results. Each subagent loads the full execute-plan context and handles its own plan.
+- Группирует планы по волнам, выполняет волны последовательно
+- Планы внутри каждой волны запускаются параллельно через инструмент Task
+- Проверяет цель фазы после завершения всех планов
+- Обновляет REQUIREMENTS.md, ROADMAP.md, STATE.md
 
-Context budget: ~15% orchestrator, 100% fresh per subagent.
+**После этой команды:** Запустите `/gsd:verify-work <номер>` для проверки.
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/execute-phase.md
-@~/.claude/get-shit-done/references/ui-brand.md
 </execution_context>
 
-<context>
-Phase: $ARGUMENTS
-
-**Flags:**
-- `--gaps-only` — Execute only gap closure plans (plans with `gap_closure: true` in frontmatter). Use after verify-work creates fix plans.
-
-@.planning/ROADMAP.md
-@.planning/STATE.md
-</context>
-
 <process>
-Execute the execute-phase workflow from @~/.claude/get-shit-done/workflows/execute-phase.md end-to-end.
-Preserve all workflow gates (wave execution, checkpoint handling, verification, state updates, routing).
+Выполни рабочий процесс выполнения фазы из @~/.claude/get-shit-done/workflows/execute-phase.md.
+Сохрани все контрольные точки (волны, коммиты, верификация).
 </process>

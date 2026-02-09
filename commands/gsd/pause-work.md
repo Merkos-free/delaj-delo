@@ -1,35 +1,23 @@
 ---
 name: gsd:pause-work
-description: Create context handoff when pausing work mid-phase
+description: Сохранить контекст при приостановке работы
 allowed-tools:
   - Read
-  - Write
   - Bash
+  - Write
 ---
-
 <objective>
-Create `.continue-here.md` handoff file to preserve complete work state across sessions.
+Создать передачу контекста при приостановке работы посреди фазы.
 
-Routes to the pause-work workflow which handles:
-- Current phase detection from recent files
-- Complete state gathering (position, completed work, remaining work, decisions, blockers)
-- Handoff file creation with all context sections
-- Git commit as WIP
-- Resume instructions
+- Создаёт файл .continue-here с текущим состоянием
+- Обновляет секцию непрерывности сессии в STATE.md
+- Фиксирует контекст незавершённой работы
 </objective>
 
 <execution_context>
-@.planning/STATE.md
 @~/.claude/get-shit-done/workflows/pause-work.md
 </execution_context>
 
 <process>
-**Follow the pause-work workflow** from `@~/.claude/get-shit-done/workflows/pause-work.md`.
-
-The workflow handles all logic including:
-1. Phase directory detection
-2. State gathering with user clarifications
-3. Handoff file writing with timestamp
-4. Git commit
-5. Confirmation with resume instructions
+Выполни рабочий процесс паузы из @~/.claude/get-shit-done/workflows/pause-work.md.
 </process>

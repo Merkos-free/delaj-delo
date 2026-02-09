@@ -1,21 +1,20 @@
 ---
 name: gsd:set-profile
-description: Switch model profile for GSD agents (quality/balanced/budget)
-argument-hint: <profile>
+description: Быстро переключить профиль модели для агентов ДД
+argument-hint: "<профиль>"
 allowed-tools:
   - Read
-  - Write
   - Bash
+  - Write
 ---
-
 <objective>
-Switch the model profile used by GSD agents. Controls which Claude model each agent uses, balancing quality vs token spend.
+Быстро переключить профиль модели для агентов ДелайДело.
 
-Routes to the set-profile workflow which handles:
-- Argument validation (quality/balanced/budget)
-- Config file creation if missing
-- Profile update in config.json
-- Confirmation with model table display
+- `quality` — Opus везде кроме верификации
+- `balanced` — Opus для планирования, Sonnet для выполнения (по умолчанию)
+- `budget` — Sonnet для написания, Haiku для исследования/верификации
+
+Использование: `/gsd:set-profile budget`
 </objective>
 
 <execution_context>
@@ -23,12 +22,5 @@ Routes to the set-profile workflow which handles:
 </execution_context>
 
 <process>
-**Follow the set-profile workflow** from `@~/.claude/get-shit-done/workflows/set-profile.md`.
-
-The workflow handles all logic including:
-1. Profile argument validation
-2. Config file ensuring
-3. Config reading and updating
-4. Model table generation from MODEL_PROFILES
-5. Confirmation display
+Выполни рабочий процесс установки профиля из @~/.claude/get-shit-done/workflows/set-profile.md.
 </process>

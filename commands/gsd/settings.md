@@ -1,22 +1,18 @@
 ---
 name: gsd:settings
-description: Configure GSD workflow toggles and model profile
+description: Настроить переключатели рабочего процесса и профиль модели
 allowed-tools:
   - Read
-  - Write
   - Bash
+  - Write
   - AskUserQuestion
 ---
-
 <objective>
-Interactive configuration of GSD workflow agents and model profile via multi-question prompt.
+Настроить переключатели рабочего процесса и профиль модели интерактивно.
 
-Routes to the settings workflow which handles:
-- Config existence ensuring
-- Current settings reading and parsing
-- Interactive 5-question prompt (model, research, plan_check, verifier, branching)
-- Config merging and writing
-- Confirmation display with quick command references
+- Переключить агентов: исследователь, проверщик планов, верификатор
+- Выбрать профиль модели (качество/баланс/бюджет)
+- Обновляет `.planning/config.json`
 </objective>
 
 <execution_context>
@@ -24,13 +20,5 @@ Routes to the settings workflow which handles:
 </execution_context>
 
 <process>
-**Follow the settings workflow** from `@~/.claude/get-shit-done/workflows/settings.md`.
-
-The workflow handles all logic including:
-1. Config file creation with defaults if missing
-2. Current config reading
-3. Interactive settings presentation with pre-selection
-4. Answer parsing and config merging
-5. File writing
-6. Confirmation display
+Выполни рабочий процесс настроек из @~/.claude/get-shit-done/workflows/settings.md.
 </process>

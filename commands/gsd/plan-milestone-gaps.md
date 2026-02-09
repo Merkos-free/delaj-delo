@@ -1,40 +1,24 @@
 ---
 name: gsd:plan-milestone-gaps
-description: Create phases to close all gaps identified by milestone audit
+description: Создать фазы для закрытия пробелов, выявленных аудитом
 allowed-tools:
   - Read
-  - Write
   - Bash
-  - Glob
-  - Grep
-  - AskUserQuestion
+  - Write
 ---
 <objective>
-Create all phases necessary to close gaps identified by `/gsd:audit-milestone`.
+Создать фазы для закрытия пробелов, выявленных аудитом.
 
-Reads MILESTONE-AUDIT.md, groups gaps into logical phases, creates phase entries in ROADMAP.md, and offers to plan each phase.
-
-One command creates all fix phases — no manual `/gsd:add-phase` per gap.
+- Читает MILESTONE-AUDIT.md и группирует пробелы в фазы
+- Приоритизирует по приоритету требований (обязательно/желательно/хорошо бы)
+- Добавляет фазы закрытия пробелов в ROADMAP.md
+- Готов к `/gsd:plan-phase` для новых фаз
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/plan-milestone-gaps.md
 </execution_context>
 
-<context>
-**Audit results:**
-Glob: .planning/v*-MILESTONE-AUDIT.md (use most recent)
-
-**Original intent (for prioritization):**
-@.planning/PROJECT.md
-@.planning/REQUIREMENTS.md
-
-**Current state:**
-@.planning/ROADMAP.md
-@.planning/STATE.md
-</context>
-
 <process>
-Execute the plan-milestone-gaps workflow from @~/.claude/get-shit-done/workflows/plan-milestone-gaps.md end-to-end.
-Preserve all workflow gates (audit loading, prioritization, phase grouping, user confirmation, roadmap updates).
+Выполни рабочий процесс планирования пробелов вехи из @~/.claude/get-shit-done/workflows/plan-milestone-gaps.md.
 </process>

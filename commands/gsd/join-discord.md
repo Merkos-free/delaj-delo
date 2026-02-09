@@ -1,18 +1,16 @@
 ---
 name: gsd:join-discord
-description: Join the GSD Discord community
+description: Присоединиться к сообществу ДелайДело в Discord
 ---
-
 <objective>
-Display the Discord invite link for the GSD community server.
+Присоединиться к сообществу ДелайДело в Discord.
+
+- Получить помощь, поделиться проектами, быть в курсе обновлений
+- Общаться с другими пользователями ДелайДело
+
+Ссылка: https://discord.gg/5JJgD5svVS
 </objective>
 
-<output>
-# Join the GSD Discord
-
-Connect with other GSD users, get help, share what you're building, and stay updated.
-
-**Invite link:** https://discord.gg/5JJgD5svVS
-
-Click the link or paste it into your browser to join.
-</output>
+<process>
+Покажи пользователю ссылку на Discord и предложи присоединиться.
+</process>

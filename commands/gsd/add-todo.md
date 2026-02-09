@@ -1,42 +1,29 @@
 ---
 name: gsd:add-todo
-description: Capture idea or task as todo from current conversation context
-argument-hint: [optional description]
+description: Записать идею или задачу как заметку
+argument-hint: "[описание]"
 allowed-tools:
   - Read
-  - Write
   - Bash
-  - AskUserQuestion
+  - Write
 ---
-
 <objective>
-Capture an idea, task, or issue that surfaces during a GSD session as a structured todo for later work.
+Записать идею или задачу как заметку из текущего разговора.
 
-Routes to the add-todo workflow which handles:
-- Directory structure creation
-- Content extraction from arguments or conversation
-- Area inference from file paths
-- Duplicate detection and resolution
-- Todo file creation with frontmatter
-- STATE.md updates
-- Git commits
+- Извлекает контекст из разговора (или использует указанное описание)
+- Создаёт структурированный файл заметки в `.planning/todos/pending/`
+- Определяет область по путям файлов для группировки
+- Проверяет дубликаты перед созданием
+- Обновляет счётчик заметок в STATE.md
+
+Использование: `/gsd:add-todo` (определяет из разговора)
+Использование: `/gsd:add-todo Добавить обновление токена авторизации`
 </objective>
 
 <execution_context>
-@.planning/STATE.md
 @~/.claude/get-shit-done/workflows/add-todo.md
 </execution_context>
 
 <process>
-**Follow the add-todo workflow** from `@~/.claude/get-shit-done/workflows/add-todo.md`.
-
-The workflow handles all logic including:
-1. Directory ensuring
-2. Existing area checking
-3. Content extraction (arguments or conversation)
-4. Area inference
-5. Duplicate checking
-6. File creation with slug generation
-7. STATE.md updates
-8. Git commits
+Выполни рабочий процесс добавления заметки из @~/.claude/get-shit-done/workflows/add-todo.md.
 </process>

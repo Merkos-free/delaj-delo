@@ -1,6 +1,6 @@
 ---
 name: gsd:new-project
-description: Initialize a new project with deep context gathering and PROJECT.md
+description: Инициализация нового проекта с глубоким сбором контекста и PROJECT.md
 argument-hint: "[--auto]"
 allowed-tools:
   - Read
@@ -10,22 +10,22 @@ allowed-tools:
   - AskUserQuestion
 ---
 <context>
-**Flags:**
-- `--auto` — Automatic mode. After config questions, runs research → requirements → roadmap without further interaction. Expects idea document via @ reference.
+**Флаги:**
+- `--auto` — Автоматический режим. После вопросов по конфигурации запускает исследование → требования → дорожная карта без дальнейшего взаимодействия. Ожидает документ с идеей через @ ссылку.
 </context>
 
 <objective>
-Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
+Инициализировать новый проект через единый поток: опрос → исследование (опционально) → требования → дорожная карта.
 
-**Creates:**
-- `.planning/PROJECT.md` — project context
-- `.planning/config.json` — workflow preferences
-- `.planning/research/` — domain research (optional)
-- `.planning/REQUIREMENTS.md` — scoped requirements
-- `.planning/ROADMAP.md` — phase structure
-- `.planning/STATE.md` — project memory
+**Создаёт:**
+- `.planning/PROJECT.md` — контекст проекта
+- `.planning/config.json` — настройки рабочего процесса
+- `.planning/research/` — исследование предметной области (опционально)
+- `.planning/REQUIREMENTS.md` — скопированные требования
+- `.planning/ROADMAP.md` — структура фаз
+- `.planning/STATE.md` — память проекта
 
-**After this command:** Run `/gsd:plan-phase 1` to start execution.
+**После этой команды:** Запустите `/gsd:plan-phase 1` чтобы начать выполнение.
 </objective>
 
 <execution_context>
@@ -37,6 +37,6 @@ Initialize a new project through unified flow: questioning → research (optiona
 </execution_context>
 
 <process>
-Execute the new-project workflow from @~/.claude/get-shit-done/workflows/new-project.md end-to-end.
-Preserve all workflow gates (validation, approvals, commits, routing).
+Выполни рабочий процесс нового проекта из @~/.claude/get-shit-done/workflows/new-project.md от начала до конца.
+Сохрани все контрольные точки рабочего процесса (валидация, подтверждения, коммиты, маршрутизация).
 </process>

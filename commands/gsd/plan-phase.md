@@ -1,44 +1,36 @@
 ---
 name: gsd:plan-phase
-description: Create detailed execution plan for a phase (PLAN.md) with verification loop
-argument-hint: "[phase] [--research] [--skip-research] [--gaps] [--skip-verify]"
-agent: gsd-planner
+description: Создать детальный план выполнения для конкретной фазы
+argument-hint: "<номер> [--skip-research] [--skip-verify]"
 allowed-tools:
   - Read
-  - Write
   - Bash
-  - Glob
-  - Grep
+  - Write
   - Task
-  - WebFetch
-  - mcp__context7__*
+  - AskUserQuestion
 ---
+<context>
+**Аргументы:**
+- `<номер>` — Номер фазы для планирования (обязательно)
+- `--skip-research` — Пропустить этап исследования
+- `--skip-verify` — Пропустить проверку плана
+</context>
+
 <objective>
-Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
+Создать детальный план выполнения для указанной фазы.
 
-**Default flow:** Research (if needed) → Plan → Verify → Done
+**Создаёт:**
+- `.planning/phases/XX-название/XX-YY-PLAN.md` — атомарные планы задач
+- `.planning/phases/XX-название/XX-RESEARCH.md` — исследование фазы (если не пропущено)
 
-**Orchestrator role:** Parse arguments, validate phase, research domain (unless skipped), spawn gsd-planner, verify with gsd-plan-checker, iterate until pass or max iterations, present results.
+**После этой команды:** Запустите `/gsd:execute-phase <номер>` для выполнения.
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/plan-phase.md
-@~/.claude/get-shit-done/references/ui-brand.md
 </execution_context>
 
-<context>
-Phase number: $ARGUMENTS (optional — auto-detects next unplanned phase if omitted)
-
-**Flags:**
-- `--research` — Force re-research even if RESEARCH.md exists
-- `--skip-research` — Skip research, go straight to planning
-- `--gaps` — Gap closure mode (reads VERIFICATION.md, skips research)
-- `--skip-verify` — Skip verification loop
-
-Normalize phase input in step 2 before any directory lookups.
-</context>
-
 <process>
-Execute the plan-phase workflow from @~/.claude/get-shit-done/workflows/plan-phase.md end-to-end.
-Preserve all workflow gates (validation, research, planning, verification loop, routing).
+Выполни рабочий процесс планирования фазы из @~/.claude/get-shit-done/workflows/plan-phase.md.
+Сохрани все контрольные точки (исследование, планирование, проверка плана).
 </process>

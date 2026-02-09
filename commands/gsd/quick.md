@@ -1,38 +1,29 @@
 ---
 name: gsd:quick
-description: Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents
-argument-hint: ""
+description: Быстрое выполнение мелкой задачи с гарантиями ДД
 allowed-tools:
   - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
   - Bash
+  - Write
   - Task
   - AskUserQuestion
 ---
 <objective>
-Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking) while skipping optional agents (research, plan-checker, verifier).
+Выполнить небольшую задачу с гарантиями ДелайДело, но пропуская опциональные агенты.
 
-Quick mode is the same system with a shorter path:
-- Spawns gsd-planner (quick mode) + gsd-executor(s)
-- Skips gsd-phase-researcher, gsd-plan-checker, gsd-verifier
-- Quick tasks live in `.planning/quick/` separate from planned phases
-- Updates STATE.md "Quick Tasks Completed" table (NOT ROADMAP.md)
+- Использует планировщик + исполнитель (пропускает исследователя, проверщика, верификатора)
+- Быстрые задачи живут в `.planning/quick/` отдельно от запланированных фаз
+- Обновляет STATE.md (не ROADMAP.md)
 
-Use when: You know exactly what to do and the task is small enough to not need research or verification.
+Используйте когда точно знаете что делать и задача достаточно маленькая.
+
+**Создаёт:** `.planning/quick/NNN-slug/PLAN.md`, `.planning/quick/NNN-slug/SUMMARY.md`
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/quick.md
 </execution_context>
 
-<context>
-@.planning/STATE.md
-</context>
-
 <process>
-Execute the quick workflow from @~/.claude/get-shit-done/workflows/quick.md end-to-end.
-Preserve all workflow gates (validation, task description, planning, execution, state updates, commits).
+Выполни рабочий процесс быстрого режима из @~/.claude/get-shit-done/workflows/quick.md.
 </process>

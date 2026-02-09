@@ -1,33 +1,27 @@
 ---
 name: gsd:insert-phase
-description: Insert urgent work as decimal phase (e.g., 72.1) between existing phases
-argument-hint: <after> <description>
+description: Вставить срочную работу между существующими фазами
+argument-hint: "<после> <описание>"
 allowed-tools:
   - Read
-  - Write
   - Bash
+  - Write
 ---
-
 <objective>
-Insert a decimal phase for urgent work discovered mid-milestone that must be completed between existing integer phases.
+Вставить срочную работу как промежуточную фазу между существующими.
 
-Uses decimal numbering (72.1, 72.2, etc.) to preserve the logical sequence of planned phases while accommodating urgent insertions.
+- Создаёт промежуточную фазу (например, 7.1 между 7 и 8)
+- Полезно для обнаруженной работы, которая должна быть выполнена в середине вехи
+- Сохраняет порядок фаз
 
-Purpose: Handle urgent work discovered during execution without renumbering entire roadmap.
+Использование: `/gsd:insert-phase 7 "Исправить критический баг авторизации"`
+Результат: Создаёт Фазу 7.1
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/insert-phase.md
 </execution_context>
 
-<context>
-Arguments: $ARGUMENTS (format: <after-phase-number> <description>)
-
-@.planning/ROADMAP.md
-@.planning/STATE.md
-</context>
-
 <process>
-Execute the insert-phase workflow from @~/.claude/get-shit-done/workflows/insert-phase.md end-to-end.
-Preserve all validation gates (argument parsing, phase verification, decimal calculation, roadmap updates).
+Выполни рабочий процесс вставки фазы из @~/.claude/get-shit-done/workflows/insert-phase.md.
 </process>
