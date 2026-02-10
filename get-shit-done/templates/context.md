@@ -1,283 +1,159 @@
-# Phase Context Template
+# Шаблон контекста фазы
 
-Template for `.planning/phases/XX-name/{phase}-CONTEXT.md` - captures implementation decisions for a phase.
+Шаблон для `.planning/phases/XX-name/{phase}-CONTEXT.md` — фиксирует решения по реализации для фазы.
 
-**Purpose:** Document decisions that downstream agents need. Researcher uses this to know WHAT to investigate. Planner uses this to know WHAT choices are locked vs flexible.
+**Цель:** Документировать решения, необходимые нижестоящим агентам. Исследователь использует это, чтобы знать, ЧТО исследовать. Планировщик использует это, чтобы знать, КАКИЕ выборы зафиксированы, а какие гибкие.
 
-**Key principle:** Categories are NOT predefined. They emerge from what was actually discussed for THIS phase. A CLI phase has CLI-relevant sections, a UI phase has UI-relevant sections.
+**Ключевой принцип:** Категории НЕ предопределены. Они возникают из того, что реально обсуждалось для ЭТОЙ фазы. У фазы CLI будут секции по CLI, у фазы UI — секции по UI.
 
-**Downstream consumers:**
-- `gsd-phase-researcher` — Reads decisions to focus research (e.g., "card layout" → research card component patterns)
-- `gsd-planner` — Reads decisions to create specific tasks (e.g., "infinite scroll" → task includes virtualization)
+**Нижестоящие потребители:**
+- `gsd-phase-researcher` — Читает решения для фокусировки исследования (напр., "карточный макет" → исследовать паттерны карточных компонентов)
+- `gsd-planner` — Читает решения для создания конкретных задач (напр., "бесконечная прокрутка" → задача включает виртуализацию)
 
 ---
 
-## File Template
+## Шаблон файла
 
 ```markdown
-# Phase [X]: [Name] - Context
+# Фаза [X]: [Название] — Контекст
 
-**Gathered:** [date]
-**Status:** Ready for planning
+**Собрано:** [дата]
+**Статус:** Готово к планированию
 
 <domain>
-## Phase Boundary
+## Граница фазы
 
-[Clear statement of what this phase delivers — the scope anchor. This comes from ROADMAP.md and is fixed. Discussion clarifies implementation within this boundary.]
+[Чёткое описание того, что доставляет эта фаза — якорь объёма. Берётся из ROADMAP.md и зафиксировано. Обсуждение уточняет реализацию в рамках этой границы.]
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## Решения по реализации
 
-### [Area 1 that was discussed]
-- [Specific decision made]
-- [Another decision if applicable]
+### [Область 1, которая обсуждалась]
+- [Конкретное принятое решение]
+- [Другое решение, если применимо]
 
-### [Area 2 that was discussed]
-- [Specific decision made]
+### [Область 2, которая обсуждалась]
+- [Конкретное принятое решение]
 
-### [Area 3 that was discussed]
-- [Specific decision made]
+### [Область 3, которая обсуждалась]
+- [Конкретное принятое решение]
 
-### Claude's Discretion
-[Areas where user explicitly said "you decide" — Claude has flexibility here during planning/implementation]
+### На усмотрение Claude
+[Области, где пользователь явно сказал "решай сам" — у Claude есть гибкость при планировании/реализации]
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## Конкретные идеи
 
-[Any particular references, examples, or "I want it like X" moments from discussion. Product references, specific behaviors, interaction patterns.]
+[Конкретные ссылки, примеры или моменты "я хочу как X" из обсуждения. Ссылки на продукты, конкретное поведение, паттерны взаимодействия.]
 
-[If none: "No specific requirements — open to standard approaches"]
+[Если нет: "Нет конкретных требований — открыт к стандартным подходам"]
 
 </specifics>
 
 <deferred>
-## Deferred Ideas
+## Отложенные идеи
 
-[Ideas that came up during discussion but belong in other phases. Captured here so they're not lost, but explicitly out of scope for this phase.]
+[Идеи, возникшие во время обсуждения, но относящиеся к другим фазам. Зафиксированы здесь, чтобы не потерялись, но явно за пределами этой фазы.]
 
-[If none: "None — discussion stayed within phase scope"]
+[Если нет: "Нет — обсуждение осталось в рамках фазы"]
 
 </deferred>
 
 ---
 
-*Phase: XX-name*
-*Context gathered: [date]*
+*Фаза: XX-name*
+*Контекст собран: [дата]*
 ```
 
 <good_examples>
 
-**Example 1: Visual feature (Post Feed)**
+**Пример 1: Визуальная функция (Лента постов)**
 
 ```markdown
-# Phase 3: Post Feed - Context
+# Фаза 3: Лента постов — Контекст
 
-**Gathered:** 2025-01-20
-**Status:** Ready for planning
+**Собрано:** 2025-01-20
+**Статус:** Готово к планированию
 
 <domain>
-## Phase Boundary
+## Граница фазы
 
-Display posts from followed users in a scrollable feed. Users can view posts and see engagement counts. Creating posts and interactions are separate phases.
+Отображение постов от подписок в прокручиваемой ленте. Пользователи могут просматривать посты и видеть счётчики вовлечённости. Создание постов и взаимодействия — отдельные фазы.
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## Решения по реализации
 
-### Layout style
-- Card-based layout, not timeline or list
-- Each card shows: author avatar, name, timestamp, full post content, reaction counts
-- Cards have subtle shadows, rounded corners — modern feel
+### Стиль макета
+- Карточный макет, не таймлайн и не список
+- Каждая карточка показывает: аватар автора, имя, время, полный текст поста, счётчики реакций
+- Карточки с лёгкими тенями, скруглёнными углами — современный вид
 
-### Loading behavior
-- Infinite scroll, not pagination
-- Pull-to-refresh on mobile
-- New posts indicator at top ("3 new posts") rather than auto-inserting
+### Поведение загрузки
+- Бесконечная прокрутка, не пагинация
+- Pull-to-refresh на мобильных
+- Индикатор новых постов вверху ("3 новых поста") вместо автоматической вставки
 
-### Empty state
-- Friendly illustration + "Follow people to see posts here"
-- Suggest 3-5 accounts to follow based on interests
+### Пустое состояние
+- Дружелюбная иллюстрация + "Подпишитесь на людей, чтобы видеть посты здесь"
+- Предложить 3-5 аккаунтов для подписки на основе интересов
 
-### Claude's Discretion
-- Loading skeleton design
-- Exact spacing and typography
-- Error state handling
+### На усмотрение Claude
+- Дизайн скелетона загрузки
+- Точные отступы и типографика
+- Обработка состояния ошибки
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## Конкретные идеи
 
-- "I like how Twitter shows the new posts indicator without disrupting your scroll position"
-- Cards should feel like Linear's issue cards — clean, not cluttered
+- "Мне нравится, как Twitter показывает индикатор новых постов, не нарушая позицию прокрутки"
+- Карточки должны ощущаться как карточки задач в Linear — чистые, без нагромождения
 
 </specifics>
 
 <deferred>
-## Deferred Ideas
+## Отложенные идеи
 
-- Commenting on posts — Phase 5
-- Bookmarking posts — add to backlog
+- Комментирование постов — Фаза 5
+- Закладки постов — добавить в бэклог
 
 </deferred>
 
 ---
 
-*Phase: 03-post-feed*
-*Context gathered: 2025-01-20*
-```
-
-**Example 2: CLI tool (Database backup)**
-
-```markdown
-# Phase 2: Backup Command - Context
-
-**Gathered:** 2025-01-20
-**Status:** Ready for planning
-
-<domain>
-## Phase Boundary
-
-CLI command to backup database to local file or S3. Supports full and incremental backups. Restore command is a separate phase.
-
-</domain>
-
-<decisions>
-## Implementation Decisions
-
-### Output format
-- JSON for programmatic use, table format for humans
-- Default to table, --json flag for JSON
-- Verbose mode (-v) shows progress, silent by default
-
-### Flag design
-- Short flags for common options: -o (output), -v (verbose), -f (force)
-- Long flags for clarity: --incremental, --compress, --encrypt
-- Required: database connection string (positional or --db)
-
-### Error recovery
-- Retry 3 times on network failure, then fail with clear message
-- --no-retry flag to fail fast
-- Partial backups are deleted on failure (no corrupt files)
-
-### Claude's Discretion
-- Exact progress bar implementation
-- Compression algorithm choice
-- Temp file handling
-
-</decisions>
-
-<specifics>
-## Specific Ideas
-
-- "I want it to feel like pg_dump — familiar to database people"
-- Should work in CI pipelines (exit codes, no interactive prompts)
-
-</specifics>
-
-<deferred>
-## Deferred Ideas
-
-- Scheduled backups — separate phase
-- Backup rotation/retention — add to backlog
-
-</deferred>
-
----
-
-*Phase: 02-backup-command*
-*Context gathered: 2025-01-20*
-```
-
-**Example 3: Organization task (Photo library)**
-
-```markdown
-# Phase 1: Photo Organization - Context
-
-**Gathered:** 2025-01-20
-**Status:** Ready for planning
-
-<domain>
-## Phase Boundary
-
-Organize existing photo library into structured folders. Handle duplicates and apply consistent naming. Tagging and search are separate phases.
-
-</domain>
-
-<decisions>
-## Implementation Decisions
-
-### Grouping criteria
-- Primary grouping by year, then by month
-- Events detected by time clustering (photos within 2 hours = same event)
-- Event folders named by date + location if available
-
-### Duplicate handling
-- Keep highest resolution version
-- Move duplicates to _duplicates folder (don't delete)
-- Log all duplicate decisions for review
-
-### Naming convention
-- Format: YYYY-MM-DD_HH-MM-SS_originalname.ext
-- Preserve original filename as suffix for searchability
-- Handle name collisions with incrementing suffix
-
-### Claude's Discretion
-- Exact clustering algorithm
-- How to handle photos with no EXIF data
-- Folder emoji usage
-
-</decisions>
-
-<specifics>
-## Specific Ideas
-
-- "I want to be able to find photos by roughly when they were taken"
-- Don't delete anything — worst case, move to a review folder
-
-</specifics>
-
-<deferred>
-## Deferred Ideas
-
-- Face detection grouping — future phase
-- Cloud sync — out of scope for now
-
-</deferred>
-
----
-
-*Phase: 01-photo-organization*
-*Context gathered: 2025-01-20*
+*Фаза: 03-post-feed*
+*Контекст собран: 2025-01-20*
 ```
 
 </good_examples>
 
 <guidelines>
-**This template captures DECISIONS for downstream agents.**
+**Этот шаблон фиксирует РЕШЕНИЯ для нижестоящих агентов.**
 
-The output should answer: "What does the researcher need to investigate? What choices are locked for the planner?"
+Результат должен отвечать: "Что исследователю нужно изучить? Какие выборы зафиксированы для планировщика?"
 
-**Good content (concrete decisions):**
-- "Card-based layout, not timeline"
-- "Retry 3 times on network failure, then fail"
-- "Group by year, then by month"
-- "JSON for programmatic use, table for humans"
+**Хорошее содержание (конкретные решения):**
+- "Карточный макет, не таймлайн"
+- "3 повторные попытки при сбое сети, затем отказ"
+- "Группировка по году, затем по месяцу"
+- "JSON для программного использования, таблица для людей"
 
-**Bad content (too vague):**
-- "Should feel modern and clean"
-- "Good user experience"
-- "Fast and responsive"
-- "Easy to use"
+**Плохое содержание (слишком расплывчато):**
+- "Должно ощущаться современным и чистым"
+- "Хороший пользовательский опыт"
+- "Быстро и отзывчиво"
+- "Легко в использовании"
 
-**After creation:**
-- File lives in phase directory: `.planning/phases/XX-name/{phase}-CONTEXT.md`
-- `gsd-phase-researcher` uses decisions to focus investigation
-- `gsd-planner` uses decisions + research to create executable tasks
-- Downstream agents should NOT need to ask the user again about captured decisions
+**После создания:**
+- Файл находится в каталоге фазы: `.planning/phases/XX-name/{phase}-CONTEXT.md`
+- `gsd-phase-researcher` использует решения для фокусировки исследования
+- `gsd-planner` использует решения + исследование для создания исполняемых задач
+- Нижестоящие агенты НЕ должны снова спрашивать пользователя о зафиксированных решениях
 </guidelines>

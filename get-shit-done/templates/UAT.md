@@ -1,53 +1,53 @@
-# UAT Template
+# Шаблон ПАТ (Пользовательское Приёмочное Тестирование)
 
-Template for `.planning/phases/XX-name/{phase}-UAT.md` — persistent UAT session tracking.
+Шаблон для `.planning/phases/XX-name/{phase}-UAT.md` — постоянное отслеживание сессии ПАТ.
 
 ---
 
-## File Template
+## Шаблон файла
 
 ```markdown
 ---
 status: testing | complete | diagnosed
 phase: XX-name
-source: [list of SUMMARY.md files tested]
-started: [ISO timestamp]
-updated: [ISO timestamp]
+source: [список протестированных файлов SUMMARY.md]
+started: [ISO метка времени]
+updated: [ISO метка времени]
 ---
 
-## Current Test
-<!-- OVERWRITE each test - shows where we are -->
+## Текущий тест
+<!-- ПЕРЕЗАПИСЫВАТЬ каждый тест — показывает, где мы находимся -->
 
 number: [N]
-name: [test name]
+name: [название теста]
 expected: |
-  [what user should observe]
-awaiting: user response
+  [что пользователь должен наблюдать]
+awaiting: ответ пользователя
 
-## Tests
+## Тесты
 
-### 1. [Test Name]
-expected: [observable behavior - what user should see]
-result: [pending]
+### 1. [Название теста]
+expected: [наблюдаемое поведение — что пользователь должен видеть]
+result: [ожидает]
 
-### 2. [Test Name]
-expected: [observable behavior]
+### 2. [Название теста]
+expected: [наблюдаемое поведение]
 result: pass
 
-### 3. [Test Name]
-expected: [observable behavior]
+### 3. [Название теста]
+expected: [наблюдаемое поведение]
 result: issue
-reported: "[verbatim user response]"
+reported: "[дословный ответ пользователя]"
 severity: major
 
-### 4. [Test Name]
-expected: [observable behavior]
+### 4. [Название теста]
+expected: [наблюдаемое поведение]
 result: skipped
-reason: [why skipped]
+reason: [почему пропущен]
 
 ...
 
-## Summary
+## Итого
 
 total: [N]
 passed: [N]
@@ -55,80 +55,80 @@ issues: [N]
 pending: [N]
 skipped: [N]
 
-## Gaps
+## Пробелы
 
-<!-- YAML format for plan-phase --gaps consumption -->
-- truth: "[expected behavior from test]"
+<!-- YAML формат для потребления plan-phase --gaps -->
+- truth: "[ожидаемое поведение из теста]"
   status: failed
-  reason: "User reported: [verbatim response]"
+  reason: "Пользователь сообщил: [дословный ответ]"
   severity: blocker | major | minor | cosmetic
   test: [N]
-  root_cause: ""     # Filled by diagnosis
-  artifacts: []      # Filled by diagnosis
-  missing: []        # Filled by diagnosis
-  debug_session: ""  # Filled by diagnosis
+  root_cause: ""     # Заполняется диагностикой
+  artifacts: []      # Заполняется диагностикой
+  missing: []        # Заполняется диагностикой
+  debug_session: ""  # Заполняется диагностикой
 ```
 
 ---
 
 <section_rules>
 
-**Frontmatter:**
-- `status`: OVERWRITE - "testing" or "complete"
-- `phase`: IMMUTABLE - set on creation
-- `source`: IMMUTABLE - SUMMARY files being tested
-- `started`: IMMUTABLE - set on creation
-- `updated`: OVERWRITE - update on every change
+**Метаданные:**
+- `status`: ПЕРЕЗАПИСЫВАТЬ — "testing" или "complete"
+- `phase`: НЕИЗМЕНЯЕМЫЙ — устанавливается при создании
+- `source`: НЕИЗМЕНЯЕМЫЙ — тестируемые файлы SUMMARY
+- `started`: НЕИЗМЕНЯЕМЫЙ — устанавливается при создании
+- `updated`: ПЕРЕЗАПИСЫВАТЬ — обновлять при каждом изменении
 
-**Current Test:**
-- OVERWRITE entirely on each test transition
-- Shows which test is active and what's awaited
-- On completion: "[testing complete]"
+**Текущий тест:**
+- ПЕРЕЗАПИСЫВАТЬ целиком при переходе к каждому тесту
+- Показывает, какой тест активен и что ожидается
+- По завершении: "[тестирование завершено]"
 
-**Tests:**
-- Each test: OVERWRITE result field when user responds
-- `result` values: [pending], pass, issue, skipped
-- If issue: add `reported` (verbatim) and `severity` (inferred)
-- If skipped: add `reason` if provided
+**Тесты:**
+- Каждый тест: ПЕРЕЗАПИСЫВАТЬ поле result при ответе пользователя
+- Значения `result`: [ожидает], pass, issue, skipped
+- Если issue: добавить `reported` (дословно) и `severity` (определяется автоматически)
+- Если skipped: добавить `reason`, если указана
 
-**Summary:**
-- OVERWRITE counts after each response
-- Tracks: total, passed, issues, pending, skipped
+**Итого:**
+- ПЕРЕЗАПИСЫВАТЬ счётчики после каждого ответа
+- Отслеживает: total, passed, issues, pending, skipped
 
-**Gaps:**
-- APPEND only when issue found (YAML format)
-- After diagnosis: fill `root_cause`, `artifacts`, `missing`, `debug_session`
-- This section feeds directly into /gsd:plan-phase --gaps
+**Пробелы:**
+- Только ДОБАВЛЕНИЕ при обнаружении проблемы (YAML формат)
+- После диагностики: заполнить `root_cause`, `artifacts`, `missing`, `debug_session`
+- Эта секция напрямую подаётся в /gsd:plan-phase --gaps
 
 </section_rules>
 
 <diagnosis_lifecycle>
 
-**After testing complete (status: complete), if gaps exist:**
+**После завершения тестирования (status: complete), если есть пробелы:**
 
-1. User runs diagnosis (from verify-work offer or manually)
-2. diagnose-issues workflow spawns parallel debug agents
-3. Each agent investigates one gap, returns root cause
-4. UAT.md Gaps section updated with diagnosis:
-   - Each gap gets `root_cause`, `artifacts`, `missing`, `debug_session` filled
+1. Пользователь запускает диагностику (по предложению verify-work или вручную)
+2. Рабочий процесс diagnose-issues запускает параллельных агентов отладки
+3. Каждый агент исследует один пробел, возвращает корневую причину
+4. Секция Пробелы в UAT.md обновляется результатами диагностики:
+   - Для каждого пробела заполняются `root_cause`, `artifacts`, `missing`, `debug_session`
 5. status → "diagnosed"
-6. Ready for /gsd:plan-phase --gaps with root causes
+6. Готово для /gsd:plan-phase --gaps с корневыми причинами
 
-**After diagnosis:**
+**После диагностики:**
 ```yaml
-## Gaps
+## Пробелы
 
-- truth: "Comment appears immediately after submission"
+- truth: "Комментарий появляется сразу после отправки"
   status: failed
-  reason: "User reported: works but doesn't show until I refresh the page"
+  reason: "Пользователь сообщил: работает, но не показывается пока не обновлю страницу"
   severity: major
   test: 2
-  root_cause: "useEffect in CommentList.tsx missing commentCount dependency"
+  root_cause: "useEffect в CommentList.tsx не содержит commentCount в зависимостях"
   artifacts:
     - path: "src/components/CommentList.tsx"
-      issue: "useEffect missing dependency"
+      issue: "Отсутствует зависимость в useEffect"
   missing:
-    - "Add commentCount to useEffect dependency array"
+    - "Добавить commentCount в массив зависимостей useEffect"
   debug_session: ".planning/debug/comment-not-refreshing.md"
 ```
 
@@ -136,112 +136,45 @@ skipped: [N]
 
 <lifecycle>
 
-**Creation:** When /gsd:verify-work starts new session
-- Extract tests from SUMMARY.md files
-- Set status to "testing"
-- Current Test points to test 1
-- All tests have result: [pending]
+**Создание:** Когда /gsd:verify-work начинает новую сессию
+- Извлечь тесты из файлов SUMMARY.md
+- Установить status в "testing"
+- Текущий тест указывает на тест 1
+- Все тесты имеют result: [ожидает]
 
-**During testing:**
-- Present test from Current Test section
-- User responds with pass confirmation or issue description
-- Update test result (pass/issue/skipped)
-- Update Summary counts
-- If issue: append to Gaps section (YAML format), infer severity
-- Move Current Test to next pending test
+**Во время тестирования:**
+- Представить тест из секции Текущий тест
+- Пользователь отвечает подтверждением прохождения или описанием проблемы
+- Обновить result теста (pass/issue/skipped)
+- Обновить счётчики Итого
+- Если issue: добавить в секцию Пробелы (YAML формат), определить severity
+- Переместить Текущий тест к следующему ожидающему тесту
 
-**On completion:**
+**По завершении:**
 - status → "complete"
-- Current Test → "[testing complete]"
-- Commit file
-- Present summary with next steps
+- Текущий тест → "[тестирование завершено]"
+- Закоммитить файл
+- Представить итоги со следующими шагами
 
-**Resume after /clear:**
-1. Read frontmatter → know phase and status
-2. Read Current Test → know where we are
-3. Find first [pending] result → continue from there
-4. Summary shows progress so far
+**Возобновление после /clear:**
+1. Прочитать метаданные → узнать фазу и статус
+2. Прочитать Текущий тест → узнать, где мы
+3. Найти первый результат [ожидает] → продолжить оттуда
+4. Итого показывает прогресс
 
 </lifecycle>
 
 <severity_guide>
 
-Severity is INFERRED from user's natural language, never asked.
+Серьёзность ОПРЕДЕЛЯЕТСЯ из естественного языка пользователя, никогда не спрашивается.
 
-| User describes | Infer |
-|----------------|-------|
-| Crash, error, exception, fails completely, unusable | blocker |
-| Doesn't work, nothing happens, wrong behavior, missing | major |
-| Works but..., slow, weird, minor, small issue | minor |
-| Color, font, spacing, alignment, visual, looks off | cosmetic |
+| Пользователь описывает | Определить как |
+|-------------------------|----------------|
+| Крах, ошибка, исключение, полностью не работает, непригодно | blocker |
+| Не работает, ничего не происходит, неправильное поведение, отсутствует | major |
+| Работает, но..., медленно, странно, мелочь, небольшая проблема | minor |
+| Цвет, шрифт, отступы, выравнивание, визуально, выглядит не так | cosmetic |
 
-Default: **major** (safe default, user can clarify if wrong)
+По умолчанию: **major** (безопасное значение, пользователь может уточнить)
 
 </severity_guide>
-
-<good_example>
-```markdown
----
-status: diagnosed
-phase: 04-comments
-source: 04-01-SUMMARY.md, 04-02-SUMMARY.md
-started: 2025-01-15T10:30:00Z
-updated: 2025-01-15T10:45:00Z
----
-
-## Current Test
-
-[testing complete]
-
-## Tests
-
-### 1. View Comments on Post
-expected: Comments section expands, shows count and comment list
-result: pass
-
-### 2. Create Top-Level Comment
-expected: Submit comment via rich text editor, appears in list with author info
-result: issue
-reported: "works but doesn't show until I refresh the page"
-severity: major
-
-### 3. Reply to a Comment
-expected: Click Reply, inline composer appears, submit shows nested reply
-result: pass
-
-### 4. Visual Nesting
-expected: 3+ level thread shows indentation, left borders, caps at reasonable depth
-result: pass
-
-### 5. Delete Own Comment
-expected: Click delete on own comment, removed or shows [deleted] if has replies
-result: pass
-
-### 6. Comment Count
-expected: Post shows accurate count, increments when adding comment
-result: pass
-
-## Summary
-
-total: 6
-passed: 5
-issues: 1
-pending: 0
-skipped: 0
-
-## Gaps
-
-- truth: "Comment appears immediately after submission in list"
-  status: failed
-  reason: "User reported: works but doesn't show until I refresh the page"
-  severity: major
-  test: 2
-  root_cause: "useEffect in CommentList.tsx missing commentCount dependency"
-  artifacts:
-    - path: "src/components/CommentList.tsx"
-      issue: "useEffect missing dependency"
-  missing:
-    - "Add commentCount to useEffect dependency array"
-  debug_session: ".planning/debug/comment-not-refreshing.md"
-```
-</good_example>

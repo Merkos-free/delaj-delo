@@ -1,184 +1,184 @@
-# PROJECT.md Template
+# Шаблон PROJECT.md
 
-Template for `.planning/PROJECT.md` — the living project context document.
+Шаблон для `.planning/PROJECT.md` — живой документ контекста проекта.
 
 <template>
 
 ```markdown
-# [Project Name]
+# [Название проекта]
 
-## What This Is
+## Что это
 
-[Current accurate description — 2-3 sentences. What does this product do and who is it for?
-Use the user's language and framing. Update whenever reality drifts from this description.]
+[Текущее точное описание — 2-3 предложения. Что делает этот продукт и для кого?
+Используйте формулировки пользователя. Обновляйте, когда реальность расходится с описанием.]
 
-## Core Value
+## Основная ценность
 
-[The ONE thing that matters most. If everything else fails, this must work.
-One sentence that drives prioritization when tradeoffs arise.]
+[ТА ЕДИНСТВЕННАЯ вещь, которая важнее всего. Если всё остальное откажет, это должно работать.
+Одно предложение, определяющее приоритеты при компромиссах.]
 
-## Requirements
+## Требования
 
-### Validated
+### Подтверждённые
 
-<!-- Shipped and confirmed valuable. -->
+<!-- Выпущены и подтверждена ценность. -->
 
-(None yet — ship to validate)
+(Пока нет — выпускайте для подтверждения)
 
-### Active
+### Активные
 
-<!-- Current scope. Building toward these. -->
+<!-- Текущий объём. Строим к этим целям. -->
 
-- [ ] [Requirement 1]
-- [ ] [Requirement 2]
-- [ ] [Requirement 3]
+- [ ] [Требование 1]
+- [ ] [Требование 2]
+- [ ] [Требование 3]
 
-### Out of Scope
+### За пределами
 
-<!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
+<!-- Явные границы. Включают обоснование для предотвращения повторного добавления. -->
 
-- [Exclusion 1] — [why]
-- [Exclusion 2] — [why]
+- [Исключение 1] — [почему]
+- [Исключение 2] — [почему]
 
-## Context
+## Контекст
 
-[Background information that informs implementation:
-- Technical environment or ecosystem
-- Relevant prior work or experience
-- User research or feedback themes
-- Known issues to address]
+[Справочная информация, влияющая на реализацию:
+- Техническая среда или экосистема
+- Релевантная предыдущая работа или опыт
+- Результаты исследований пользователей или темы обратной связи
+- Известные проблемы для решения]
 
-## Constraints
+## Ограничения
 
-- **[Type]**: [What] — [Why]
-- **[Type]**: [What] — [Why]
+- **[Тип]**: [Что] — [Почему]
+- **[Тип]**: [Что] — [Почему]
 
-Common types: Tech stack, Timeline, Budget, Dependencies, Compatibility, Performance, Security
+Распространённые типы: Технологический стек, Сроки, Бюджет, Зависимости, Совместимость, Производительность, Безопасность
 
-## Key Decisions
+## Ключевые решения
 
-<!-- Decisions that constrain future work. Add throughout project lifecycle. -->
+<!-- Решения, ограничивающие будущую работу. Добавляйте на протяжении жизненного цикла проекта. -->
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| [Choice] | [Why] | [✓ Good / ⚠️ Revisit / — Pending] |
+| Решение | Обоснование | Результат |
+|---------|-------------|----------|
+| [Выбор] | [Почему] | [✓ Хорошо / ⚠️ Пересмотреть / — Ожидает] |
 
 ---
-*Last updated: [date] after [trigger]*
+*Последнее обновление: [дата] после [причина]*
 ```
 
 </template>
 
 <guidelines>
 
-**What This Is:**
-- Current accurate description of the product
-- 2-3 sentences capturing what it does and who it's for
-- Use the user's words and framing
-- Update when the product evolves beyond this description
+**Что это:**
+- Текущее точное описание продукта
+- 2-3 предложения, описывающие что он делает и для кого
+- Используйте слова и формулировки пользователя
+- Обновляйте, когда продукт выходит за рамки этого описания
 
-**Core Value:**
-- The single most important thing
-- Everything else can fail; this cannot
-- Drives prioritization when tradeoffs arise
-- Rarely changes; if it does, it's a significant pivot
+**Основная ценность:**
+- Единственная самая важная вещь
+- Всё остальное может отказать; это — нет
+- Определяет приоритеты при компромиссах
+- Редко меняется; если меняется — это значительный разворот
 
-**Requirements — Validated:**
-- Requirements that shipped and proved valuable
-- Format: `- ✓ [Requirement] — [version/phase]`
-- These are locked — changing them requires explicit discussion
+**Требования — Подтверждённые:**
+- Требования, которые выпущены и доказали свою ценность
+- Формат: `- ✓ [Требование] — [версия/фаза]`
+- Заблокированы — изменение требует явного обсуждения
 
-**Requirements — Active:**
-- Current scope being built toward
-- These are hypotheses until shipped and validated
-- Move to Validated when shipped, Out of Scope if invalidated
+**Требования — Активные:**
+- Текущий объём для разработки
+- Это гипотезы до выпуска и подтверждения
+- Переносятся в Подтверждённые при выпуске, в За пределами при опровержении
 
-**Requirements — Out of Scope:**
-- Explicit boundaries on what we're not building
-- Always include reasoning (prevents re-adding later)
-- Includes: considered and rejected, deferred to future, explicitly excluded
+**Требования — За пределами:**
+- Явные границы того, что мы не строим
+- Всегда включают обоснование (предотвращает повторное добавление)
+- Включает: рассмотренное и отклонённое, отложенное, явно исключённое
 
-**Context:**
-- Background that informs implementation decisions
-- Technical environment, prior work, user feedback
-- Known issues or technical debt to address
-- Update as new context emerges
+**Контекст:**
+- Справочная информация, влияющая на решения по реализации
+- Техническая среда, предыдущая работа, обратная связь пользователей
+- Известные проблемы или технический долг для решения
+- Обновляйте по мере появления нового контекста
 
-**Constraints:**
-- Hard limits on implementation choices
-- Tech stack, timeline, budget, compatibility, dependencies
-- Include the "why" — constraints without rationale get questioned
+**Ограничения:**
+- Жёсткие ограничения на выбор реализации
+- Технологический стек, сроки, бюджет, совместимость, зависимости
+- Включайте "почему" — ограничения без обоснования подвергаются сомнению
 
-**Key Decisions:**
-- Significant choices that affect future work
-- Add decisions as they're made throughout the project
-- Track outcome when known:
-  - ✓ Good — decision proved correct
-  - ⚠️ Revisit — decision may need reconsideration
-  - — Pending — too early to evaluate
+**Ключевые решения:**
+- Значимые выборы, влияющие на будущую работу
+- Добавляйте решения по мере их принятия на протяжении проекта
+- Отслеживайте результат, когда он известен:
+  - ✓ Хорошо — решение оказалось верным
+  - ⚠️ Пересмотреть — решение может потребовать пересмотра
+  - — Ожидает — слишком рано оценивать
 
-**Last Updated:**
-- Always note when and why the document was updated
-- Format: `after Phase 2` or `after v1.0 milestone`
-- Triggers review of whether content is still accurate
+**Последнее обновление:**
+- Всегда отмечайте, когда и почему документ был обновлён
+- Формат: `после Фазы 2` или `после вехи v1.0`
+- Инициирует проверку актуальности содержимого
 
 </guidelines>
 
 <evolution>
 
-PROJECT.md evolves throughout the project lifecycle.
+PROJECT.md развивается на протяжении жизненного цикла проекта.
 
-**After each phase transition:**
-1. Requirements invalidated? → Move to Out of Scope with reason
-2. Requirements validated? → Move to Validated with phase reference
-3. New requirements emerged? → Add to Active
-4. Decisions to log? → Add to Key Decisions
-5. "What This Is" still accurate? → Update if drifted
+**После каждого перехода фазы:**
+1. Требования опровергнуты? → Перенести в За пределами с причиной
+2. Требования подтверждены? → Перенести в Подтверждённые со ссылкой на фазу
+3. Появились новые требования? → Добавить в Активные
+4. Решения для записи? → Добавить в Ключевые решения
+5. "Что это" всё ещё точно? → Обновить при расхождении
 
-**After each milestone:**
-1. Full review of all sections
-2. Core Value check — still the right priority?
-3. Audit Out of Scope — reasons still valid?
-4. Update Context with current state (users, feedback, metrics)
+**После каждой вехи:**
+1. Полный пересмотр всех секций
+2. Проверка Основной ценности — всё ещё правильный приоритет?
+3. Аудит За пределами — причины всё ещё актуальны?
+4. Обновление Контекста с текущим состоянием (пользователи, обратная связь, метрики)
 
 </evolution>
 
 <brownfield>
 
-For existing codebases:
+Для существующих кодовых баз:
 
-1. **Map codebase first** via `/gsd:map-codebase`
+1. **Сначала картирование кодовой базы** через `/gsd:map-codebase`
 
-2. **Infer Validated requirements** from existing code:
-   - What does the codebase actually do?
-   - What patterns are established?
-   - What's clearly working and relied upon?
+2. **Вывод Подтверждённых требований** из существующего кода:
+   - Что кодовая база реально делает?
+   - Какие паттерны установлены?
+   - Что явно работает и на что полагаются?
 
-3. **Gather Active requirements** from user:
-   - Present inferred current state
-   - Ask what they want to build next
+3. **Сбор Активных требований** от пользователя:
+   - Представить предполагаемое текущее состояние
+   - Спросить, что они хотят строить дальше
 
-4. **Initialize:**
-   - Validated = inferred from existing code
-   - Active = user's goals for this work
-   - Out of Scope = boundaries user specifies
-   - Context = includes current codebase state
+4. **Инициализация:**
+   - Подтверждённые = выведенные из существующего кода
+   - Активные = цели пользователя для этой работы
+   - За пределами = указанные пользователем границы
+   - Контекст = включает текущее состояние кодовой базы
 
 </brownfield>
 
 <state_reference>
 
-STATE.md references PROJECT.md:
+STATE.md ссылается на PROJECT.md:
 
 ```markdown
-## Project Reference
+## Ссылка на проект
 
-See: .planning/PROJECT.md (updated [date])
+См.: .planning/PROJECT.md (обновлён [дата])
 
-**Core value:** [One-liner from Core Value section]
-**Current focus:** [Current phase name]
+**Основная ценность:** [Одна строка из секции Основная ценность]
+**Текущий фокус:** [Название текущей фазы]
 ```
 
-This ensures Claude reads current PROJECT.md context.
+Это гарантирует, что Claude читает актуальный контекст PROJECT.md.
 
 </state_reference>
