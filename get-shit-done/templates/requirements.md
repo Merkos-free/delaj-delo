@@ -1,231 +1,231 @@
-# Requirements Template
+# Шаблон требований
 
-Template for `.planning/REQUIREMENTS.md` — checkable requirements that define "done."
+Шаблон для `.planning/REQUIREMENTS.md` — проверяемые требования, определяющие "готово".
 
 <template>
 
 ```markdown
-# Requirements: [Project Name]
+# Требования: [Название проекта]
 
-**Defined:** [date]
-**Core Value:** [from PROJECT.md]
+**Определены:** [дата]
+**Ключевая ценность:** [из PROJECT.md]
 
-## v1 Requirements
+## Требования v1
 
-Requirements for initial release. Each maps to roadmap phases.
+Требования для начального релиза. Каждое соответствует фазам дорожной карты.
 
-### Authentication
+### Аутентификация
 
-- [ ] **AUTH-01**: User can sign up with email and password
-- [ ] **AUTH-02**: User receives email verification after signup
-- [ ] **AUTH-03**: User can reset password via email link
-- [ ] **AUTH-04**: User session persists across browser refresh
+- [ ] **AUTH-01**: Пользователь может зарегистрироваться с email и паролем
+- [ ] **AUTH-02**: Пользователь получает подтверждение email после регистрации
+- [ ] **AUTH-03**: Пользователь может сбросить пароль через ссылку в email
+- [ ] **AUTH-04**: Сессия пользователя сохраняется при обновлении браузера
 
-### [Category 2]
+### [Категория 2]
 
-- [ ] **[CAT]-01**: [Requirement description]
-- [ ] **[CAT]-02**: [Requirement description]
-- [ ] **[CAT]-03**: [Requirement description]
+- [ ] **[КАТ]-01**: [Описание требования]
+- [ ] **[КАТ]-02**: [Описание требования]
+- [ ] **[КАТ]-03**: [Описание требования]
 
-### [Category 3]
+### [Категория 3]
 
-- [ ] **[CAT]-01**: [Requirement description]
-- [ ] **[CAT]-02**: [Requirement description]
+- [ ] **[КАТ]-01**: [Описание требования]
+- [ ] **[КАТ]-02**: [Описание требования]
 
-## v2 Requirements
+## Требования v2
 
-Deferred to future release. Tracked but not in current roadmap.
+Отложены до будущего релиза. Отслеживаются, но не в текущей дорожной карте.
 
-### [Category]
+### [Категория]
 
-- **[CAT]-01**: [Requirement description]
-- **[CAT]-02**: [Requirement description]
+- **[КАТ]-01**: [Описание требования]
+- **[КАТ]-02**: [Описание требования]
 
-## Out of Scope
+## Вне области
 
-Explicitly excluded. Documented to prevent scope creep.
+Явно исключено. Задокументировано для предотвращения расширения объёма.
 
-| Feature | Reason |
+| Функция | Причина |
 |---------|--------|
-| [Feature] | [Why excluded] |
-| [Feature] | [Why excluded] |
+| [Функция] | [Почему исключена] |
+| [Функция] | [Почему исключена] |
 
-## Traceability
+## Трассировка
 
-Which phases cover which requirements. Updated during roadmap creation.
+Какие фазы покрывают какие требования. Обновляется при создании дорожной карты.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| [REQ-ID] | Phase [N] | Pending |
+| Требование | Фаза | Статус |
+|------------|------|--------|
+| AUTH-01 | Фаза 1 | Ожидает |
+| AUTH-02 | Фаза 1 | Ожидает |
+| AUTH-03 | Фаза 1 | Ожидает |
+| AUTH-04 | Фаза 1 | Ожидает |
+| [REQ-ID] | Фаза [N] | Ожидает |
 
-**Coverage:**
-- v1 requirements: [X] total
-- Mapped to phases: [Y]
-- Unmapped: [Z] ⚠️
+**Покрытие:**
+- Требования v1: [X] всего
+- Привязано к фазам: [Y]
+- Не привязано: [Z] ⚠️
 
 ---
-*Requirements defined: [date]*
-*Last updated: [date] after [trigger]*
+*Требования определены: [дата]*
+*Последнее обновление: [дата] после [триггер]*
 ```
 
 </template>
 
 <guidelines>
 
-**Requirement Format:**
-- ID: `[CATEGORY]-[NUMBER]` (AUTH-01, CONTENT-02, SOCIAL-03)
-- Description: User-centric, testable, atomic
-- Checkbox: Only for v1 requirements (v2 are not yet actionable)
+**Формат требования:**
+- ID: `[КАТЕГОРИЯ]-[НОМЕР]` (AUTH-01, CONTENT-02, SOCIAL-03)
+- Описание: Ориентировано на пользователя, тестируемо, атомарно
+- Чекбокс: Только для требований v1 (v2 ещё не являются действиями)
 
-**Categories:**
-- Derive from research FEATURES.md categories
-- Keep consistent with domain conventions
-- Typical: Authentication, Content, Social, Notifications, Moderation, Payments, Admin
+**Категории:**
+- Выводятся из категорий FEATURES.md исследования
+- Поддерживайте согласованность с доменными конвенциями
+- Типичные: Аутентификация, Контент, Социальные, Уведомления, Модерация, Платежи, Администрирование
 
 **v1 vs v2:**
-- v1: Committed scope, will be in roadmap phases
-- v2: Acknowledged but deferred, not in current roadmap
-- Moving v2 → v1 requires roadmap update
+- v1: Зафиксированный объём, будет в фазах дорожной карты
+- v2: Признано, но отложено, не в текущей дорожной карте
+- Перемещение v2 → v1 требует обновления дорожной карты
 
-**Out of Scope:**
-- Explicit exclusions with reasoning
-- Prevents "why didn't you include X?" later
-- Anti-features from research belong here with warnings
+**Вне области:**
+- Явные исключения с обоснованием
+- Предотвращает "почему вы не включили X?" в будущем
+- Анти-функции из исследования размещаются здесь с предупреждениями
 
-**Traceability:**
-- Empty initially, populated during roadmap creation
-- Each requirement maps to exactly one phase
-- Unmapped requirements = roadmap gap
+**Трассировка:**
+- Изначально пустая, заполняется при создании дорожной карты
+- Каждое требование привязывается ровно к одной фазе
+- Непривязанные требования = пробел в дорожной карте
 
-**Status Values:**
-- Pending: Not started
-- In Progress: Phase is active
-- Complete: Requirement verified
-- Blocked: Waiting on external factor
+**Значения статусов:**
+- Ожидает: Не начато
+- В работе: Фаза активна
+- Выполнено: Требование верифицировано
+- Заблокировано: Ожидание внешнего фактора
 
 </guidelines>
 
 <evolution>
 
-**After each phase completes:**
-1. Mark covered requirements as Complete
-2. Update traceability status
-3. Note any requirements that changed scope
+**После завершения каждой фазы:**
+1. Отметить покрытые требования как Выполнено
+2. Обновить статус трассировки
+3. Отметить требования, у которых изменился объём
 
-**After roadmap updates:**
-1. Verify all v1 requirements still mapped
-2. Add new requirements if scope expanded
-3. Move requirements to v2/out of scope if descoped
+**После обновлений дорожной карты:**
+1. Убедиться, что все требования v1 по-прежнему привязаны
+2. Добавить новые требования при расширении объёма
+3. Переместить требования в v2/вне области при сокращении объёма
 
-**Requirement completion criteria:**
-- Requirement is "Complete" when:
-  - Feature is implemented
-  - Feature is verified (tests pass, manual check done)
-  - Feature is committed
+**Критерии завершения требования:**
+- Требование считается "Выполненным" когда:
+  - Функция реализована
+  - Функция верифицирована (тесты проходят, ручная проверка выполнена)
+  - Функция закоммичена
 
 </evolution>
 
 <example>
 
 ```markdown
-# Requirements: CommunityApp
+# Требования: CommunityApp
 
-**Defined:** 2025-01-14
-**Core Value:** Users can share and discuss content with people who share their interests
+**Определены:** 2025-01-14
+**Ключевая ценность:** Пользователи могут делиться и обсуждать контент с людьми, разделяющими их интересы
 
-## v1 Requirements
+## Требования v1
 
-### Authentication
+### Аутентификация
 
-- [ ] **AUTH-01**: User can sign up with email and password
-- [ ] **AUTH-02**: User receives email verification after signup
-- [ ] **AUTH-03**: User can reset password via email link
-- [ ] **AUTH-04**: User session persists across browser refresh
+- [ ] **AUTH-01**: Пользователь может зарегистрироваться с email и паролем
+- [ ] **AUTH-02**: Пользователь получает подтверждение email после регистрации
+- [ ] **AUTH-03**: Пользователь может сбросить пароль через ссылку в email
+- [ ] **AUTH-04**: Сессия пользователя сохраняется при обновлении браузера
 
-### Profiles
+### Профили
 
-- [ ] **PROF-01**: User can create profile with display name
-- [ ] **PROF-02**: User can upload avatar image
-- [ ] **PROF-03**: User can write bio (max 500 chars)
-- [ ] **PROF-04**: User can view other users' profiles
+- [ ] **PROF-01**: Пользователь может создать профиль с отображаемым именем
+- [ ] **PROF-02**: Пользователь может загрузить аватар
+- [ ] **PROF-03**: Пользователь может написать био (макс. 500 символов)
+- [ ] **PROF-04**: Пользователь может просматривать профили других пользователей
 
-### Content
+### Контент
 
-- [ ] **CONT-01**: User can create text post
-- [ ] **CONT-02**: User can upload image with post
-- [ ] **CONT-03**: User can edit own posts
-- [ ] **CONT-04**: User can delete own posts
-- [ ] **CONT-05**: User can view feed of posts
+- [ ] **CONT-01**: Пользователь может создать текстовый пост
+- [ ] **CONT-02**: Пользователь может загрузить изображение к посту
+- [ ] **CONT-03**: Пользователь может редактировать свои посты
+- [ ] **CONT-04**: Пользователь может удалить свои посты
+- [ ] **CONT-05**: Пользователь может просматривать ленту постов
 
-### Social
+### Социальное
 
-- [ ] **SOCL-01**: User can follow other users
-- [ ] **SOCL-02**: User can unfollow users
-- [ ] **SOCL-03**: User can like posts
-- [ ] **SOCL-04**: User can comment on posts
-- [ ] **SOCL-05**: User can view activity feed (followed users' posts)
+- [ ] **SOCL-01**: Пользователь может подписаться на других пользователей
+- [ ] **SOCL-02**: Пользователь может отписаться от пользователей
+- [ ] **SOCL-03**: Пользователь может лайкать посты
+- [ ] **SOCL-04**: Пользователь может комментировать посты
+- [ ] **SOCL-05**: Пользователь может просматривать ленту активности (посты подписок)
 
-## v2 Requirements
+## Требования v2
 
-### Notifications
+### Уведомления
 
-- **NOTF-01**: User receives in-app notifications
-- **NOTF-02**: User receives email for new followers
-- **NOTF-03**: User receives email for comments on own posts
-- **NOTF-04**: User can configure notification preferences
+- **NOTF-01**: Пользователь получает уведомления в приложении
+- **NOTF-02**: Пользователь получает email при новых подписчиках
+- **NOTF-03**: Пользователь получает email при комментариях к своим постам
+- **NOTF-04**: Пользователь может настроить предпочтения уведомлений
 
-### Moderation
+### Модерация
 
-- **MODR-01**: User can report content
-- **MODR-02**: User can block other users
-- **MODR-03**: Admin can view reported content
-- **MODR-04**: Admin can remove content
-- **MODR-05**: Admin can ban users
+- **MODR-01**: Пользователь может пожаловаться на контент
+- **MODR-02**: Пользователь может заблокировать других пользователей
+- **MODR-03**: Администратор может просматривать жалобы на контент
+- **MODR-04**: Администратор может удалять контент
+- **MODR-05**: Администратор может банить пользователей
 
-## Out of Scope
+## Вне области
 
-| Feature | Reason |
+| Функция | Причина |
 |---------|--------|
-| Real-time chat | High complexity, not core to community value |
-| Video posts | Storage/bandwidth costs, defer to v2+ |
-| OAuth login | Email/password sufficient for v1 |
-| Mobile app | Web-first, mobile later |
+| Чат в реальном времени | Высокая сложность, не является основой ценности сообщества |
+| Видео-посты | Стоимость хранения/трафика, отложено до v2+ |
+| OAuth логин | Email/пароль достаточно для v1 |
+| Мобильное приложение | Сначала веб, мобильное позже |
 
-## Traceability
+## Трассировка
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| PROF-01 | Phase 2 | Pending |
-| PROF-02 | Phase 2 | Pending |
-| PROF-03 | Phase 2 | Pending |
-| PROF-04 | Phase 2 | Pending |
-| CONT-01 | Phase 3 | Pending |
-| CONT-02 | Phase 3 | Pending |
-| CONT-03 | Phase 3 | Pending |
-| CONT-04 | Phase 3 | Pending |
-| CONT-05 | Phase 3 | Pending |
-| SOCL-01 | Phase 4 | Pending |
-| SOCL-02 | Phase 4 | Pending |
-| SOCL-03 | Phase 4 | Pending |
-| SOCL-04 | Phase 4 | Pending |
-| SOCL-05 | Phase 4 | Pending |
+| Требование | Фаза | Статус |
+|------------|------|--------|
+| AUTH-01 | Фаза 1 | Ожидает |
+| AUTH-02 | Фаза 1 | Ожидает |
+| AUTH-03 | Фаза 1 | Ожидает |
+| AUTH-04 | Фаза 1 | Ожидает |
+| PROF-01 | Фаза 2 | Ожидает |
+| PROF-02 | Фаза 2 | Ожидает |
+| PROF-03 | Фаза 2 | Ожидает |
+| PROF-04 | Фаза 2 | Ожидает |
+| CONT-01 | Фаза 3 | Ожидает |
+| CONT-02 | Фаза 3 | Ожидает |
+| CONT-03 | Фаза 3 | Ожидает |
+| CONT-04 | Фаза 3 | Ожидает |
+| CONT-05 | Фаза 3 | Ожидает |
+| SOCL-01 | Фаза 4 | Ожидает |
+| SOCL-02 | Фаза 4 | Ожидает |
+| SOCL-03 | Фаза 4 | Ожидает |
+| SOCL-04 | Фаза 4 | Ожидает |
+| SOCL-05 | Фаза 4 | Ожидает |
 
-**Coverage:**
-- v1 requirements: 18 total
-- Mapped to phases: 18
-- Unmapped: 0 ✓
+**Покрытие:**
+- Требования v1: 18 всего
+- Привязано к фазам: 18
+- Не привязано: 0 ✓
 
 ---
-*Requirements defined: 2025-01-14*
-*Last updated: 2025-01-14 after initial definition*
+*Требования определены: 2025-01-14*
+*Последнее обновление: 2025-01-14 после начального определения*
 ```
 
 </example>

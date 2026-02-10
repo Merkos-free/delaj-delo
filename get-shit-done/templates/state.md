@@ -1,176 +1,176 @@
-# State Template
+# Шаблон состояния
 
-Template for `.planning/STATE.md` — the project's living memory.
+Шаблон для `.planning/STATE.md` — живая память проекта.
 
 ---
 
-## File Template
+## Шаблон файла
 
 ```markdown
-# Project State
+# Состояние проекта
 
-## Project Reference
+## Ссылка на проект
 
-See: .planning/PROJECT.md (updated [date])
+См.: .planning/PROJECT.md (обновлено [дата])
 
-**Core value:** [One-liner from PROJECT.md Core Value section]
-**Current focus:** [Current phase name]
+**Ключевая ценность:** [Однострочник из раздела Ключевая ценность PROJECT.md]
+**Текущий фокус:** [Название текущей фазы]
 
-## Current Position
+## Текущая позиция
 
-Phase: [X] of [Y] ([Phase name])
-Plan: [A] of [B] in current phase
-Status: [Ready to plan / Planning / Ready to execute / In progress / Phase complete]
-Last activity: [YYYY-MM-DD] — [What happened]
+Фаза: [X] из [Y] ([Название фазы])
+План: [A] из [B] в текущей фазе
+Статус: [Готов к планированию / Планирование / Готов к выполнению / В работе / Фаза завершена]
+Последняя активность: [ГГГГ-ММ-ДД] — [Что произошло]
 
-Progress: [░░░░░░░░░░] 0%
+Прогресс: [░░░░░░░░░░] 0%
 
-## Performance Metrics
+## Метрики производительности
 
-**Velocity:**
-- Total plans completed: [N]
-- Average duration: [X] min
-- Total execution time: [X.X] hours
+**Скорость:**
+- Всего планов выполнено: [N]
+- Среднее время: [X] мин
+- Общее время выполнения: [X.X] часов
 
-**By Phase:**
+**По фазам:**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
+| Фаза | Планы | Всего | Ср./План |
+|------|-------|-------|----------|
 | - | - | - | - |
 
-**Recent Trend:**
-- Last 5 plans: [durations]
-- Trend: [Improving / Stable / Degrading]
+**Последний тренд:**
+- Последние 5 планов: [длительности]
+- Тренд: [Улучшается / Стабильный / Ухудшается]
 
-*Updated after each plan completion*
+*Обновляется после завершения каждого плана*
 
-## Accumulated Context
+## Накопленный контекст
 
-### Decisions
+### Решения
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+Решения логируются в таблице Ключевых решений PROJECT.md.
+Последние решения, влияющие на текущую работу:
 
-- [Phase X]: [Decision summary]
-- [Phase Y]: [Decision summary]
+- [Фаза X]: [Краткое описание решения]
+- [Фаза Y]: [Краткое описание решения]
 
-### Pending Todos
+### Отложенные задачи
 
-[From .planning/todos/pending/ — ideas captured during sessions]
+[Из .planning/todos/pending/ — идеи, зафиксированные во время сессий]
 
-None yet.
+Пока нет.
 
-### Blockers/Concerns
+### Блокеры/Проблемы
 
-[Issues that affect future work]
+[Вопросы, влияющие на будущую работу]
 
-None yet.
+Пока нет.
 
-## Session Continuity
+## Непрерывность сессий
 
-Last session: [YYYY-MM-DD HH:MM]
-Stopped at: [Description of last completed action]
-Resume file: [Path to .continue-here*.md if exists, otherwise "None"]
+Последняя сессия: [ГГГГ-ММ-ДД ЧЧ:ММ]
+Остановились на: [Описание последнего выполненного действия]
+Файл возобновления: [Путь к .continue-here*.md если существует, иначе "Нет"]
 ```
 
 <purpose>
 
-STATE.md is the project's short-term memory spanning all phases and sessions.
+STATE.md — это краткосрочная память проекта, охватывающая все фазы и сессии.
 
-**Problem it solves:** Information is captured in summaries, issues, and decisions but not systematically consumed. Sessions start without context.
+**Проблема, которую решает:** Информация захватывается в итогах, задачах и решениях, но не потребляется систематически. Сессии начинаются без контекста.
 
-**Solution:** A single, small file that's:
-- Read first in every workflow
-- Updated after every significant action
-- Contains digest of accumulated context
-- Enables instant session restoration
+**Решение:** Единый небольшой файл, который:
+- Читается первым в каждом рабочем процессе
+- Обновляется после каждого значимого действия
+- Содержит дайджест накопленного контекста
+- Позволяет мгновенно восстановить сессию
 
 </purpose>
 
 <lifecycle>
 
-**Creation:** After ROADMAP.md is created (during init)
-- Reference PROJECT.md (read it for current context)
-- Initialize empty accumulated context sections
-- Set position to "Phase 1 ready to plan"
+**Создание:** После создания ROADMAP.md (во время init)
+- Ссылка на PROJECT.md (прочитать его для текущего контекста)
+- Инициализировать пустые разделы накопленного контекста
+- Установить позицию "Фаза 1 готова к планированию"
 
-**Reading:** First step of every workflow
-- progress: Present status to user
-- plan: Inform planning decisions
-- execute: Know current position
-- transition: Know what's complete
+**Чтение:** Первый шаг каждого рабочего процесса
+- progress: Показать статус пользователю
+- plan: Информировать решения планирования
+- execute: Знать текущую позицию
+- transition: Знать что завершено
 
-**Writing:** After every significant action
-- execute: After SUMMARY.md created
-  - Update position (phase, plan, status)
-  - Note new decisions (detail in PROJECT.md)
-  - Add blockers/concerns
-- transition: After phase marked complete
-  - Update progress bar
-  - Clear resolved blockers
-  - Refresh Project Reference date
+**Запись:** После каждого значимого действия
+- execute: После создания SUMMARY.md
+  - Обновить позицию (фаза, план, статус)
+  - Отметить новые решения (детали в PROJECT.md)
+  - Добавить блокеры/проблемы
+- transition: После отметки фазы как завершённой
+  - Обновить индикатор прогресса
+  - Очистить решённые блокеры
+  - Обновить дату ссылки на проект
 
 </lifecycle>
 
 <sections>
 
-### Project Reference
-Points to PROJECT.md for full context. Includes:
-- Core value (the ONE thing that matters)
-- Current focus (which phase)
-- Last update date (triggers re-read if stale)
+### Ссылка на проект
+Указывает на PROJECT.md для полного контекста. Включает:
+- Ключевую ценность (ОДНА вещь, которая важна)
+- Текущий фокус (какая фаза)
+- Дата последнего обновления (инициирует повторное чтение при устаревании)
 
-Claude reads PROJECT.md directly for requirements, constraints, and decisions.
+Claude читает PROJECT.md напрямую для требований, ограничений и решений.
 
-### Current Position
-Where we are right now:
-- Phase X of Y — which phase
-- Plan A of B — which plan within phase
-- Status — current state
-- Last activity — what happened most recently
-- Progress bar — visual indicator of overall completion
+### Текущая позиция
+Где мы сейчас:
+- Фаза X из Y — какая фаза
+- План A из B — какой план внутри фазы
+- Статус — текущее состояние
+- Последняя активность — что произошло совсем недавно
+- Индикатор прогресса — визуальный показатель общего завершения
 
-Progress calculation: (completed plans) / (total plans across all phases) × 100%
+Расчёт прогресса: (завершённые планы) / (всего планов по всем фазам) × 100%
 
-### Performance Metrics
-Track velocity to understand execution patterns:
-- Total plans completed
-- Average duration per plan
-- Per-phase breakdown
-- Recent trend (improving/stable/degrading)
+### Метрики производительности
+Отслеживание скорости для понимания паттернов выполнения:
+- Всего завершённых планов
+- Средняя длительность на план
+- Разбивка по фазам
+- Последний тренд (улучшается/стабильный/ухудшается)
 
-Updated after each plan completion.
+Обновляется после завершения каждого плана.
 
-### Accumulated Context
+### Накопленный контекст
 
-**Decisions:** Reference to PROJECT.md Key Decisions table, plus recent decisions summary for quick access. Full decision log lives in PROJECT.md.
+**Решения:** Ссылка на таблицу Ключевых решений PROJECT.md, плюс краткое описание последних решений для быстрого доступа. Полный журнал решений хранится в PROJECT.md.
 
-**Pending Todos:** Ideas captured via /gsd:add-todo
-- Count of pending todos
-- Reference to .planning/todos/pending/
-- Brief list if few, count if many (e.g., "5 pending todos — see /gsd:check-todos")
+**Отложенные задачи:** Идеи, зафиксированные через /gsd:add-todo
+- Количество отложенных задач
+- Ссылка на .planning/todos/pending/
+- Краткий список если мало, количество если много (напр. "5 отложенных задач — см. /gsd:check-todos")
 
-**Blockers/Concerns:** From "Next Phase Readiness" sections
-- Issues that affect future work
-- Prefix with originating phase
-- Cleared when addressed
+**Блокеры/Проблемы:** Из разделов "Готовность к следующей фазе"
+- Вопросы, влияющие на будущую работу
+- Префикс с фазой-источником
+- Очищаются при решении
 
-### Session Continuity
-Enables instant resumption:
-- When was last session
-- What was last completed
-- Is there a .continue-here file to resume from
+### Непрерывность сессий
+Обеспечивает мгновенное возобновление:
+- Когда была последняя сессия
+- Что было последним завершённым действием
+- Есть ли файл .continue-here для возобновления
 
 </sections>
 
 <size_constraint>
 
-Keep STATE.md under 100 lines.
+Держите STATE.md менее 100 строк.
 
-It's a DIGEST, not an archive. If accumulated context grows too large:
-- Keep only 3-5 recent decisions in summary (full log in PROJECT.md)
-- Keep only active blockers, remove resolved ones
+Это ДАЙДЖЕСТ, не архив. Если накопленный контекст разрастается:
+- Оставляйте только 3-5 последних решений в кратком описании (полный журнал в PROJECT.md)
+- Оставляйте только активные блокеры, убирайте решённые
 
-The goal is "read once, know where we are" — if it's too long, that fails.
+Цель — "прочитал один раз, знаю где мы" — если файл слишком длинный, это не работает.
 
 </size_constraint>

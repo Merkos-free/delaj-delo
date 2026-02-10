@@ -1,146 +1,146 @@
-# Discovery Template
+# Шаблон исследования (Discovery)
 
-Template for `.planning/phases/XX-name/DISCOVERY.md` - shallow research for library/option decisions.
+Шаблон для `.planning/phases/XX-name/DISCOVERY.md` — поверхностное исследование для выбора библиотеки/варианта.
 
-**Purpose:** Answer "which library/option should we use" questions during mandatory discovery in plan-phase.
+**Назначение:** Ответить на вопросы "какую библиотеку/вариант выбрать" во время обязательного исследования в plan-phase.
 
-For deep ecosystem research ("how do experts build this"), use `/gsd:research-phase` which produces RESEARCH.md.
+Для глубокого исследования экосистемы ("как эксперты строят это") используйте `/gsd:research-phase`, который создаёт RESEARCH.md.
 
 ---
 
-## File Template
+## Шаблон файла
 
 ```markdown
 ---
 phase: XX-name
 type: discovery
-topic: [discovery-topic]
+topic: [тема-исследования]
 ---
 
 <session_initialization>
-Before beginning discovery, verify today's date:
+Перед началом исследования проверьте сегодняшнюю дату:
 !`date +%Y-%m-%d`
 
-Use this date when searching for "current" or "latest" information.
-Example: If today is 2025-11-22, search for "2025" not "2024".
+Используйте эту дату при поиске "текущей" или "последней" информации.
+Пример: Если сегодня 2025-11-22, ищите "2025", а не "2024".
 </session_initialization>
 
 <discovery_objective>
-Discover [topic] to inform [phase name] implementation.
+Исследовать [тему] для принятия решений в фазе [название фазы].
 
-Purpose: [What decision/implementation this enables]
-Scope: [Boundaries]
-Output: DISCOVERY.md with recommendation
+Цель: [Какое решение/реализацию это обеспечивает]
+Область: [Границы]
+Результат: DISCOVERY.md с рекомендацией
 </discovery_objective>
 
 <discovery_scope>
 <include>
-- [Question to answer]
-- [Area to investigate]
-- [Specific comparison if needed]
+- [Вопрос для ответа]
+- [Область для исследования]
+- [Конкретное сравнение при необходимости]
 </include>
 
 <exclude>
-- [Out of scope for this discovery]
-- [Defer to implementation phase]
+- [Вне области данного исследования]
+- [Отложить до фазы реализации]
 </exclude>
 </discovery_scope>
 
 <discovery_protocol>
 
-**Source Priority:**
-1. **Context7 MCP** - For library/framework documentation (current, authoritative)
-2. **Official Docs** - For platform-specific or non-indexed libraries
-3. **WebSearch** - For comparisons, trends, community patterns (verify all findings)
+**Приоритет источников:**
+1. **Context7 MCP** — Для документации библиотек/фреймворков (актуальная, авторитетная)
+2. **Официальная документация** — Для платформо-специфичных или неиндексированных библиотек
+3. **Веб-поиск** — Для сравнений, трендов, паттернов сообщества (проверяйте все находки)
 
-**Quality Checklist:**
-Before completing discovery, verify:
-- [ ] All claims have authoritative sources (Context7 or official docs)
-- [ ] Negative claims ("X is not possible") verified with official documentation
-- [ ] API syntax/configuration from Context7 or official docs (never WebSearch alone)
-- [ ] WebSearch findings cross-checked with authoritative sources
-- [ ] Recent updates/changelogs checked for breaking changes
-- [ ] Alternative approaches considered (not just first solution found)
+**Чек-лист качества:**
+Перед завершением исследования проверьте:
+- [ ] Все утверждения имеют авторитетные источники (Context7 или официальная документация)
+- [ ] Отрицательные утверждения ("X невозможно") проверены по официальной документации
+- [ ] Синтаксис API/конфигурация из Context7 или официальной документации (никогда только из веб-поиска)
+- [ ] Находки из веб-поиска перепроверены по авторитетным источникам
+- [ ] Проверены последние обновления/журналы изменений на предмет критических изменений
+- [ ] Рассмотрены альтернативные подходы (не только первое найденное решение)
 
-**Confidence Levels:**
-- HIGH: Context7 or official docs confirm
-- MEDIUM: WebSearch + Context7/official docs confirm
-- LOW: WebSearch only or training knowledge only (mark for validation)
+**Уровни уверенности:**
+- ВЫСОКИЙ: Context7 или официальная документация подтверждают
+- СРЕДНИЙ: Веб-поиск + Context7/официальная документация подтверждают
+- НИЗКИЙ: Только веб-поиск или только знания из обучения (отметить для валидации)
 
 </discovery_protocol>
 
 
 <output_structure>
-Create `.planning/phases/XX-name/DISCOVERY.md`:
+Создать `.planning/phases/XX-name/DISCOVERY.md`:
 
 ```markdown
-# [Topic] Discovery
+# Исследование [Темы]
 
-## Summary
-[2-3 paragraph executive summary - what was researched, what was found, what's recommended]
+## Резюме
+[2-3 абзаца — что исследовалось, что найдено, что рекомендуется]
 
-## Primary Recommendation
-[What to do and why - be specific and actionable]
+## Основная рекомендация
+[Что делать и почему — конкретно и практично]
 
-## Alternatives Considered
-[What else was evaluated and why not chosen]
+## Рассмотренные альтернативы
+[Что ещё оценивалось и почему не выбрано]
 
-## Key Findings
+## Ключевые находки
 
-### [Category 1]
-- [Finding with source URL and relevance to our case]
+### [Категория 1]
+- [Находка с URL источника и релевантностью для нашего случая]
 
-### [Category 2]
-- [Finding with source URL and relevance]
+### [Категория 2]
+- [Находка с URL источника и релевантностью]
 
-## Code Examples
-[Relevant implementation patterns, if applicable]
+## Примеры кода
+[Релевантные паттерны реализации, если применимо]
 
-## Metadata
+## Метаданные
 
 <metadata>
 <confidence level="high|medium|low">
-[Why this confidence level - based on source quality and verification]
+[Почему такой уровень уверенности — на основе качества источников и верификации]
 </confidence>
 
 <sources>
-- [Primary authoritative sources used]
+- [Основные авторитетные источники]
 </sources>
 
 <open_questions>
-[What couldn't be determined or needs validation during implementation]
+[Что не удалось определить или требует валидации при реализации]
 </open_questions>
 
 <validation_checkpoints>
-[If confidence is LOW or MEDIUM, list specific things to verify during implementation]
+[Если уверенность НИЗКАЯ или СРЕДНЯЯ — список конкретных вещей для проверки при реализации]
 </validation_checkpoints>
 </metadata>
 ```
 </output_structure>
 
 <success_criteria>
-- All scope questions answered with authoritative sources
-- Quality checklist items completed
-- Clear primary recommendation
-- Low-confidence findings marked with validation checkpoints
-- Ready to inform PLAN.md creation
+- На все вопросы области ответы с авторитетными источниками
+- Пункты чек-листа качества выполнены
+- Чёткая основная рекомендация
+- Находки с низкой уверенностью отмечены контрольными точками валидации
+- Готово для формирования PLAN.md
 </success_criteria>
 
 <guidelines>
-**When to use discovery:**
-- Technology choice unclear (library A vs B)
-- Best practices needed for unfamiliar integration
-- API/library investigation required
-- Single decision pending
+**Когда использовать discovery:**
+- Выбор технологии неясен (библиотека A vs B)
+- Нужны лучшие практики для незнакомой интеграции
+- Требуется исследование API/библиотеки
+- Одно решение в ожидании
 
-**When NOT to use:**
-- Established patterns (CRUD, auth with known library)
-- Implementation details (defer to execution)
-- Questions answerable from existing project context
+**Когда НЕ использовать:**
+- Устоявшиеся паттерны (CRUD, аутентификация с известной библиотекой)
+- Детали реализации (отложить до выполнения)
+- Вопросы, на которые можно ответить из существующего контекста проекта
 
-**When to use RESEARCH.md instead:**
-- Niche/complex domains (3D, games, audio, shaders)
-- Need ecosystem knowledge, not just library choice
-- "How do experts build this" questions
-- Use `/gsd:research-phase` for these
+**Когда использовать RESEARCH.md вместо этого:**
+- Нишевые/сложные домены (3D, игры, аудио, шейдеры)
+- Нужны знания экосистемы, а не просто выбор библиотеки
+- Вопросы "как эксперты строят это"
+- Используйте `/gsd:research-phase` для таких случаев
 </guidelines>

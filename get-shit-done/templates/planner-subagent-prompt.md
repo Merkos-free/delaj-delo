@@ -1,117 +1,117 @@
-# Planner Subagent Prompt Template
+# Шаблон промпта суб-агента планировщика
 
-Template for spawning gsd-planner agent. The agent contains all planning expertise - this template provides planning context only.
+Шаблон для запуска агента gsd-planner. Агент содержит всю экспертизу планирования — этот шаблон передаёт только контекст планирования.
 
 ---
 
-## Template
+## Шаблон
 
 ```markdown
 <planning_context>
 
-**Phase:** {phase_number}
-**Mode:** {standard | gap_closure}
+**Фаза:** {phase_number}
+**Режим:** {standard | gap_closure}
 
-**Project State:**
+**Состояние проекта:**
 @.planning/STATE.md
 
-**Roadmap:**
+**Дорожная карта:**
 @.planning/ROADMAP.md
 
-**Requirements (if exists):**
+**Требования (если существуют):**
 @.planning/REQUIREMENTS.md
 
-**Phase Context (if exists):**
+**Контекст фазы (если существует):**
 @.planning/phases/{phase_dir}/{phase}-CONTEXT.md
 
-**Research (if exists):**
+**Исследование (если существует):**
 @.planning/phases/{phase_dir}/{phase}-RESEARCH.md
 
-**Gap Closure (if --gaps mode):**
+**Закрытие пробелов (если режим --gaps):**
 @.planning/phases/{phase_dir}/{phase}-VERIFICATION.md
 @.planning/phases/{phase_dir}/{phase}-UAT.md
 
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase
-Plans must be executable prompts with:
-- Frontmatter (wave, depends_on, files_modified, autonomous)
-- Tasks in XML format
-- Verification criteria
-- must_haves for goal-backward verification
+Результат потребляется /gsd:execute-phase
+Планы должны быть исполняемыми промптами с:
+- Фронтматтером (wave, depends_on, files_modified, autonomous)
+- Задачами в формате XML
+- Критериями верификации
+- must_haves для обратной верификации от цели
 </downstream_consumer>
 
 <quality_gate>
-Before returning PLANNING COMPLETE:
-- [ ] PLAN.md files created in phase directory
-- [ ] Each plan has valid frontmatter
-- [ ] Tasks are specific and actionable
-- [ ] Dependencies correctly identified
-- [ ] Waves assigned for parallel execution
-- [ ] must_haves derived from phase goal
+Перед возвратом ПЛАНИРОВАНИЕ ЗАВЕРШЕНО:
+- [ ] Файлы PLAN.md созданы в директории фазы
+- [ ] Каждый план имеет валидный фронтматтер
+- [ ] Задачи конкретны и исполнимы
+- [ ] Зависимости корректно определены
+- [ ] Волны назначены для параллельного выполнения
+- [ ] must_haves выведены из цели фазы
 </quality_gate>
 ```
 
 ---
 
-## Placeholders
+## Плейсхолдеры
 
-| Placeholder | Source | Example |
-|-------------|--------|---------|
-| `{phase_number}` | From roadmap/arguments | `5` or `2.1` |
-| `{phase_dir}` | Phase directory name | `05-user-profiles` |
-| `{phase}` | Phase prefix | `05` |
-| `{standard \| gap_closure}` | Mode flag | `standard` |
+| Плейсхолдер | Источник | Пример |
+|-------------|----------|---------|
+| `{phase_number}` | Из дорожной карты/аргументов | `5` или `2.1` |
+| `{phase_dir}` | Имя директории фазы | `05-user-profiles` |
+| `{phase}` | Префикс фазы | `05` |
+| `{standard \| gap_closure}` | Флаг режима | `standard` |
 
 ---
 
-## Usage
+## Использование
 
-**From /gsd:plan-phase (standard mode):**
+**Из /gsd:plan-phase (стандартный режим):**
 ```python
 Task(
   prompt=filled_template,
   subagent_type="gsd-planner",
-  description="Plan Phase {phase}"
+  description="Планирование фазы {phase}"
 )
 ```
 
-**From /gsd:plan-phase --gaps (gap closure mode):**
+**Из /gsd:plan-phase --gaps (режим закрытия пробелов):**
 ```python
 Task(
-  prompt=filled_template,  # with mode: gap_closure
+  prompt=filled_template,  # с mode: gap_closure
   subagent_type="gsd-planner",
-  description="Plan gaps for Phase {phase}"
+  description="Планирование пробелов для фазы {phase}"
 )
 ```
 
 ---
 
-## Continuation
+## Продолжение
 
-For checkpoints, spawn fresh agent with:
+Для контрольных точек запустите нового агента с:
 
 ```markdown
 <objective>
-Continue planning for Phase {phase_number}: {phase_name}
+Продолжить планирование фазы {phase_number}: {phase_name}
 </objective>
 
 <prior_state>
-Phase directory: @.planning/phases/{phase_dir}/
-Existing plans: @.planning/phases/{phase_dir}/*-PLAN.md
+Директория фазы: @.planning/phases/{phase_dir}/
+Существующие планы: @.planning/phases/{phase_dir}/*-PLAN.md
 </prior_state>
 
 <checkpoint_response>
-**Type:** {checkpoint_type}
-**Response:** {user_response}
+**Тип:** {checkpoint_type}
+**Ответ:** {user_response}
 </checkpoint_response>
 
 <mode>
-Continue: {standard | gap_closure}
+Продолжить: {standard | gap_closure}
 </mode>
 ```
 
 ---
 
-**Note:** Planning methodology, task breakdown, dependency analysis, wave assignment, TDD detection, and goal-backward derivation are baked into the gsd-planner agent. This template only passes context.
+**Примечание:** Методология планирования, декомпозиция задач, анализ зависимостей, назначение волн, определение TDD и обратная деривация от цели встроены в агент gsd-planner. Этот шаблон только передаёт контекст.
