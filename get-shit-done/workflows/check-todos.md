@@ -1,176 +1,176 @@
 <purpose>
-List all pending todos, allow selection, load full context for the selected todo, and route to appropriate action.
+Вывести список всех ожидающих задач (todo), разрешить выбор, загрузить полный контекст выбранной задачи и направить к соответствующему действию.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="init_context">
-Load todo context:
+Загрузите контекст задач:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init todos)
 ```
 
-Extract from init JSON: `todo_count`, `todos`, `pending_dir`.
+Извлеките из JSON инициализации: `todo_count`, `todos`, `pending_dir`.
 
-If `todo_count` is 0:
+Если `todo_count` равен 0:
 ```
-No pending todos.
+Нет ожидающих задач.
 
-Todos are captured during work sessions with /gsd:add-todo.
+Задачи фиксируются во время рабочих сессий с помощью /gsd:add-todo.
 
 ---
 
-Would you like to:
+Хотите:
 
-1. Continue with current phase (/gsd:progress)
-2. Add a todo now (/gsd:add-todo)
+1. Продолжить текущую фазу (/gsd:progress)
+2. Добавить задачу сейчас (/gsd:add-todo)
 ```
 
-Exit.
+Выход.
 </step>
 
 <step name="parse_filter">
-Check for area filter in arguments:
-- `/gsd:check-todos` → show all
-- `/gsd:check-todos api` → filter to area:api only
+Проверьте наличие фильтра по области в аргументах:
+- `/gsd:check-todos` → показать все
+- `/gsd:check-todos api` → фильтр только по area:api
 </step>
 
 <step name="list_todos">
-Use the `todos` array from init context (already filtered by area if specified).
+Используйте массив `todos` из контекста инициализации (уже отфильтрованный по области, если указано).
 
-Parse and display as numbered list:
+Разберите и отобразите нумерованным списком:
 
 ```
-Pending Todos:
+Ожидающие задачи:
 
-1. Add auth token refresh (api, 2d ago)
-2. Fix modal z-index issue (ui, 1d ago)
-3. Refactor database connection pool (database, 5h ago)
+1. Добавить обновление auth-токена (api, 2д назад)
+2. Исправить z-index модального окна (ui, 1д назад)
+3. Рефакторинг пула соединений БД (database, 5ч назад)
 
 ---
 
-Reply with a number to view details, or:
-- `/gsd:check-todos [area]` to filter by area
-- `q` to exit
+Ответьте номером для просмотра деталей, или:
+- `/gsd:check-todos [область]` для фильтрации по области
+- `q` для выхода
 ```
 
-Format age as relative time from created timestamp.
+Форматируйте возраст как относительное время от метки создания.
 </step>
 
 <step name="handle_selection">
-Wait for user to reply with a number.
+Дождитесь ответа пользователя с номером.
 
-If valid: load selected todo, proceed.
-If invalid: "Invalid selection. Reply with a number (1-[N]) or `q` to exit."
+Если валидный: загрузить выбранную задачу, продолжить.
+Если невалидный: "Неверный выбор. Ответьте номером (1-[N]) или `q` для выхода."
 </step>
 
 <step name="load_context">
-Read the todo file completely. Display:
+Прочитайте файл задачи полностью. Отобразите:
 
 ```
-## [title]
+## [заголовок]
 
-**Area:** [area]
-**Created:** [date] ([relative time] ago)
-**Files:** [list or "None"]
+**Область:** [область]
+**Создано:** [дата] ([относительное время] назад)
+**Файлы:** [список или "Нет"]
 
-### Problem
-[problem section content]
+### Проблема
+[содержимое секции problem]
 
-### Solution
-[solution section content]
+### Решение
+[содержимое секции solution]
 ```
 
-If `files` field has entries, read and briefly summarize each.
+Если поле `files` содержит записи, прочитайте и кратко опишите каждый.
 </step>
 
 <step name="check_roadmap">
-Check for roadmap (can use init progress or directly check file existence):
+Проверьте наличие дорожной карты (можно использовать init progress или прямую проверку файла):
 
-If `.planning/ROADMAP.md` exists:
-1. Check if todo's area matches an upcoming phase
-2. Check if todo's files overlap with a phase's scope
-3. Note any match for action options
+Если `.planning/ROADMAP.md` существует:
+1. Проверьте, совпадает ли область задачи с предстоящей фазой
+2. Проверьте, пересекаются ли файлы задачи с областью фазы
+3. Отметьте совпадение для вариантов действий
 </step>
 
 <step name="offer_actions">
-**If todo maps to a roadmap phase:**
+**Если задача связана с фазой дорожной карты:**
 
-Use AskUserQuestion:
-- header: "Action"
-- question: "This todo relates to Phase [N]: [name]. What would you like to do?"
+Используйте AskUserQuestion:
+- header: "Действие"
+- question: "Эта задача относится к Фазе [N]: [название]. Что хотите сделать?"
 - options:
-  - "Work on it now" — move to done, start working
-  - "Add to phase plan" — include when planning Phase [N]
-  - "Brainstorm approach" — think through before deciding
-  - "Put it back" — return to list
+  - "Работать сейчас" — переместить в done, начать работу
+  - "Добавить в план фазы" — включить при планировании Фазы [N]
+  - "Обсудить подход" — обдумать перед решением
+  - "Вернуть назад" — вернуться к списку
 
-**If no roadmap match:**
+**Если нет совпадения с дорожной картой:**
 
-Use AskUserQuestion:
-- header: "Action"
-- question: "What would you like to do with this todo?"
+Используйте AskUserQuestion:
+- header: "Действие"
+- question: "Что хотите сделать с этой задачей?"
 - options:
-  - "Work on it now" — move to done, start working
-  - "Create a phase" — /gsd:add-phase with this scope
-  - "Brainstorm approach" — think through before deciding
-  - "Put it back" — return to list
+  - "Работать сейчас" — переместить в done, начать работу
+  - "Создать фазу" — /gsd:add-phase с этой областью
+  - "Обсудить подход" — обдумать перед решением
+  - "Вернуть назад" — вернуться к списку
 </step>
 
 <step name="execute_action">
-**Work on it now:**
+**Работать сейчас:**
 ```bash
 mv ".planning/todos/pending/[filename]" ".planning/todos/done/"
 ```
-Update STATE.md todo count. Present problem/solution context. Begin work or ask how to proceed.
+Обновите STATE.md счётчик задач. Представьте контекст проблемы/решения. Начните работу или спросите как продолжить.
 
-**Add to phase plan:**
-Note todo reference in phase planning notes. Keep in pending. Return to list or exit.
+**Добавить в план фазы:**
+Отметьте ссылку на задачу в заметках планирования фазы. Оставьте в pending. Вернитесь к списку или завершите.
 
-**Create a phase:**
-Display: `/gsd:add-phase [description from todo]`
-Keep in pending. User runs command in fresh context.
+**Создать фазу:**
+Отобразите: `/gsd:add-phase [описание из задачи]`
+Оставьте в pending. Пользователь запускает команду в чистом контексте.
 
-**Brainstorm approach:**
-Keep in pending. Start discussion about problem and approaches.
+**Обсудить подход:**
+Оставьте в pending. Начните обсуждение проблемы и подходов.
 
-**Put it back:**
-Return to list_todos step.
+**Вернуть назад:**
+Вернитесь к шагу list_todos.
 </step>
 
 <step name="update_state">
-After any action that changes todo count:
+После любого действия, изменяющего счётчик задач:
 
-Re-run `init todos` to get updated count, then update STATE.md "### Pending Todos" section if exists.
+Повторно запустите `init todos` для получения обновлённого счётчика, затем обновите секцию "### Pending Todos" в STATE.md, если она существует.
 </step>
 
 <step name="git_commit">
-If todo was moved to done/, commit the change:
+Если задача была перемещена в done/, зафиксируйте изменение:
 
 ```bash
 git rm --cached .planning/todos/pending/[filename] 2>/dev/null || true
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs: start work on todo - [title]" --files .planning/todos/done/[filename] .planning/STATE.md
+node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs: начата работа над задачей - [заголовок]" --files .planning/todos/done/[filename] .planning/STATE.md
 ```
 
-Tool respects `commit_docs` config and gitignore automatically.
+Инструмент автоматически учитывает настройку `commit_docs` и gitignore.
 
-Confirm: "Committed: docs: start work on todo - [title]"
+Подтвердите: "Зафиксировано: docs: начата работа над задачей - [заголовок]"
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] All pending todos listed with title, area, age
-- [ ] Area filter applied if specified
-- [ ] Selected todo's full context loaded
-- [ ] Roadmap context checked for phase match
-- [ ] Appropriate actions offered
-- [ ] Selected action executed
-- [ ] STATE.md updated if todo count changed
-- [ ] Changes committed to git (if todo moved to done/)
+- [ ] Все ожидающие задачи перечислены с заголовком, областью, возрастом
+- [ ] Фильтр по области применён, если указан
+- [ ] Полный контекст выбранной задачи загружен
+- [ ] Контекст дорожной карты проверен на совпадение с фазой
+- [ ] Предложены соответствующие действия
+- [ ] Выбранное действие выполнено
+- [ ] STATE.md обновлён, если счётчик задач изменился
+- [ ] Изменения зафиксированы в git (если задача перемещена в done/)
 </success_criteria>

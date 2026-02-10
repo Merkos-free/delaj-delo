@@ -1,289 +1,289 @@
 <purpose>
-Execute discovery at the appropriate depth level.
-Produces DISCOVERY.md (for Level 2-3) that informs PLAN.md creation.
+Выполнение исследования (discovery) на соответствующем уровне глубины.
+Создаёт DISCOVERY.md (для уровней 2-3), который информирует создание PLAN.md.
 
-Called from plan-phase.md's mandatory_discovery step with a depth parameter.
+Вызывается из шага mandatory_discovery в plan-phase.md с параметром глубины.
 
-NOTE: For comprehensive ecosystem research ("how do experts build this"), use /gsd:research-phase instead, which produces RESEARCH.md.
+ПРИМЕЧАНИЕ: Для комплексного исследования экосистемы ("как эксперты строят это") используйте /gsd:research-phase, который создаёт RESEARCH.md.
 </purpose>
 
 <depth_levels>
-**This workflow supports three depth levels:**
+**Этот воркфлоу поддерживает три уровня глубины:**
 
-| Level | Name         | Time      | Output                                       | When                                      |
-| ----- | ------------ | --------- | -------------------------------------------- | ----------------------------------------- |
-| 1     | Quick Verify | 2-5 min   | No file, proceed with verified knowledge     | Single library, confirming current syntax |
-| 2     | Standard     | 15-30 min | DISCOVERY.md                                 | Choosing between options, new integration |
-| 3     | Deep Dive    | 1+ hour   | Detailed DISCOVERY.md with validation gates  | Architectural decisions, novel problems   |
+| Уровень | Название         | Время      | Результат                                      | Когда                                       |
+| ------- | ---------------- | ---------- | ---------------------------------------------- | ------------------------------------------- |
+| 1       | Быстрая проверка | 2-5 мин    | Без файла, продолжение с проверенными знаниями | Одна библиотека, подтверждение синтаксиса   |
+| 2       | Стандартный      | 15-30 мин  | DISCOVERY.md                                   | Выбор между вариантами, новая интеграция    |
+| 3       | Глубокое погружение | 1+ час   | Детальный DISCOVERY.md с точками валидации     | Архитектурные решения, новые проблемы       |
 
-**Depth is determined by plan-phase.md before routing here.**
+**Глубина определяется в plan-phase.md перед маршрутизацией сюда.**
 </depth_levels>
 
 <source_hierarchy>
-**MANDATORY: Context7 BEFORE WebSearch**
+**ОБЯЗАТЕЛЬНО: Context7 ПЕРЕД WebSearch**
 
-Claude's training data is 6-18 months stale. Always verify.
+Обучающие данные Claude устаревают на 6-18 месяцев. Всегда проверяйте.
 
-1. **Context7 MCP FIRST** - Current docs, no hallucination
-2. **Official docs** - When Context7 lacks coverage
-3. **WebSearch LAST** - For comparisons and trends only
+1. **Context7 MCP СНАЧАЛА** — Актуальные документы, без галлюцинаций
+2. **Официальная документация** — Когда Context7 не покрывает
+3. **WebSearch ПОСЛЕДНИМ** — Только для сравнений и трендов
 
-See ~/.claude/get-shit-done/templates/discovery.md `<discovery_protocol>` for full protocol.
+См. ~/.claude/get-shit-done/templates/discovery.md `<discovery_protocol>` для полного протокола.
 </source_hierarchy>
 
 <process>
 
 <step name="determine_depth">
-Check the depth parameter passed from plan-phase.md:
-- `depth=verify` → Level 1 (Quick Verification)
-- `depth=standard` → Level 2 (Standard Discovery)
-- `depth=deep` → Level 3 (Deep Dive)
+Проверьте параметр глубины, переданный из plan-phase.md:
+- `depth=verify` → Уровень 1 (Быстрая проверка)
+- `depth=standard` → Уровень 2 (Стандартное исследование)
+- `depth=deep` → Уровень 3 (Глубокое погружение)
 
-Route to appropriate level workflow below.
+Маршрутизация к соответствующему рабочему процессу уровня ниже.
 </step>
 
 <step name="level_1_quick_verify">
-**Level 1: Quick Verification (2-5 minutes)**
+**Уровень 1: Быстрая проверка (2-5 минут)**
 
-For: Single known library, confirming syntax/version still correct.
+Для: Одна известная библиотека, подтверждение что синтаксис/версия всё ещё корректны.
 
-**Process:**
+**Процесс:**
 
-1. Resolve library in Context7:
+1. Найдите библиотеку в Context7:
 
    ```
-   mcp__context7__resolve-library-id with libraryName: "[library]"
+   mcp__context7__resolve-library-id with libraryName: "[библиотека]"
    ```
 
-2. Fetch relevant docs:
+2. Получите релевантную документацию:
 
    ```
    mcp__context7__get-library-docs with:
-   - context7CompatibleLibraryID: [from step 1]
-   - topic: [specific concern]
+   - context7CompatibleLibraryID: [из шага 1]
+   - topic: [конкретный вопрос]
    ```
 
-3. Verify:
+3. Проверьте:
 
-   - Current version matches expectations
-   - API syntax unchanged
-   - No breaking changes in recent versions
+   - Текущая версия соответствует ожиданиям
+   - Синтаксис API не изменился
+   - Нет ломающих изменений в последних версиях
 
-4. **If verified:** Return to plan-phase.md with confirmation. No DISCOVERY.md needed.
+4. **Если подтверждено:** Вернитесь к plan-phase.md с подтверждением. DISCOVERY.md не нужен.
 
-5. **If concerns found:** Escalate to Level 2.
+5. **Если обнаружены проблемы:** Эскалация до Уровня 2.
 
-**Output:** Verbal confirmation to proceed, or escalation to Level 2.
+**Результат:** Устное подтверждение продолжения или эскалация до Уровня 2.
 </step>
 
 <step name="level_2_standard">
-**Level 2: Standard Discovery (15-30 minutes)**
+**Уровень 2: Стандартное исследование (15-30 минут)**
 
-For: Choosing between options, new external integration.
+Для: Выбор между вариантами, новая внешняя интеграция.
 
-**Process:**
+**Процесс:**
 
-1. **Identify what to discover:**
+1. **Определите что исследовать:**
 
-   - What options exist?
-   - What are the key comparison criteria?
-   - What's our specific use case?
+   - Какие варианты существуют?
+   - Каковы ключевые критерии сравнения?
+   - Каков наш конкретный сценарий использования?
 
-2. **Context7 for each option:**
+2. **Context7 для каждого варианта:**
 
    ```
-   For each library/framework:
+   Для каждой библиотеки/фреймворка:
    - mcp__context7__resolve-library-id
-   - mcp__context7__get-library-docs (mode: "code" for API, "info" for concepts)
+   - mcp__context7__get-library-docs (mode: "code" для API, "info" для концепций)
    ```
 
-3. **Official docs** for anything Context7 lacks.
+3. **Официальная документация** для того, что Context7 не покрывает.
 
-4. **WebSearch** for comparisons:
+4. **WebSearch** для сравнений:
 
-   - "[option A] vs [option B] {current_year}"
-   - "[option] known issues"
-   - "[option] with [our stack]"
+   - "[вариант A] vs [вариант B] {текущий_год}"
+   - "[вариант] known issues"
+   - "[вариант] with [наш стек]"
 
-5. **Cross-verify:** Any WebSearch finding → confirm with Context7/official docs.
+5. **Перекрёстная проверка:** Любая находка WebSearch → подтвердить через Context7/официальные доки.
 
-6. **Create DISCOVERY.md** using ~/.claude/get-shit-done/templates/discovery.md structure:
+6. **Создайте DISCOVERY.md** используя структуру ~/.claude/get-shit-done/templates/discovery.md:
 
-   - Summary with recommendation
-   - Key findings per option
-   - Code examples from Context7
-   - Confidence level (should be MEDIUM-HIGH for Level 2)
+   - Сводка с рекомендацией
+   - Ключевые находки по каждому варианту
+   - Примеры кода из Context7
+   - Уровень уверенности (должен быть СРЕДНИЙ-ВЫСОКИЙ для Уровня 2)
 
-7. Return to plan-phase.md.
+7. Вернитесь к plan-phase.md.
 
-**Output:** `.planning/phases/XX-name/DISCOVERY.md`
+**Результат:** `.planning/phases/XX-name/DISCOVERY.md`
 </step>
 
 <step name="level_3_deep_dive">
-**Level 3: Deep Dive (1+ hour)**
+**Уровень 3: Глубокое погружение (1+ час)**
 
-For: Architectural decisions, novel problems, high-risk choices.
+Для: Архитектурные решения, новые проблемы, высокорисковые выборы.
 
-**Process:**
+**Процесс:**
 
-1. **Scope the discovery** using ~/.claude/get-shit-done/templates/discovery.md:
+1. **Определите область исследования** используя ~/.claude/get-shit-done/templates/discovery.md:
 
-   - Define clear scope
-   - Define include/exclude boundaries
-   - List specific questions to answer
+   - Определите чёткую область
+   - Определите границы включения/исключения
+   - Перечислите конкретные вопросы для ответа
 
-2. **Exhaustive Context7 research:**
+2. **Исчерпывающее исследование Context7:**
 
-   - All relevant libraries
-   - Related patterns and concepts
-   - Multiple topics per library if needed
+   - Все релевантные библиотеки
+   - Связанные паттерны и концепции
+   - Несколько тем на библиотеку при необходимости
 
-3. **Official documentation deep read:**
+3. **Глубокое чтение официальной документации:**
 
-   - Architecture guides
-   - Best practices sections
-   - Migration/upgrade guides
-   - Known limitations
+   - Руководства по архитектуре
+   - Секции лучших практик
+   - Руководства по миграции/обновлению
+   - Известные ограничения
 
-4. **WebSearch for ecosystem context:**
+4. **WebSearch для контекста экосистемы:**
 
-   - How others solved similar problems
-   - Production experiences
-   - Gotchas and anti-patterns
-   - Recent changes/announcements
+   - Как другие решали похожие проблемы
+   - Опыт в продакшене
+   - Подводные камни и антипаттерны
+   - Недавние изменения/объявления
 
-5. **Cross-verify ALL findings:**
+5. **Перекрёстная проверка ВСЕХ находок:**
 
-   - Every WebSearch claim → verify with authoritative source
-   - Mark what's verified vs assumed
-   - Flag contradictions
+   - Каждое утверждение WebSearch → проверить с авторитетным источником
+   - Отметить что проверено vs предполагается
+   - Отметить противоречия
 
-6. **Create comprehensive DISCOVERY.md:**
+6. **Создайте комплексный DISCOVERY.md:**
 
-   - Full structure from ~/.claude/get-shit-done/templates/discovery.md
-   - Quality report with source attribution
-   - Confidence by finding
-   - If LOW confidence on any critical finding → add validation checkpoints
+   - Полная структура из ~/.claude/get-shit-done/templates/discovery.md
+   - Отчёт о качестве с атрибуцией источников
+   - Уверенность по каждой находке
+   - Если НИЗКАЯ уверенность в критической находке → добавить контрольные точки валидации
 
-7. **Confidence gate:** If overall confidence is LOW, present options before proceeding.
+7. **Точка уверенности:** Если общая уверенность НИЗКАЯ, представить варианты перед продолжением.
 
-8. Return to plan-phase.md.
+8. Вернитесь к plan-phase.md.
 
-**Output:** `.planning/phases/XX-name/DISCOVERY.md` (comprehensive)
+**Результат:** `.planning/phases/XX-name/DISCOVERY.md` (комплексный)
 </step>
 
 <step name="identify_unknowns">
-**For Level 2-3:** Define what we need to learn.
+**Для Уровней 2-3:** Определите что нужно узнать.
 
-Ask: What do we need to learn before we can plan this phase?
+Спросите: Что нам нужно узнать прежде чем планировать эту фазу?
 
-- Technology choices?
-- Best practices?
-- API patterns?
-- Architecture approach?
+- Выбор технологий?
+- Лучшие практики?
+- Паттерны API?
+- Архитектурный подход?
   </step>
 
 <step name="create_discovery_scope">
-Use ~/.claude/get-shit-done/templates/discovery.md.
+Используйте ~/.claude/get-shit-done/templates/discovery.md.
 
-Include:
+Включите:
 
-- Clear discovery objective
-- Scoped include/exclude lists
-- Source preferences (official docs, Context7, current year)
-- Output structure for DISCOVERY.md
+- Чёткую цель исследования
+- Области включения/исключения
+- Предпочтения источников (официальные доки, Context7, текущий год)
+- Структуру вывода для DISCOVERY.md
   </step>
 
 <step name="execute_discovery">
-Run the discovery:
-- Use web search for current info
-- Use Context7 MCP for library docs
-- Prefer current year sources
-- Structure findings per template
+Запустите исследование:
+- Используйте веб-поиск для актуальной информации
+- Используйте Context7 MCP для документации библиотек
+- Предпочитайте источники текущего года
+- Структурируйте находки по шаблону
 </step>
 
 <step name="create_discovery_output">
-Write `.planning/phases/XX-name/DISCOVERY.md`:
-- Summary with recommendation
-- Key findings with sources
-- Code examples if applicable
-- Metadata (confidence, dependencies, open questions, assumptions)
+Запишите `.planning/phases/XX-name/DISCOVERY.md`:
+- Сводка с рекомендацией
+- Ключевые находки с источниками
+- Примеры кода если применимо
+- Метаданные (уверенность, зависимости, открытые вопросы, допущения)
 </step>
 
 <step name="confidence_gate">
-After creating DISCOVERY.md, check confidence level.
+После создания DISCOVERY.md проверьте уровень уверенности.
 
-If confidence is LOW:
-Use AskUserQuestion:
+Если уверенность НИЗКАЯ:
+Используйте AskUserQuestion:
 
-- header: "Low Confidence"
-- question: "Discovery confidence is LOW: [reason]. How would you like to proceed?"
+- header: "Низкая уверенность"
+- question: "Уверенность исследования НИЗКАЯ: [причина]. Как хотите продолжить?"
 - options:
-  - "Dig deeper" - Do more research before planning
-  - "Proceed anyway" - Accept uncertainty, plan with caveats
-  - "Pause" - I need to think about this
+  - "Копать глубже" — Провести дополнительное исследование перед планированием
+  - "Продолжить так" — Принять неопределённость, планировать с оговорками
+  - "Пауза" — Мне нужно подумать
 
-If confidence is MEDIUM:
-Inline: "Discovery complete (medium confidence). [brief reason]. Proceed to planning?"
+Если уверенность СРЕДНЯЯ:
+Встроенно: "Исследование завершено (средняя уверенность). [краткая причина]. Продолжить с планированием?"
 
-If confidence is HIGH:
-Proceed directly, just note: "Discovery complete (high confidence)."
+Если уверенность ВЫСОКАЯ:
+Продолжайте напрямую, просто отметьте: "Исследование завершено (высокая уверенность)."
 </step>
 
 <step name="open_questions_gate">
-If DISCOVERY.md has open_questions:
+Если DISCOVERY.md содержит open_questions:
 
-Present them inline:
-"Open questions from discovery:
+Представьте их встроенно:
+"Открытые вопросы из исследования:
 
-- [Question 1]
-- [Question 2]
+- [Вопрос 1]
+- [Вопрос 2]
 
-These may affect implementation. Acknowledge and proceed? (yes / address first)"
+Они могут повлиять на реализацию. Подтвердить и продолжить? (да / решить сначала)"
 
-If "address first": Gather user input on questions, update discovery.
+Если "решить сначала": Собрать ввод пользователя по вопросам, обновить исследование.
 </step>
 
 <step name="offer_next">
 ```
-Discovery complete: .planning/phases/XX-name/DISCOVERY.md
-Recommendation: [one-liner]
-Confidence: [level]
+Исследование завершено: .planning/phases/XX-name/DISCOVERY.md
+Рекомендация: [одна строка]
+Уверенность: [уровень]
 
-What's next?
+Что дальше?
 
-1. Discuss phase context (/gsd:discuss-phase [current-phase])
-2. Create phase plan (/gsd:plan-phase [current-phase])
-3. Refine discovery (dig deeper)
-4. Review discovery
+1. Обсудить контекст фазы (/gsd:discuss-phase [текущая-фаза])
+2. Создать план фазы (/gsd:plan-phase [текущая-фаза])
+3. Углубить исследование (копать глубже)
+4. Просмотреть исследование
 
 ```
 
-NOTE: DISCOVERY.md is NOT committed separately. It will be committed with phase completion.
+ПРИМЕЧАНИЕ: DISCOVERY.md НЕ фиксируется отдельно. Он будет зафиксирован при завершении фазы.
 </step>
 
 </process>
 
 <success_criteria>
-**Level 1 (Quick Verify):**
-- Context7 consulted for library/topic
-- Current state verified or concerns escalated
-- Verbal confirmation to proceed (no files)
+**Уровень 1 (Быстрая проверка):**
+- Context7 запрошен для библиотеки/темы
+- Текущее состояние подтверждено или проблемы эскалированы
+- Устное подтверждение продолжения (без файлов)
 
-**Level 2 (Standard):**
-- Context7 consulted for all options
-- WebSearch findings cross-verified
-- DISCOVERY.md created with recommendation
-- Confidence level MEDIUM or higher
-- Ready to inform PLAN.md creation
+**Уровень 2 (Стандартный):**
+- Context7 запрошен для всех вариантов
+- Находки WebSearch перекрёстно проверены
+- DISCOVERY.md создан с рекомендацией
+- Уровень уверенности СРЕДНИЙ или выше
+- Готов для информирования создания PLAN.md
 
-**Level 3 (Deep Dive):**
-- Discovery scope defined
-- Context7 exhaustively consulted
-- All WebSearch findings verified against authoritative sources
-- DISCOVERY.md created with comprehensive analysis
-- Quality report with source attribution
-- If LOW confidence findings → validation checkpoints defined
-- Confidence gate passed
-- Ready to inform PLAN.md creation
+**Уровень 3 (Глубокое погружение):**
+- Область исследования определена
+- Context7 исчерпывающе запрошен
+- Все находки WebSearch проверены против авторитетных источников
+- DISCOVERY.md создан с комплексным анализом
+- Отчёт о качестве с атрибуцией источников
+- Если находки с НИЗКОЙ уверенностью → контрольные точки валидации определены
+- Точка уверенности пройдена
+- Готов для информирования создания PLAN.md
 </success_criteria>

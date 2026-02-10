@@ -1,91 +1,91 @@
 <purpose>
-Verify milestone achieved its definition of done by aggregating phase verifications, checking cross-phase integration, and assessing requirements coverage. Reads existing VERIFICATION.md files (phases already verified during execute-phase), aggregates tech debt and deferred gaps, then spawns integration checker for cross-phase wiring.
+Проверить достижение этапом определения завершённости путём агрегации проверок фаз, контроля межфазовой интеграции и оценки покрытия требований. Читает существующие файлы VERIFICATION.md (фазы уже проверены во время execute-phase), агрегирует технический долг и отложенные пробелы, затем запускает проверщик интеграции для межфазовых связей.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
-## 0. Initialize Milestone Context
+## 0. Инициализация контекста этапа
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init milestone-op)
 ```
 
-Extract from init JSON: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`.
+Извлеките из JSON инициализации: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`.
 
-Resolve integration checker model:
+Определите модель проверщика интеграции:
 ```bash
 CHECKER_MODEL=$(node ~/.claude/get-shit-done/bin/gsd-tools.js resolve-model gsd-integration-checker --raw)
 ```
 
-## 1. Determine Milestone Scope
+## 1. Определение области этапа
 
 ```bash
-# Get phases in milestone (sorted numerically, handles decimals)
+# Получить фазы в этапе (отсортированные числовым порядком, поддержка десятичных)
 node ~/.claude/get-shit-done/bin/gsd-tools.js phases list
 ```
 
-- Parse version from arguments or detect current from ROADMAP.md
-- Identify all phase directories in scope
-- Extract milestone definition of done from ROADMAP.md
-- Extract requirements mapped to this milestone from REQUIREMENTS.md
+- Разберите версию из аргументов или определите текущую из ROADMAP.md
+- Определите все каталоги фаз в области
+- Извлеките определение завершённости этапа из ROADMAP.md
+- Извлеките требования, привязанные к этому этапу из REQUIREMENTS.md
 
-## 2. Read All Phase Verifications
+## 2. Чтение всех проверок фаз
 
-For each phase directory, read the VERIFICATION.md:
+Для каждого каталога фазы прочитайте VERIFICATION.md:
 
 ```bash
 cat .planning/phases/01-*/*-VERIFICATION.md
 cat .planning/phases/02-*/*-VERIFICATION.md
-# etc.
+# и т.д.
 ```
 
-From each VERIFICATION.md, extract:
-- **Status:** passed | gaps_found
-- **Critical gaps:** (if any — these are blockers)
-- **Non-critical gaps:** tech debt, deferred items, warnings
-- **Anti-patterns found:** TODOs, stubs, placeholders
-- **Requirements coverage:** which requirements satisfied/blocked
+Из каждого VERIFICATION.md извлеките:
+- **Статус:** passed | gaps_found
+- **Критические пробелы:** (если есть — это блокеры)
+- **Некритические пробелы:** технический долг, отложенные элементы, предупреждения
+- **Найденные антипаттерны:** TODO, заглушки, плейсхолдеры
+- **Покрытие требований:** какие требования удовлетворены/заблокированы
 
-If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is a blocker.
+Если у фазы отсутствует VERIFICATION.md, отметьте как "непроверенная фаза" — это блокер.
 
-## 3. Spawn Integration Checker
+## 3. Запуск проверщика интеграции
 
-With phase context collected:
+С собранным контекстом фаз:
 
 ```
 Task(
-  prompt="Check cross-phase integration and E2E flows.
+  prompt="Проверить межфазовую интеграцию и сквозные потоки.
 
-Phases: {phase_dirs}
-Phase exports: {from SUMMARYs}
-API routes: {routes created}
+Фазы: {phase_dirs}
+Экспорты фаз: {из SUMMARY}
+API маршруты: {созданные маршруты}
 
-Verify cross-phase wiring and E2E user flows.",
+Проверить межфазовые связи и сквозные пользовательские потоки.",
   subagent_type="gsd-integration-checker",
   model="{integration_checker_model}"
 )
 ```
 
-## 4. Collect Results
+## 4. Сбор результатов
 
-Combine:
-- Phase-level gaps and tech debt (from step 2)
-- Integration checker's report (wiring gaps, broken flows)
+Объедините:
+- Пробелы и технический долг уровня фаз (из шага 2)
+- Отчёт проверщика интеграции (пробелы связей, нарушенные потоки)
 
-## 5. Check Requirements Coverage
+## 5. Проверка покрытия требований
 
-For each requirement in REQUIREMENTS.md mapped to this milestone:
-- Find owning phase
-- Check phase verification status
-- Determine: satisfied | partial | unsatisfied
+Для каждого требования в REQUIREMENTS.md, привязанного к этому этапу:
+- Найдите владеющую фазу
+- Проверьте статус проверки фазы
+- Определите: satisfied | partial | unsatisfied
 
-## 6. Aggregate into v{version}-MILESTONE-AUDIT.md
+## 6. Агрегация в v{version}-MILESTONE-AUDIT.md
 
-Create `.planning/v{version}-v{version}-MILESTONE-AUDIT.md` with:
+Создайте `.planning/v{version}-v{version}-MILESTONE-AUDIT.md` со структурой:
 
 ```yaml
 ---
@@ -97,145 +97,145 @@ scores:
   phases: N/M
   integration: N/M
   flows: N/M
-gaps:  # Critical blockers
+gaps:  # Критические блокеры
   requirements: [...]
   integration: [...]
   flows: [...]
-tech_debt:  # Non-critical, deferred
+tech_debt:  # Некритические, отложенные
   - phase: 01-auth
     items:
-      - "TODO: add rate limiting"
-      - "Warning: no password strength validation"
+      - "TODO: добавить ограничение частоты запросов"
+      - "Предупреждение: нет валидации сложности пароля"
   - phase: 03-dashboard
     items:
-      - "Deferred: mobile responsive layout"
+      - "Отложено: адаптивная мобильная вёрстка"
 ---
 ```
 
-Plus full markdown report with tables for requirements, phases, integration, tech debt.
+Плюс полный markdown-отчёт с таблицами для требований, фаз, интеграции, техдолга.
 
-**Status values:**
-- `passed` — all requirements met, no critical gaps, minimal tech debt
-- `gaps_found` — critical blockers exist
-- `tech_debt` — no blockers but accumulated deferred items need review
+**Значения статусов:**
+- `passed` — все требования выполнены, нет критических пробелов, минимальный техдолг
+- `gaps_found` — существуют критические блокеры
+- `tech_debt` — нет блокеров, но накопленные отложенные элементы требуют ревью
 
-## 7. Present Results
+## 7. Представление результатов
 
-Route by status (see `<offer_next>`).
+Маршрутизация по статусу (см. `<offer_next>`).
 
 </process>
 
 <offer_next>
-Output this markdown directly (not as a code block). Route based on status:
+Выводите этот markdown напрямую (не как блок кода). Маршрутизация по статусу:
 
 ---
 
-**If passed:**
+**Если passed:**
 
-## ✓ Milestone {version} — Audit Passed
+## ✓ Этап {version} — Аудит пройден
 
-**Score:** {N}/{M} requirements satisfied
-**Report:** .planning/v{version}-MILESTONE-AUDIT.md
+**Оценка:** {N}/{M} требований удовлетворено
+**Отчёт:** .planning/v{version}-MILESTONE-AUDIT.md
 
-All requirements covered. Cross-phase integration verified. E2E flows complete.
+Все требования покрыты. Межфазовая интеграция проверена. Сквозные потоки завершены.
 
 ───────────────────────────────────────────────────────────────
 
-## ▶ Next Up
+## ▶ Далее
 
-**Complete milestone** — archive and tag
+**Завершить этап** — архивировать и пометить тегом
 
 /gsd:complete-milestone {version}
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear сначала → чистое контекстное окно</sub>
 
 ───────────────────────────────────────────────────────────────
 
 ---
 
-**If gaps_found:**
+**Если gaps_found:**
 
-## ⚠ Milestone {version} — Gaps Found
+## ⚠ Этап {version} — Обнаружены пробелы
 
-**Score:** {N}/{M} requirements satisfied
-**Report:** .planning/v{version}-MILESTONE-AUDIT.md
+**Оценка:** {N}/{M} требований удовлетворено
+**Отчёт:** .planning/v{version}-MILESTONE-AUDIT.md
 
-### Unsatisfied Requirements
+### Неудовлетворённые требования
 
-{For each unsatisfied requirement:}
-- **{REQ-ID}: {description}** (Phase {X})
-  - {reason}
+{Для каждого неудовлетворённого требования:}
+- **{REQ-ID}: {описание}** (Фаза {X})
+  - {причина}
 
-### Cross-Phase Issues
+### Межфазовые проблемы
 
-{For each integration gap:}
-- **{from} → {to}:** {issue}
+{Для каждого пробела интеграции:}
+- **{откуда} → {куда}:** {проблема}
 
-### Broken Flows
+### Нарушенные потоки
 
-{For each flow gap:}
-- **{flow name}:** breaks at {step}
+{Для каждого пробела потока:}
+- **{название потока}:** прерывается на {шаг}
 
 ───────────────────────────────────────────────────────────────
 
-## ▶ Next Up
+## ▶ Далее
 
-**Plan gap closure** — create phases to complete milestone
+**Планирование закрытия пробелов** — создать фазы для завершения этапа
 
 /gsd:plan-milestone-gaps
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear сначала → чистое контекстное окно</sub>
 
 ───────────────────────────────────────────────────────────────
 
-**Also available:**
-- cat .planning/v{version}-MILESTONE-AUDIT.md — see full report
-- /gsd:complete-milestone {version} — proceed anyway (accept tech debt)
+**Также доступно:**
+- cat .planning/v{version}-MILESTONE-AUDIT.md — посмотреть полный отчёт
+- /gsd:complete-milestone {version} — продолжить всё равно (принять техдолг)
 
 ───────────────────────────────────────────────────────────────
 
 ---
 
-**If tech_debt (no blockers but accumulated debt):**
+**Если tech_debt (нет блокеров, но накоплен долг):**
 
-## ⚡ Milestone {version} — Tech Debt Review
+## ⚡ Этап {version} — Ревью технического долга
 
-**Score:** {N}/{M} requirements satisfied
-**Report:** .planning/v{version}-MILESTONE-AUDIT.md
+**Оценка:** {N}/{M} требований удовлетворено
+**Отчёт:** .planning/v{version}-MILESTONE-AUDIT.md
 
-All requirements met. No critical blockers. Accumulated tech debt needs review.
+Все требования выполнены. Нет критических блокеров. Накопленный технический долг требует ревью.
 
-### Tech Debt by Phase
+### Технический долг по фазам
 
-{For each phase with debt:}
-**Phase {X}: {name}**
-- {item 1}
-- {item 2}
+{Для каждой фазы с долгом:}
+**Фаза {X}: {название}**
+- {элемент 1}
+- {элемент 2}
 
-### Total: {N} items across {M} phases
+### Итого: {N} элементов в {M} фазах
 
 ───────────────────────────────────────────────────────────────
 
-## ▶ Options
+## ▶ Варианты
 
-**A. Complete milestone** — accept debt, track in backlog
+**A. Завершить этап** — принять долг, отслеживать в бэклоге
 
 /gsd:complete-milestone {version}
 
-**B. Plan cleanup phase** — address debt before completing
+**B. Запланировать фазу очистки** — устранить долг перед завершением
 
 /gsd:plan-milestone-gaps
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear сначала → чистое контекстное окно</sub>
 
 ───────────────────────────────────────────────────────────────
 </offer_next>
 
 <success_criteria>
-- [ ] Milestone scope identified
-- [ ] All phase VERIFICATION.md files read
-- [ ] Tech debt and deferred gaps aggregated
-- [ ] Integration checker spawned for cross-phase wiring
-- [ ] v{version}-MILESTONE-AUDIT.md created
-- [ ] Results presented with actionable next steps
+- [ ] Область этапа определена
+- [ ] Все файлы VERIFICATION.md фаз прочитаны
+- [ ] Технический долг и отложенные пробелы агрегированы
+- [ ] Проверщик интеграции запущен для межфазовых связей
+- [ ] v{version}-MILESTONE-AUDIT.md создан
+- [ ] Результаты представлены с действенными следующими шагами
 </success_criteria>
