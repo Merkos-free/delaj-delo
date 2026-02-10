@@ -1,48 +1,48 @@
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category]
-tags: [searchable tech]
+subsystem: [основная категория]
+tags: [поисковые теги]
 provides:
-  - [bullet list of what was built/delivered]
-affects: [list of phase names or keywords]
+  - [список того, что было создано/поставлено]
+affects: [список имён фаз или ключевых слов]
 tech-stack:
-  added: [libraries/tools]
-  patterns: [architectural/code patterns]
+  added: [библиотеки/инструменты]
+  patterns: [архитектурные/кодовые паттерны]
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [важные созданные файлы]
+  modified: [важные изменённые файлы]
 key-decisions:
-  - "Decision 1"
-duration: Xmin
+  - "Решение 1"
+duration: Xмин
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary
+# Фаза [X]: [Название] — Итоги
 
-**[Substantive one-liner describing outcome]**
+**[Содержательная однострочная сводка результата]**
 
-## Performance
-- **Duration:** [time]
-- **Tasks:** [count completed]
-- **Files modified:** [count]
+## Производительность
+- **Длительность:** [время]
+- **Задачи:** [выполнено]
+- **Файлов изменено:** [количество]
 
-## Accomplishments
-- [Key outcome 1]
-- [Key outcome 2]
+## Достижения
+- [Ключевой результат 1]
+- [Ключевой результат 2]
 
-## Task Commits
-1. **Task 1: [task name]** - `hash`
-2. **Task 2: [task name]** - `hash`
-3. **Task 3: [task name]** - `hash`
+## Коммиты задач
+1. **Задача 1: [название]** - `хеш`
+2. **Задача 2: [название]** - `хеш`
+3. **Задача 3: [название]** - `хеш`
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
-- `path/to/another.ts` - What it does
+## Созданные/Изменённые файлы
+- `путь/к/файлу.ts` - Что делает
+- `путь/к/другому.ts` - Что делает
 
-## Decisions & Deviations
-[Key decisions or "None - followed plan as specified"]
-[Minor deviations if any, or "None"]
+## Решения и отклонения
+[Ключевые решения или «Нет — выполнено по плану»]
+[Незначительные отклонения если есть, или «Нет»]
 
-## Next Phase Readiness
-[What's ready for next phase]
+## Готовность к следующей фазе
+[Что готово для следующей фазы]

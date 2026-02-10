@@ -1,123 +1,123 @@
-# Milestone Archive Template
+# Шаблон архива вехи
 
-This template is used by the complete-milestone workflow to create archive files in `.planning/milestones/`.
+Этот шаблон используется рабочим процессом complete-milestone для создания файлов архива в `.planning/milestones/`.
 
 ---
 
-## File Template
+## Шаблон файла
 
-# Milestone v{{VERSION}}: {{MILESTONE_NAME}}
+# Веха v{{VERSION}}: {{MILESTONE_NAME}}
 
-**Status:** ✅ SHIPPED {{DATE}}
-**Phases:** {{PHASE_START}}-{{PHASE_END}}
-**Total Plans:** {{TOTAL_PLANS}}
+**Статус:** ✅ ВЫПУЩЕНО {{DATE}}
+**Фазы:** {{PHASE_START}}-{{PHASE_END}}
+**Всего планов:** {{TOTAL_PLANS}}
 
-## Overview
+## Обзор
 
 {{MILESTONE_DESCRIPTION}}
 
-## Phases
+## Фазы
 
 {{PHASES_SECTION}}
 
-[For each phase in this milestone, include:]
+[Для каждой фазы в этой вехе включить:]
 
-### Phase {{PHASE_NUM}}: {{PHASE_NAME}}
+### Фаза {{PHASE_NUM}}: {{PHASE_NAME}}
 
-**Goal**: {{PHASE_GOAL}}
-**Depends on**: {{DEPENDS_ON}}
-**Plans**: {{PLAN_COUNT}} plans
+**Цель**: {{PHASE_GOAL}}
+**Зависит от**: {{DEPENDS_ON}}
+**Планы**: {{PLAN_COUNT}} планов
 
-Plans:
+Планы:
 
 - [x] {{PHASE}}-01: {{PLAN_DESCRIPTION}}
 - [x] {{PHASE}}-02: {{PLAN_DESCRIPTION}}
-      [... all plans ...]
+      [... все планы ...]
 
-**Details:**
+**Детали:**
 {{PHASE_DETAILS_FROM_ROADMAP}}
 
-**For decimal phases, include (INSERTED) marker:**
+**Для дробных фаз включить маркер (ВСТАВЛЕНО):**
 
-### Phase 2.1: Critical Security Patch (INSERTED)
+### Фаза 2.1: Критический патч безопасности (ВСТАВЛЕНО)
 
-**Goal**: Fix authentication bypass vulnerability
-**Depends on**: Phase 2
-**Plans**: 1 plan
+**Цель**: Исправить уязвимость обхода аутентификации
+**Зависит от**: Фаза 2
+**Планы**: 1 план
 
-Plans:
+Планы:
 
-- [x] 02.1-01: Patch auth vulnerability
+- [x] 02.1-01: Исправить уязвимость аутентификации
 
-**Details:**
+**Детали:**
 {{PHASE_DETAILS_FROM_ROADMAP}}
 
 ---
 
-## Milestone Summary
+## Итоги вехи
 
-**Decimal Phases:**
+**Дробные фазы:**
 
-- Phase 2.1: Critical Security Patch (inserted after Phase 2 for urgent fix)
-- Phase 5.1: Performance Hotfix (inserted after Phase 5 for production issue)
+- Фаза 2.1: Критический патч безопасности (вставлен после Фазы 2 для срочного исправления)
+- Фаза 5.1: Хотфикс производительности (вставлен после Фазы 5 для проблемы на продакшене)
 
-**Key Decisions:**
+**Ключевые решения:**
 {{DECISIONS_FROM_PROJECT_STATE}}
-[Example:]
+[Пример:]
 
-- Decision: Use ROADMAP.md split (Rationale: Constant context cost)
-- Decision: Decimal phase numbering (Rationale: Clear insertion semantics)
+- Решение: Использовать разделение ROADMAP.md (Обоснование: Постоянная стоимость контекста)
+- Решение: Дробная нумерация фаз (Обоснование: Понятная семантика вставки)
 
-**Issues Resolved:**
+**Решённые проблемы:**
 {{ISSUES_RESOLVED_DURING_MILESTONE}}
-[Example:]
+[Пример:]
 
-- Fixed context overflow at 100+ phases
-- Resolved phase insertion confusion
+- Исправлено переполнение контекста при 100+ фазах
+- Решена путаница с вставкой фаз
 
-**Issues Deferred:**
+**Отложенные проблемы:**
 {{ISSUES_DEFERRED_TO_LATER}}
-[Example:]
+[Пример:]
 
-- PROJECT-STATE.md tiering (deferred until decisions > 300)
+- Тиринг PROJECT-STATE.md (отложен до >300 решений)
 
-**Technical Debt Incurred:**
+**Накопленный технический долг:**
 {{SHORTCUTS_NEEDING_FUTURE_WORK}}
-[Example:]
+[Пример:]
 
-- Some workflows still have hardcoded paths (fix in Phase 5)
-
----
-
-_For current project status, see .planning/ROADMAP.md_
+- Некоторые рабочие процессы ещё имеют захардкоженные пути (исправить в Фазе 5)
 
 ---
 
-## Usage Guidelines
+_Для текущего статуса проекта смотрите .planning/ROADMAP.md_
+
+---
+
+## Рекомендации по использованию
 
 <guidelines>
-**When to create milestone archives:**
-- After completing all phases in a milestone (v1.0, v1.1, v2.0, etc.)
-- Triggered by complete-milestone workflow
-- Before planning next milestone work
+**Когда создавать архивы вех:**
+- После завершения всех фаз вехи (v1.0, v1.1, v2.0 и т.д.)
+- Запускается рабочим процессом complete-milestone
+- Перед планированием работы следующей вехи
 
-**How to fill template:**
+**Как заполнять шаблон:**
 
-- Replace {{PLACEHOLDERS}} with actual values
-- Extract phase details from ROADMAP.md
-- Document decimal phases with (INSERTED) marker
-- Include key decisions from PROJECT-STATE.md or SUMMARY files
-- List issues resolved vs deferred
-- Capture technical debt for future reference
+- Замените {{ЗАПОЛНИТЕЛИ}} фактическими значениями
+- Извлеките детали фаз из ROADMAP.md
+- Документируйте дробные фазы маркером (ВСТАВЛЕНО)
+- Включите ключевые решения из PROJECT-STATE.md или файлов SUMMARY
+- Перечислите решённые vs отложенные проблемы
+- Зафиксируйте технический долг для справки
 
-**Archive location:**
+**Расположение архива:**
 
-- Save to `.planning/milestones/v{VERSION}-{NAME}.md`
-- Example: `.planning/milestones/v1.0-mvp.md`
+- Сохраняйте в `.planning/milestones/v{VERSION}-{NAME}.md`
+- Пример: `.planning/milestones/v1.0-mvp.md`
 
-**After archiving:**
+**После архивации:**
 
-- Update ROADMAP.md to collapse completed milestone in `<details>` tag
-- Update PROJECT.md to brownfield format with Current State section
-- Continue phase numbering in next milestone (never restart at 01)
-  </guidelines>
+- Обновите ROADMAP.md, свернув завершённую веху в тег `<details>`
+- Обновите PROJECT.md в формат браунфилда с секцией Текущее состояние
+- Продолжайте нумерацию фаз в следующей вехе (никогда не начинайте с 01)
+</guidelines>

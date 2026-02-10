@@ -1,6 +1,6 @@
-# Continue-Here Template
+# Шаблон Continue-Here
 
-Copy and fill this structure for `.planning/phases/XX-name/.continue-here.md`:
+Скопируйте и заполните эту структуру для `.planning/phases/XX-name/.continue-here.md`:
 
 ```yaml
 ---
@@ -14,65 +14,65 @@ last_updated: 2025-01-15T14:30:00Z
 
 ```markdown
 <current_state>
-[Where exactly are we? What's the immediate context?]
+[Где именно мы находимся? Каков непосредственный контекст?]
 </current_state>
 
 <completed_work>
-[What got done this session - be specific]
+[Что было сделано в этой сессии — будьте конкретны]
 
-- Task 1: [name] - Done
-- Task 2: [name] - Done
-- Task 3: [name] - In progress, [what's done on it]
+- Задача 1: [название] - Готово
+- Задача 2: [название] - Готово
+- Задача 3: [название] - В процессе, [что уже сделано]
 </completed_work>
 
 <remaining_work>
-[What's left in this phase]
+[Что осталось в этой фазе]
 
-- Task 3: [name] - [what's left to do]
-- Task 4: [name] - Not started
-- Task 5: [name] - Not started
+- Задача 3: [название] - [что осталось сделать]
+- Задача 4: [название] - Не начата
+- Задача 5: [название] - Не начата
 </remaining_work>
 
 <decisions_made>
-[Key decisions and why - so next session doesn't re-debate]
+[Ключевые решения и почему — чтобы следующая сессия не пересматривала]
 
-- Decided to use [X] because [reason]
-- Chose [approach] over [alternative] because [reason]
+- Решили использовать [X] потому что [причина]
+- Выбрали [подход] вместо [альтернативы] потому что [причина]
 </decisions_made>
 
 <blockers>
-[Anything stuck or waiting on external factors]
+[Всё что застряло или ожидает внешних факторов]
 
-- [Blocker 1]: [status/workaround]
+- [Блокер 1]: [статус/обходной путь]
 </blockers>
 
 <context>
-[Mental state, "vibe", anything that helps resume smoothly]
+[Ментальное состояние, «настрой», всё что поможет плавно продолжить]
 
-[What were you thinking about? What was the plan?
-This is the "pick up exactly where you left off" context.]
+[О чём вы думали? Каков был план?
+Это контекст «продолжить точно с того места, где остановились».]
 </context>
 
 <next_action>
-[The very first thing to do when resuming]
+[Самое первое действие при возобновлении]
 
-Start with: [specific action]
+Начать с: [конкретное действие]
 </next_action>
 ```
 
 <yaml_fields>
-Required YAML frontmatter:
+Обязательные YAML-метаданные:
 
-- `phase`: Directory name (e.g., `02-authentication`)
-- `task`: Current task number
-- `total_tasks`: How many tasks in phase
+- `phase`: Имя каталога (например, `02-authentication`)
+- `task`: Номер текущей задачи
+- `total_tasks`: Сколько задач в фазе
 - `status`: `in_progress`, `blocked`, `almost_done`
-- `last_updated`: ISO timestamp
+- `last_updated`: Временная метка ISO
 </yaml_fields>
 
 <guidelines>
-- Be specific enough that a fresh Claude instance understands immediately
-- Include WHY decisions were made, not just what
-- The `<next_action>` should be actionable without reading anything else
-- This file gets DELETED after resume - it's not permanent storage
+- Будьте достаточно конкретны, чтобы свежий экземпляр Claude сразу понял
+- Указывайте ПОЧЕМУ были приняты решения, а не только что
+- `<next_action>` должен быть выполним без чтения чего-либо ещё
+- Этот файл УДАЛЯЕТСЯ после возобновления — это не постоянное хранилище
 </guidelines>

@@ -1,115 +1,115 @@
-# Milestone Entry Template
+# Шаблон записи вехи
 
-Add this entry to `.planning/MILESTONES.md` when completing a milestone:
+Добавьте эту запись в `.planning/MILESTONES.md` при завершении вехи:
 
 ```markdown
-## v[X.Y] [Name] (Shipped: YYYY-MM-DD)
+## v[X.Y] [Название] (Выпущено: ГГГГ-ММ-ДД)
 
-**Delivered:** [One sentence describing what shipped]
+**Поставлено:** [Одно предложение описывающее что выпущено]
 
-**Phases completed:** [X-Y] ([Z] plans total)
+**Завершённые фазы:** [X-Y] ([Z] планов всего)
 
-**Key accomplishments:**
-- [Major achievement 1]
-- [Major achievement 2]
-- [Major achievement 3]
-- [Major achievement 4]
+**Ключевые достижения:**
+- [Главное достижение 1]
+- [Главное достижение 2]
+- [Главное достижение 3]
+- [Главное достижение 4]
 
-**Stats:**
-- [X] files created/modified
-- [Y] lines of code (primary language)
-- [Z] phases, [N] plans, [M] tasks
-- [D] days from start to ship (or milestone to milestone)
+**Статистика:**
+- [X] файлов создано/изменено
+- [Y] строк кода (основной язык)
+- [Z] фаз, [N] планов, [M] задач
+- [D] дней от старта до выпуска (или от вехи до вехи)
 
-**Git range:** `feat(XX-XX)` → `feat(YY-YY)`
+**Диапазон Git:** `feat(XX-XX)` → `feat(YY-YY)`
 
-**What's next:** [Brief description of next milestone goals, or "Project complete"]
+**Что дальше:** [Краткое описание целей следующей вехи, или «Проект завершён»]
 
 ---
 ```
 
 <structure>
-If MILESTONES.md doesn't exist, create it with header:
+Если MILESTONES.md не существует, создайте его с заголовком:
 
 ```markdown
-# Project Milestones: [Project Name]
+# Вехи проекта: [Название проекта]
 
-[Entries in reverse chronological order - newest first]
+[Записи в обратном хронологическом порядке — новые сначала]
 ```
 </structure>
 
 <guidelines>
-**When to create milestones:**
-- Initial v1.0 MVP shipped
-- Major version releases (v2.0, v3.0)
-- Significant feature milestones (v1.1, v1.2)
-- Before archiving planning (capture what was shipped)
+**Когда создавать вехи:**
+- Первоначальный v1.0 MVP выпущен
+- Крупные релизы версий (v2.0, v3.0)
+- Значительные функциональные вехи (v1.1, v1.2)
+- Перед архивацией планирования (зафиксировать что было выпущено)
 
-**Don't create milestones for:**
-- Individual phase completions (normal workflow)
-- Work in progress (wait until shipped)
-- Minor bug fixes that don't constitute a release
+**Не создавайте вехи для:**
+- Отдельных завершений фаз (обычный рабочий процесс)
+- Незавершённой работы (дождитесь выпуска)
+- Мелких исправлений багов, не составляющих релиз
 
-**Stats to include:**
-- Count modified files: `git diff --stat feat(XX-XX)..feat(YY-YY) | tail -1`
-- Count LOC: `find . -name "*.swift" -o -name "*.ts" | xargs wc -l` (or relevant extension)
-- Phase/plan/task counts from ROADMAP
-- Timeline from first phase commit to last phase commit
+**Какую статистику включать:**
+- Количество изменённых файлов: `git diff --stat feat(XX-XX)..feat(YY-YY) | tail -1`
+- Количество строк: `find . -name "*.swift" -o -name "*.ts" | xargs wc -l` (или нужное расширение)
+- Количество фаз/планов/задач из ROADMAP
+- Хронология от первого коммита фазы до последнего
 
-**Git range format:**
-- First commit of milestone → last commit of milestone
-- Example: `feat(01-01)` → `feat(04-01)` for phases 1-4
+**Формат диапазона Git:**
+- Первый коммит вехи → последний коммит вехи
+- Пример: `feat(01-01)` → `feat(04-01)` для фаз 1-4
 </guidelines>
 
 <example>
 ```markdown
-# Project Milestones: WeatherBar
+# Вехи проекта: WeatherBar
 
-## v1.1 Security & Polish (Shipped: 2025-12-10)
+## v1.1 Безопасность и полировка (Выпущено: 2025-12-10)
 
-**Delivered:** Security hardening with Keychain integration and comprehensive error handling
+**Поставлено:** Усиление безопасности с интеграцией Keychain и комплексной обработкой ошибок
 
-**Phases completed:** 5-6 (3 plans total)
+**Завершённые фазы:** 5-6 (3 плана всего)
 
-**Key accomplishments:**
-- Migrated API key storage from plaintext to macOS Keychain
-- Implemented comprehensive error handling for network failures
-- Added Sentry crash reporting integration
-- Fixed memory leak in auto-refresh timer
+**Ключевые достижения:**
+- Перенос хранения API-ключей из plaintext в macOS Keychain
+- Внедрение комплексной обработки ошибок для сетевых сбоев
+- Интеграция Sentry для отчётов о сбоях
+- Исправление утечки памяти в таймере автообновления
 
-**Stats:**
-- 23 files modified
-- 650 lines of Swift added
-- 2 phases, 3 plans, 12 tasks
-- 8 days from v1.0 to v1.1
+**Статистика:**
+- 23 файла изменено
+- 650 строк Swift добавлено
+- 2 фазы, 3 плана, 12 задач
+- 8 дней от v1.0 до v1.1
 
-**Git range:** `feat(05-01)` → `feat(06-02)`
+**Диапазон Git:** `feat(05-01)` → `feat(06-02)`
 
-**What's next:** v2.0 SwiftUI redesign with widget support
+**Что дальше:** v2.0 Редизайн на SwiftUI с поддержкой виджетов
 
 ---
 
-## v1.0 MVP (Shipped: 2025-11-25)
+## v1.0 MVP (Выпущено: 2025-11-25)
 
-**Delivered:** Menu bar weather app with current conditions and 3-day forecast
+**Поставлено:** Приложение погоды в меню-баре с текущими условиями и 3-дневным прогнозом
 
-**Phases completed:** 1-4 (7 plans total)
+**Завершённые фазы:** 1-4 (7 планов всего)
 
-**Key accomplishments:**
-- Menu bar app with popover UI (AppKit)
-- OpenWeather API integration with auto-refresh
-- Current weather display with conditions icon
-- 3-day forecast list with high/low temperatures
-- Code signed and notarized for distribution
+**Ключевые достижения:**
+- Приложение в меню-баре с попап-интерфейсом (AppKit)
+- Интеграция OpenWeather API с автообновлением
+- Отображение текущей погоды с иконкой условий
+- Список 3-дневного прогноза с максимальными/минимальными температурами
+- Подписание кода и нотаризация для распространения
 
-**Stats:**
-- 47 files created
-- 2,450 lines of Swift
-- 4 phases, 7 plans, 28 tasks
-- 12 days from start to ship
+**Статистика:**
+- 47 файлов создано
+- 2 450 строк Swift
+- 4 фазы, 7 планов, 28 задач
+- 12 дней от старта до выпуска
 
-**Git range:** `feat(01-01)` → `feat(04-01)`
+**Диапазон Git:** `feat(01-01)` → `feat(04-01)`
 
-**What's next:** Security audit and hardening for v1.1
+**Что дальше:** Аудит безопасности и усиление для v1.1
 ```
 </example>

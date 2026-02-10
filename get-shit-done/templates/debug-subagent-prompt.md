@@ -1,24 +1,24 @@
-# Debug Subagent Prompt Template
+# Шаблон промпта для субагента отладки
 
-Template for spawning gsd-debugger agent. The agent contains all debugging expertise - this template provides problem context only.
+Шаблон для запуска агента gsd-debugger. Агент содержит всю экспертизу по отладке — этот шаблон предоставляет только контекст проблемы.
 
 ---
 
-## Template
+## Шаблон
 
 ```markdown
 <objective>
-Investigate issue: {issue_id}
+Исследовать проблему: {issue_id}
 
-**Summary:** {issue_summary}
+**Описание:** {issue_summary}
 </objective>
 
 <symptoms>
-expected: {expected}
-actual: {actual}
-errors: {errors}
-reproduction: {reproduction}
-timeline: {timeline}
+ожидаемое: {expected}
+фактическое: {actual}
+ошибки: {errors}
+воспроизведение: {reproduction}
+хронология: {timeline}
 </symptoms>
 
 <mode>
@@ -27,62 +27,62 @@ goal: {find_root_cause_only | find_and_fix}
 </mode>
 
 <debug_file>
-Create: .planning/debug/{slug}.md
+Создать: .planning/debug/{slug}.md
 </debug_file>
 ```
 
 ---
 
-## Placeholders
+## Заполнители
 
-| Placeholder | Source | Example |
-|-------------|--------|---------|
-| `{issue_id}` | Orchestrator-assigned | `auth-screen-dark` |
-| `{issue_summary}` | User description | `Auth screen is too dark` |
-| `{expected}` | From symptoms | `See logo clearly` |
-| `{actual}` | From symptoms | `Screen is dark` |
-| `{errors}` | From symptoms | `None in console` |
-| `{reproduction}` | From symptoms | `Open /auth page` |
-| `{timeline}` | From symptoms | `After recent deploy` |
-| `{goal}` | Orchestrator sets | `find_and_fix` |
-| `{slug}` | Generated | `auth-screen-dark` |
+| Заполнитель | Источник | Пример |
+|-------------|----------|---------|
+| `{issue_id}` | Назначен оркестратором | `auth-screen-dark` |
+| `{issue_summary}` | Описание пользователя | `Экран авторизации слишком тёмный` |
+| `{expected}` | Из симптомов | `Логотип чётко виден` |
+| `{actual}` | Из симптомов | `Экран тёмный` |
+| `{errors}` | Из симптомов | `Нет в консоли` |
+| `{reproduction}` | Из симптомов | `Открыть /auth` |
+| `{timeline}` | Из симптомов | `После недавнего деплоя` |
+| `{goal}` | Устанавливает оркестратор | `find_and_fix` |
+| `{slug}` | Генерируется | `auth-screen-dark` |
 
 ---
 
-## Usage
+## Использование
 
-**From /gsd:debug:**
+**Из /gsd:debug:**
 ```python
 Task(
   prompt=filled_template,
   subagent_type="gsd-debugger",
-  description="Debug {slug}"
+  description="Отладка {slug}"
 )
 ```
 
-**From diagnose-issues (UAT):**
+**Из diagnose-issues (UAT):**
 ```python
-Task(prompt=template, subagent_type="gsd-debugger", description="Debug UAT-001")
+Task(prompt=template, subagent_type="gsd-debugger", description="Отладка UAT-001")
 ```
 
 ---
 
-## Continuation
+## Продолжение
 
-For checkpoints, spawn fresh agent with:
+Для контрольных точек запустите нового агента с:
 
 ```markdown
 <objective>
-Continue debugging {slug}. Evidence is in the debug file.
+Продолжить отладку {slug}. Доказательства в файле отладки.
 </objective>
 
 <prior_state>
-Debug file: @.planning/debug/{slug}.md
+Файл отладки: @.planning/debug/{slug}.md
 </prior_state>
 
 <checkpoint_response>
-**Type:** {checkpoint_type}
-**Response:** {user_response}
+**Тип:** {checkpoint_type}
+**Ответ:** {user_response}
 </checkpoint_response>
 
 <mode>

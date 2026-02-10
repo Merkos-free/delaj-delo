@@ -1,59 +1,59 @@
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category]
-tags: [searchable tech]
+subsystem: [основная категория]
+tags: [поисковые теги]
 requires:
-  - phase: [prior phase]
-    provides: [what that phase built]
+  - phase: [предыдущая фаза]
+    provides: [что та фаза создала]
 provides:
-  - [bullet list of what was built/delivered]
-affects: [list of phase names or keywords]
+  - [список того, что было создано/поставлено]
+affects: [список имён фаз или ключевых слов]
 tech-stack:
-  added: [libraries/tools]
-  patterns: [architectural/code patterns]
+  added: [библиотеки/инструменты]
+  patterns: [архитектурные/кодовые паттерны]
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [важные созданные файлы]
+  modified: [важные изменённые файлы]
 key-decisions:
-  - "Decision 1"
+  - "Решение 1"
 patterns-established:
-  - "Pattern 1: description"
-duration: Xmin
+  - "Паттерн 1: описание"
+duration: Xмин
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary (Complex)
+# Фаза [X]: [Название] — Итоги (Комплексный)
 
-**[Substantive one-liner describing outcome]**
+**[Содержательная однострочная сводка результата]**
 
-## Performance
-- **Duration:** [time]
-- **Tasks:** [count completed]
-- **Files modified:** [count]
+## Производительность
+- **Длительность:** [время]
+- **Задачи:** [выполнено]
+- **Файлов изменено:** [количество]
 
-## Accomplishments
-- [Key outcome 1]
-- [Key outcome 2]
+## Достижения
+- [Ключевой результат 1]
+- [Ключевой результат 2]
 
-## Task Commits
-1. **Task 1: [task name]** - `hash`
-2. **Task 2: [task name]** - `hash`
-3. **Task 3: [task name]** - `hash`
+## Коммиты задач
+1. **Задача 1: [название]** - `хеш`
+2. **Задача 2: [название]** - `хеш`
+3. **Задача 3: [название]** - `хеш`
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
-- `path/to/another.ts` - What it does
+## Созданные/Изменённые файлы
+- `путь/к/файлу.ts` - Что делает
+- `путь/к/другому.ts` - Что делает
 
-## Decisions Made
-[Key decisions with brief rationale]
+## Принятые решения
+[Ключевые решения с кратким обоснованием]
 
-## Deviations from Plan (Auto-fixed)
-[Detailed auto-fix records per GSD deviation rules]
+## Отклонения от плана (Автоисправлены)
+[Подробные записи автоисправлений по правилам отклонений ДД]
 
-## Issues Encountered
-[Problems during planned work and resolutions]
+## Встреченные проблемы
+[Проблемы во время запланированной работы и их решения]
 
-## Next Phase Readiness
-[What's ready for next phase]
-[Blockers or concerns]
+## Готовность к следующей фазе
+[Что готово для следующей фазы]
+[Блокеры или опасения]

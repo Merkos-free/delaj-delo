@@ -1,41 +1,41 @@
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category]
-tags: [searchable tech]
+subsystem: [основная категория]
+tags: [поисковые теги]
 provides:
-  - [bullet list of what was built/delivered]
-affects: [list of phase names or keywords]
+  - [список того, что было создано/поставлено]
+affects: [список имён фаз или ключевых слов]
 tech-stack:
-  added: [libraries/tools]
-  patterns: [architectural/code patterns]
+  added: [библиотеки/инструменты]
+  patterns: [архитектурные/кодовые паттерны]
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [важные созданные файлы]
+  modified: [важные изменённые файлы]
 key-decisions: []
-duration: Xmin
+duration: Xмин
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary (Minimal)
+# Фаза [X]: [Название] — Итоги (Минимальный)
 
-**[Substantive one-liner describing outcome]**
+**[Содержательная однострочная сводка результата]**
 
-## Performance
-- **Duration:** [time]
-- **Tasks:** [count]
-- **Files modified:** [count]
+## Производительность
+- **Длительность:** [время]
+- **Задачи:** [количество]
+- **Файлов изменено:** [количество]
 
-## Accomplishments
-- [Most important outcome]
-- [Second key accomplishment]
+## Достижения
+- [Самый важный результат]
+- [Второе ключевое достижение]
 
-## Task Commits
-1. **Task 1: [task name]** - `hash`
-2. **Task 2: [task name]** - `hash`
+## Коммиты задач
+1. **Задача 1: [название]** - `хеш`
+2. **Задача 2: [название]** - `хеш`
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
+## Созданные/Изменённые файлы
+- `путь/к/файлу.ts` - Что делает
 
-## Next Phase Readiness
-[Ready for next phase]
+## Готовность к следующей фазе
+[Готов к следующей фазе]
