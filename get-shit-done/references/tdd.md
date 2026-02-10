@@ -1,40 +1,40 @@
 <overview>
-TDD is about design quality, not coverage metrics. The red-green-refactor cycle forces you to think about behavior before implementation, producing cleaner interfaces and more testable code.
+TDD — это про качество дизайна, а не про метрики покрытия. Цикл красный-зелёный-рефакторинг заставляет думать о поведении до реализации, создавая более чистые интерфейсы и более тестируемый код.
 
-**Principle:** If you can describe the behavior as `expect(fn(input)).toBe(output)` before writing `fn`, TDD improves the result.
+**Принцип:** Если вы можете описать поведение как `expect(fn(input)).toBe(output)` до написания `fn`, TDD улучшит результат.
 
-**Key insight:** TDD work is fundamentally heavier than standard tasks—it requires 2-3 execution cycles (RED → GREEN → REFACTOR), each with file reads, test runs, and potential debugging. TDD features get dedicated plans to ensure full context is available throughout the cycle.
+**Ключевое наблюдение:** Работа по TDD принципиально тяжелее обычных задач — она требует 2-3 циклов выполнения (КРАСНЫЙ → ЗЕЛЁНЫЙ → РЕФАКТОРИНГ), каждый с чтением файлов, запуском тестов и потенциальной отладкой. TDD-фичи получают отдельные планы для обеспечения полного контекста на протяжении всего цикла.
 </overview>
 
 <when_to_use_tdd>
-## When TDD Improves Quality
+## Когда TDD улучшает качество
 
-**TDD candidates (create a TDD plan):**
-- Business logic with defined inputs/outputs
-- API endpoints with request/response contracts
-- Data transformations, parsing, formatting
-- Validation rules and constraints
-- Algorithms with testable behavior
-- State machines and workflows
-- Utility functions with clear specifications
+**Кандидаты для TDD (создать TDD-план):**
+- Бизнес-логика с определёнными входами/выходами
+- API-эндпоинты с контрактами запрос/ответ
+- Трансформации данных, парсинг, форматирование
+- Правила валидации и ограничения
+- Алгоритмы с тестируемым поведением
+- Конечные автоматы и рабочие процессы
+- Утилитные функции с чёткими спецификациями
 
-**Skip TDD (use standard plan with `type="auto"` tasks):**
-- UI layout, styling, visual components
-- Configuration changes
-- Glue code connecting existing components
-- One-off scripts and migrations
-- Simple CRUD with no business logic
-- Exploratory prototyping
+**Пропустить TDD (использовать стандартный план с задачами `type="auto"`):**
+- Вёрстка UI, стили, визуальные компоненты
+- Изменения конфигурации
+- Связующий код между существующими компонентами
+- Одноразовые скрипты и миграции
+- Простой CRUD без бизнес-логики
+- Исследовательское прототипирование
 
-**Heuristic:** Can you write `expect(fn(input)).toBe(output)` before writing `fn`?
-→ Yes: Create a TDD plan
-→ No: Use standard plan, add tests after if needed
+**Эвристика:** Можете ли вы написать `expect(fn(input)).toBe(output)` до написания `fn`?
+→ Да: Создайте TDD-план
+→ Нет: Используйте стандартный план, добавьте тесты после при необходимости
 </when_to_use_tdd>
 
 <tdd_plan_structure>
-## TDD Plan Structure
+## Структура TDD-плана
 
-Each TDD plan implements **one feature** through the full RED-GREEN-REFACTOR cycle.
+Каждый TDD-план реализует **одну фичу** через полный цикл КРАСНЫЙ-ЗЕЛЁНЫЙ-РЕФАКТОРИНГ.
 
 ```markdown
 ---
@@ -44,9 +44,9 @@ type: tdd
 ---
 
 <objective>
-[What feature and why]
-Purpose: [Design benefit of TDD for this feature]
-Output: [Working, tested feature]
+[Какая фича и зачем]
+Цель: [Преимущество TDD-дизайна для этой фичи]
+Результат: [Работающая, протестированная фича]
 </objective>
 
 <context>
@@ -56,89 +56,89 @@ Output: [Working, tested feature]
 </context>
 
 <feature>
-  <name>[Feature name]</name>
-  <files>[source file, test file]</files>
+  <n>[Название фичи]</n>
+  <files>[исходный файл, файл тестов]</files>
   <behavior>
-    [Expected behavior in testable terms]
-    Cases: input → expected output
+    [Ожидаемое поведение в тестируемых терминах]
+    Кейсы: вход → ожидаемый выход
   </behavior>
-  <implementation>[How to implement once tests pass]</implementation>
+  <implementation>[Как реализовать когда тесты пройдут]</implementation>
 </feature>
 
 <verification>
-[Test command that proves feature works]
+[Команда запуска тестов, доказывающая работоспособность фичи]
 </verification>
 
 <success_criteria>
-- Failing test written and committed
-- Implementation passes test
-- Refactor complete (if needed)
-- All 2-3 commits present
+- Падающий тест написан и закоммичен
+- Реализация проходит тест
+- Рефакторинг завершён (при необходимости)
+- Все 2-3 коммита присутствуют
 </success_criteria>
 
-<output>
-After completion, create SUMMARY.md with:
-- RED: What test was written, why it failed
-- GREEN: What implementation made it pass
-- REFACTOR: What cleanup was done (if any)
-- Commits: List of commits produced
-</output>
+<o>
+После завершения создайте SUMMARY.md с:
+- КРАСНЫЙ: Какой тест написан, почему он упал
+- ЗЕЛЁНЫЙ: Какая реализация заставила его пройти
+- РЕФАКТОРИНГ: Какая очистка выполнена (если есть)
+- Коммиты: Список созданных коммитов
+</o>
 ```
 
-**One feature per TDD plan.** If features are trivial enough to batch, they're trivial enough to skip TDD—use a standard plan and add tests after.
+**Одна фича на TDD-план.** Если фичи достаточно тривиальны для объединения, они достаточно тривиальны чтобы пропустить TDD — используйте стандартный план и добавьте тесты после.
 </tdd_plan_structure>
 
 <execution_flow>
-## Red-Green-Refactor Cycle
+## Цикл Красный-Зелёный-Рефакторинг
 
-**RED - Write failing test:**
-1. Create test file following project conventions
-2. Write test describing expected behavior (from `<behavior>` element)
-3. Run test - it MUST fail
-4. If test passes: feature exists or test is wrong. Investigate.
-5. Commit: `test({phase}-{plan}): add failing test for [feature]`
+**КРАСНЫЙ — Написать падающий тест:**
+1. Создать файл теста следуя конвенциям проекта
+2. Написать тест описывающий ожидаемое поведение (из элемента `<behavior>`)
+3. Запустить тест — он ДОЛЖЕН упасть
+4. Если тест проходит: фича уже существует или тест неверен. Расследовать.
+5. Коммит: `test({phase}-{plan}): add failing test for [feature]`
 
-**GREEN - Implement to pass:**
-1. Write minimal code to make test pass
-2. No cleverness, no optimization - just make it work
-3. Run test - it MUST pass
-4. Commit: `feat({phase}-{plan}): implement [feature]`
+**ЗЕЛЁНЫЙ — Реализовать для прохождения:**
+1. Написать минимальный код для прохождения теста
+2. Без ухищрений, без оптимизации — просто заставить работать
+3. Запустить тест — он ДОЛЖЕН пройти
+4. Коммит: `feat({phase}-{plan}): implement [feature]`
 
-**REFACTOR (if needed):**
-1. Clean up implementation if obvious improvements exist
-2. Run tests - MUST still pass
-3. Only commit if changes made: `refactor({phase}-{plan}): clean up [feature]`
+**РЕФАКТОРИНГ (при необходимости):**
+1. Очистить реализацию если есть очевидные улучшения
+2. Запустить тесты — ДОЛЖНЫ по-прежнему проходить
+3. Коммитить только если изменения сделаны: `refactor({phase}-{plan}): clean up [feature]`
 
-**Result:** Each TDD plan produces 2-3 atomic commits.
+**Результат:** Каждый TDD-план создаёт 2-3 атомарных коммита.
 </execution_flow>
 
 <test_quality>
-## Good Tests vs Bad Tests
+## Хорошие тесты vs Плохие тесты
 
-**Test behavior, not implementation:**
-- Good: "returns formatted date string"
-- Bad: "calls formatDate helper with correct params"
-- Tests should survive refactors
+**Тестируйте поведение, а не реализацию:**
+- Хорошо: "возвращает отформатированную строку даты"
+- Плохо: "вызывает хелпер formatDate с правильными параметрами"
+- Тесты должны переживать рефакторинг
 
-**One concept per test:**
-- Good: Separate tests for valid input, empty input, malformed input
-- Bad: Single test checking all edge cases with multiple assertions
+**Одна концепция на тест:**
+- Хорошо: Отдельные тесты для валидного ввода, пустого ввода, некорректного ввода
+- Плохо: Один тест проверяющий все граничные случаи с множеством утверждений
 
-**Descriptive names:**
-- Good: "should reject empty email", "returns null for invalid ID"
-- Bad: "test1", "handles error", "works correctly"
+**Описательные названия:**
+- Хорошо: "should reject empty email", "returns null for invalid ID"
+- Плохо: "test1", "handles error", "works correctly"
 
-**No implementation details:**
-- Good: Test public API, observable behavior
-- Bad: Mock internals, test private methods, assert on internal state
+**Без деталей реализации:**
+- Хорошо: Тестировать публичный API, наблюдаемое поведение
+- Плохо: Мокать внутренности, тестировать приватные методы, проверять внутреннее состояние
 </test_quality>
 
 <framework_setup>
-## Test Framework Setup (If None Exists)
+## Настройка тестового фреймворка (если отсутствует)
 
-When executing a TDD plan but no test framework is configured, set it up as part of the RED phase:
+Когда выполняется TDD-план, но тестовый фреймворк не настроен, настройте его в КРАСНОЙ фазе:
 
-**1. Detect project type:**
+**1. Определить тип проекта:**
 ```bash
 # JavaScript/TypeScript
 if [ -f package.json ]; then echo "node"; fi
@@ -153,111 +153,111 @@ if [ -f go.mod ]; then echo "go"; fi
 if [ -f Cargo.toml ]; then echo "rust"; fi
 ```
 
-**2. Install minimal framework:**
-| Project | Framework | Install |
+**2. Установить минимальный фреймворк:**
+| Проект | Фреймворк | Установка |
 |---------|-----------|---------|
 | Node.js | Jest | `npm install -D jest @types/jest ts-jest` |
 | Node.js (Vite) | Vitest | `npm install -D vitest` |
 | Python | pytest | `pip install pytest` |
-| Go | testing | Built-in |
-| Rust | cargo test | Built-in |
+| Go | testing | Встроенный |
+| Rust | cargo test | Встроенный |
 
-**3. Create config if needed:**
-- Jest: `jest.config.js` with ts-jest preset
-- Vitest: `vitest.config.ts` with test globals
-- pytest: `pytest.ini` or `pyproject.toml` section
+**3. Создать конфиг при необходимости:**
+- Jest: `jest.config.js` с пресетом ts-jest
+- Vitest: `vitest.config.ts` с test globals
+- pytest: `pytest.ini` или секция в `pyproject.toml`
 
-**4. Verify setup:**
+**4. Проверить настройку:**
 ```bash
-# Run empty test suite - should pass with 0 tests
+# Запустить пустой набор тестов — должен пройти с 0 тестами
 npm test  # Node
 pytest    # Python
 go test ./...  # Go
 cargo test    # Rust
 ```
 
-**5. Create first test file:**
-Follow project conventions for test location:
-- `*.test.ts` / `*.spec.ts` next to source
-- `__tests__/` directory
-- `tests/` directory at root
+**5. Создать первый тестовый файл:**
+Следуйте конвенциям проекта для расположения тестов:
+- `*.test.ts` / `*.spec.ts` рядом с исходником
+- Каталог `__tests__/`
+- Каталог `tests/` в корне
 
-Framework setup is a one-time cost included in the first TDD plan's RED phase.
+Настройка фреймворка — одноразовая стоимость, включённая в КРАСНУЮ фазу первого TDD-плана.
 </framework_setup>
 
 <error_handling>
-## Error Handling
+## Обработка ошибок
 
-**Test doesn't fail in RED phase:**
-- Feature may already exist - investigate
-- Test may be wrong (not testing what you think)
-- Fix before proceeding
+**Тест не падает в КРАСНОЙ фазе:**
+- Фича может уже существовать — расследовать
+- Тест может быть неверен (тестирует не то, что предполагалось)
+- Исправить перед продолжением
 
-**Test doesn't pass in GREEN phase:**
-- Debug implementation
-- Don't skip to refactor
-- Keep iterating until green
+**Тест не проходит в ЗЕЛЁНОЙ фазе:**
+- Отладить реализацию
+- Не переходить к рефакторингу
+- Продолжать итерации пока не станет зелёным
 
-**Tests fail in REFACTOR phase:**
-- Undo refactor
-- Commit was premature
-- Refactor in smaller steps
+**Тесты падают в фазе РЕФАКТОРИНГА:**
+- Отменить рефакторинг
+- Коммит был преждевременным
+- Рефакторить более мелкими шагами
 
-**Unrelated tests break:**
-- Stop and investigate
-- May indicate coupling issue
-- Fix before proceeding
+**Несвязанные тесты ломаются:**
+- Остановиться и расследовать
+- Может указывать на проблему связанности
+- Исправить перед продолжением
 </error_handling>
 
 <commit_pattern>
-## Commit Pattern for TDD Plans
+## Паттерн коммитов для TDD-планов
 
-TDD plans produce 2-3 atomic commits (one per phase):
+TDD-планы создают 2-3 атомарных коммита (по одному на фазу):
 
 ```
 test(08-02): add failing test for email validation
 
-- Tests valid email formats accepted
-- Tests invalid formats rejected
-- Tests empty input handling
+- Тесты валидных форматов email принимаются
+- Тесты невалидных форматов отклоняются
+- Тесты обработки пустого ввода
 
 feat(08-02): implement email validation
 
-- Regex pattern matches RFC 5322
-- Returns boolean for validity
-- Handles edge cases (empty, null)
+- Regex-паттерн соответствует RFC 5322
+- Возвращает boolean для валидности
+- Обрабатывает граничные случаи (пусто, null)
 
-refactor(08-02): extract regex to constant (optional)
+refactor(08-02): extract regex to constant (опционально)
 
-- Moved pattern to EMAIL_REGEX constant
-- No behavior changes
-- Tests still pass
+- Паттерн вынесен в константу EMAIL_REGEX
+- Без изменений поведения
+- Тесты по-прежнему проходят
 ```
 
-**Comparison with standard plans:**
-- Standard plans: 1 commit per task, 2-4 commits per plan
-- TDD plans: 2-3 commits for single feature
+**Сравнение со стандартными планами:**
+- Стандартные планы: 1 коммит на задачу, 2-4 коммита на план
+- TDD-планы: 2-3 коммита на одну фичу
 
-Both follow same format: `{type}({phase}-{plan}): {description}`
+Оба следуют одному формату: `{type}({phase}-{plan}): {description}`
 
-**Benefits:**
-- Each commit independently revertable
-- Git bisect works at commit level
-- Clear history showing TDD discipline
-- Consistent with overall commit strategy
+**Преимущества:**
+- Каждый коммит можно откатить независимо
+- Git bisect работает на уровне коммитов
+- Чёткая история, показывающая TDD-дисциплину
+- Согласуется с общей стратегией коммитов
 </commit_pattern>
 
 <context_budget>
-## Context Budget
+## Бюджет контекста
 
-TDD plans target **~40% context usage** (lower than standard plans' ~50%).
+TDD-планы нацелены на **~40% использования контекста** (ниже чем ~50% для стандартных планов).
 
-Why lower:
-- RED phase: write test, run test, potentially debug why it didn't fail
-- GREEN phase: implement, run test, potentially iterate on failures
-- REFACTOR phase: modify code, run tests, verify no regressions
+Почему ниже:
+- КРАСНАЯ фаза: написать тест, запустить тест, возможно отладить почему не упал
+- ЗЕЛЁНАЯ фаза: реализовать, запустить тест, возможно итерировать по сбоям
+- РЕФАКТОРИНГ: модифицировать код, запустить тесты, проверить отсутствие регрессий
 
-Each phase involves reading files, running commands, analyzing output. The back-and-forth is inherently heavier than linear task execution.
+Каждая фаза включает чтение файлов, запуск команд, анализ вывода. Обмен данными по природе тяжелее чем линейное выполнение задач.
 
-Single feature focus ensures full quality throughout the cycle.
+Фокус на одной фиче обеспечивает полное качество на протяжении всего цикла.
 </context_budget>

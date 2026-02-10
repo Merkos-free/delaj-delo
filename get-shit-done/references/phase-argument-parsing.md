@@ -1,60 +1,60 @@
-# Phase Argument Parsing
+# Парсинг аргументов фазы
 
-Parse and normalize phase arguments for commands that operate on phases.
+Разбор и нормализация аргументов фазы для команд, работающих с фазами.
 
-## Extraction
+## Извлечение
 
-From `$ARGUMENTS`:
-- Extract phase number (first numeric argument)
-- Extract flags (prefixed with `--`)
-- Remaining text is description (for insert/add commands)
+Из `$ARGUMENTS`:
+- Извлечь номер фазы (первый числовой аргумент)
+- Извлечь флаги (с префиксом `--`)
+- Оставшийся текст — описание (для команд insert/add)
 
-## Using gsd-tools
+## Использование gsd-tools
 
-The `find-phase` command handles normalization and validation in one step:
+Команда `find-phase` выполняет нормализацию и валидацию за один шаг:
 
 ```bash
 PHASE_INFO=$(node ~/.claude/get-shit-done/bin/gsd-tools.js find-phase "${PHASE}")
 ```
 
-Returns JSON with:
+Возвращает JSON с полями:
 - `found`: true/false
-- `directory`: Full path to phase directory
-- `phase_number`: Normalized number (e.g., "06", "06.1")
-- `phase_name`: Name portion (e.g., "foundation")
-- `plans`: Array of PLAN.md files
-- `summaries`: Array of SUMMARY.md files
+- `directory`: Полный путь к каталогу фазы
+- `phase_number`: Нормализованный номер (напр., "06", "06.1")
+- `phase_name`: Название (напр., "foundation")
+- `plans`: Массив файлов PLAN.md
+- `summaries`: Массив файлов SUMMARY.md
 
-## Manual Normalization (Legacy)
+## Ручная нормализация (устаревший способ)
 
-Zero-pad integer phases to 2 digits. Preserve decimal suffixes.
+Целочисленные фазы дополняются нулями до 2 цифр. Десятичные суффиксы сохраняются.
 
 ```bash
-# Normalize phase number
+# Нормализация номера фазы
 if [[ "$PHASE" =~ ^[0-9]+$ ]]; then
-  # Integer: 8 → 08
+  # Целое: 8 → 08
   PHASE=$(printf "%02d" "$PHASE")
 elif [[ "$PHASE" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
-  # Decimal: 2.1 → 02.1
+  # Десятичное: 2.1 → 02.1
   PHASE=$(printf "%02d.%s" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}")
 fi
 ```
 
-## Validation
+## Валидация
 
-Use `roadmap get-phase` to validate phase exists:
+Используйте `roadmap get-phase` для проверки существования фазы:
 
 ```bash
 PHASE_CHECK=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap get-phase "${PHASE}")
 if [ "$(echo "$PHASE_CHECK" | jq -r '.found')" = "false" ]; then
-  echo "ERROR: Phase ${PHASE} not found in roadmap"
+  echo "ОШИБКА: Фаза ${PHASE} не найдена в дорожной карте"
   exit 1
 fi
 ```
 
-## Directory Lookup
+## Поиск каталога
 
-Use `find-phase` for directory lookup:
+Используйте `find-phase` для поиска каталога:
 
 ```bash
 PHASE_DIR=$(node ~/.claude/get-shit-done/bin/gsd-tools.js find-phase "${PHASE}" --raw)

@@ -1,146 +1,146 @@
 <ui_patterns>
 
-Visual patterns for user-facing GSD output. Orchestrators @-reference this file.
+Визуальные паттерны для пользовательского вывода ДД. Оркестраторы ссылаются на этот файл через @.
 
-## Stage Banners
+## Баннеры этапов
 
-Use for major workflow transitions.
+Используются для основных переходов рабочего процесса.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► {STAGE NAME}
+ ДД ► {НАЗВАНИЕ ЭТАПА}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Stage names (uppercase):**
-- `QUESTIONING`
-- `RESEARCHING`
-- `DEFINING REQUIREMENTS`
-- `CREATING ROADMAP`
-- `PLANNING PHASE {N}`
-- `EXECUTING WAVE {N}`
-- `VERIFYING`
-- `PHASE {N} COMPLETE ✓`
-- `MILESTONE COMPLETE 🎉`
+**Названия этапов (заглавные):**
+- `ОПРОС`
+- `ИССЛЕДОВАНИЕ`
+- `ОПРЕДЕЛЕНИЕ ТРЕБОВАНИЙ`
+- `СОЗДАНИЕ ДОРОЖНОЙ КАРТЫ`
+- `ПЛАНИРОВАНИЕ ФАЗЫ {N}`
+- `ВЫПОЛНЕНИЕ ВОЛНЫ {N}`
+- `ВЕРИФИКАЦИЯ`
+- `ФАЗА {N} ЗАВЕРШЕНА ✓`
+- `ВЕХА ЗАВЕРШЕНА 🎉`
 
 ---
 
-## Checkpoint Boxes
+## Блоки контрольных точек
 
-User action required. 62-character width.
+Требуется действие пользователя. Ширина 62 символа.
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  CHECKPOINT: {Type}                                          ║
+║  КОНТРОЛЬНАЯ ТОЧКА: {Тип}                                    ║
 ╚══════════════════════════════════════════════════════════════╝
 
-{Content}
+{Содержимое}
 
 ──────────────────────────────────────────────────────────────
-→ {ACTION PROMPT}
+→ {ЗАПРОС ДЕЙСТВИЯ}
 ──────────────────────────────────────────────────────────────
 ```
 
-**Types:**
-- `CHECKPOINT: Verification Required` → `→ Type "approved" or describe issues`
-- `CHECKPOINT: Decision Required` → `→ Select: option-a / option-b`
-- `CHECKPOINT: Action Required` → `→ Type "done" when complete`
+**Типы:**
+- `КОНТРОЛЬНАЯ ТОЧКА: Требуется верификация` → `→ Введите "одобрено" или опишите проблемы`
+- `КОНТРОЛЬНАЯ ТОЧКА: Требуется решение` → `→ Выберите: вариант-а / вариант-б`
+- `КОНТРОЛЬНАЯ ТОЧКА: Требуется действие` → `→ Введите "готово" после завершения`
 
 ---
 
-## Status Symbols
+## Символы статуса
 
 ```
-✓  Complete / Passed / Verified
-✗  Failed / Missing / Blocked
-◆  In Progress
-○  Pending
-⚡ Auto-approved
-⚠  Warning
-🎉 Milestone complete (only in banner)
-```
-
----
-
-## Progress Display
-
-**Phase/milestone level:**
-```
-Progress: ████████░░ 80%
-```
-
-**Task level:**
-```
-Tasks: 2/4 complete
-```
-
-**Plan level:**
-```
-Plans: 3/5 complete
+✓  Завершено / Пройдено / Верифицировано
+✗  Провалено / Отсутствует / Заблокировано
+◆  В процессе
+○  Ожидает
+⚡ Авто-одобрено
+⚠  Предупреждение
+🎉 Веха завершена (только в баннере)
 ```
 
 ---
 
-## Spawning Indicators
+## Отображение прогресса
 
+**Уровень фазы/вехи:**
 ```
-◆ Spawning researcher...
+Прогресс: ████████░░ 80%
+```
 
-◆ Spawning 4 researchers in parallel...
-  → Stack research
-  → Features research
-  → Architecture research
-  → Pitfalls research
+**Уровень задач:**
+```
+Задачи: 2/4 завершено
+```
 
-✓ Researcher complete: STACK.md written
+**Уровень планов:**
+```
+Планы: 3/5 завершено
 ```
 
 ---
 
-## Next Up Block
+## Индикаторы запуска
 
-Always at end of major completions.
+```
+◆ Запуск исследователя...
+
+◆ Запуск 4 исследователей параллельно...
+  → Исследование стека
+  → Исследование фич
+  → Исследование архитектуры
+  → Исследование подводных камней
+
+✓ Исследователь завершил: STACK.md записан
+```
+
+---
+
+## Блок «Далее»
+
+Всегда в конце основных завершений.
 
 ```
 ───────────────────────────────────────────────────────────────
 
-## ▶ Next Up
+## ▶ Далее
 
-**{Identifier}: {Name}** — {one-line description}
+**{Идентификатор}: {Название}** — {описание в одну строку}
 
-`{copy-paste command}`
+`{команда для копирования}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ───────────────────────────────────────────────────────────────
 
-**Also available:**
-- `/gsd:alternative-1` — description
-- `/gsd:alternative-2` — description
+**Также доступно:**
+- `/gsd:альтернатива-1` — описание
+- `/gsd:альтернатива-2` — описание
 
 ───────────────────────────────────────────────────────────────
 ```
 
 ---
 
-## Error Box
+## Блок ошибки
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  ERROR                                                       ║
+║  ОШИБКА                                                      ║
 ╚══════════════════════════════════════════════════════════════╝
 
-{Error description}
+{Описание ошибки}
 
-**To fix:** {Resolution steps}
+**Для исправления:** {Шаги решения}
 ```
 
 ---
 
-## Tables
+## Таблицы
 
 ```
-| Phase | Status | Plans | Progress |
+| Фаза  | Статус | Планы | Прогресс |
 |-------|--------|-------|----------|
 | 1     | ✓      | 3/3   | 100%     |
 | 2     | ◆      | 1/4   | 25%      |
@@ -149,12 +149,12 @@ Always at end of major completions.
 
 ---
 
-## Anti-Patterns
+## Анти-паттерны
 
-- Varying box/banner widths
-- Mixing banner styles (`===`, `---`, `***`)
-- Skipping `GSD ►` prefix in banners
-- Random emoji (`🚀`, `✨`, `💫`)
-- Missing Next Up block after completions
+- Разная ширина блоков/баннеров
+- Смешивание стилей баннеров (`===`, `---`, `***`)
+- Пропуск префикса `ДД ►` в баннерах
+- Случайные эмодзи (`🚀`, `✨`, `💫`)
+- Отсутствие блока «Далее» после завершений
 
 </ui_patterns>
