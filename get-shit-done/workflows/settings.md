@@ -1,22 +1,22 @@
 <purpose>
-Interactive configuration of GSD workflow agents (research, plan_check, verifier) and model profile selection via multi-question prompt. Updates .planning/config.json with user preferences.
+Интерактивная настройка агентов рабочего процесса GSD (research, plan_check, verifier) и выбор профиля модели через многовопросный промпт. Обновляет .planning/config.json предпочтениями пользователя.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="ensure_and_load_config">
-Ensure config exists and load current state:
+Убедитесь, что конфиг существует, и загрузите текущее состояние:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js config-ensure-section
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js state load)
 ```
 
-Creates `.planning/config.json` with defaults if missing and loads current config values.
+Создаёт `.planning/config.json` с значениями по умолчанию, если файл отсутствует, и загружает текущие значения конфигурации.
 </step>
 
 <step name="read_current">
@@ -24,64 +24,64 @@ Creates `.planning/config.json` with defaults if missing and loads current confi
 cat .planning/config.json
 ```
 
-Parse current values (default to `true` if not present):
-- `workflow.research` — spawn researcher during plan-phase
-- `workflow.plan_check` — spawn plan checker during plan-phase
-- `workflow.verifier` — spawn verifier during execute-phase
-- `model_profile` — which model each agent uses (default: `balanced`)
-- `git.branching_strategy` — branching approach (default: `"none"`)
+Распарсите текущие значения (по умолчанию `true`, если не указано):
+- `workflow.research` — запускать исследователя во время plan-phase
+- `workflow.plan_check` — запускать проверщика плана во время plan-phase
+- `workflow.verifier` — запускать верификатора во время execute-phase
+- `model_profile` — какую модель использует каждый агент (по умолчанию: `balanced`)
+- `git.branching_strategy` — стратегия ветвления (по умолчанию: `"none"`)
 </step>
 
 <step name="present_settings">
-Use AskUserQuestion with current values pre-selected:
+Используйте AskUserQuestion с предварительно выбранными текущими значениями:
 
 ```
 AskUserQuestion([
   {
-    question: "Which model profile for agents?",
-    header: "Model",
+    question: "Какой профиль модели для агентов?",
+    header: "Модель",
     multiSelect: false,
     options: [
-      { label: "Quality", description: "Opus everywhere except verification (highest cost)" },
-      { label: "Balanced (Recommended)", description: "Opus for planning, Sonnet for execution/verification" },
-      { label: "Budget", description: "Sonnet for writing, Haiku for research/verification (lowest cost)" }
+      { label: "Quality", description: "Opus везде кроме верификации (наибольшая стоимость)" },
+      { label: "Balanced (Рекомендуется)", description: "Opus для планирования, Sonnet для выполнения/верификации" },
+      { label: "Budget", description: "Sonnet для написания, Haiku для исследования/верификации (наименьшая стоимость)" }
     ]
   },
   {
-    question: "Spawn Plan Researcher? (researches domain before planning)",
-    header: "Research",
+    question: "Запускать исследователя плана? (исследует предметную область перед планированием)",
+    header: "Исследование",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "Research phase goals before planning" },
-      { label: "No", description: "Skip research, plan directly" }
+      { label: "Да", description: "Исследовать цели фазы перед планированием" },
+      { label: "Нет", description: "Пропустить исследование, планировать сразу" }
     ]
   },
   {
-    question: "Spawn Plan Checker? (verifies plans before execution)",
-    header: "Plan Check",
+    question: "Запускать проверщика плана? (проверяет планы перед выполнением)",
+    header: "Проверка плана",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "Verify plans meet phase goals" },
-      { label: "No", description: "Skip plan verification" }
+      { label: "Да", description: "Проверить, что планы соответствуют целям фазы" },
+      { label: "Нет", description: "Пропустить проверку плана" }
     ]
   },
   {
-    question: "Spawn Execution Verifier? (verifies phase completion)",
-    header: "Verifier",
+    question: "Запускать верификатора выполнения? (проверяет завершение фазы)",
+    header: "Верификатор",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "Verify must-haves after execution" },
-      { label: "No", description: "Skip post-execution verification" }
+      { label: "Да", description: "Проверить обязательные требования после выполнения" },
+      { label: "Нет", description: "Пропустить пост-верификацию" }
     ]
   },
   {
-    question: "Git branching strategy?",
-    header: "Branching",
+    question: "Стратегия ветвления Git?",
+    header: "Ветвление",
     multiSelect: false,
     options: [
-      { label: "None (Recommended)", description: "Commit directly to current branch" },
-      { label: "Per Phase", description: "Create branch for each phase (gsd/phase-{N}-{name})" },
-      { label: "Per Milestone", description: "Create branch for entire milestone (gsd/{version}-{name})" }
+      { label: "Нет (Рекомендуется)", description: "Коммитить прямо в текущую ветку" },
+      { label: "По фазе", description: "Создавать ветку для каждой фазы (gsd/phase-{N}-{name})" },
+      { label: "По этапу", description: "Создавать ветку для всего этапа (gsd/{version}-{name})" }
     ]
   }
 ])
@@ -89,7 +89,7 @@ AskUserQuestion([
 </step>
 
 <step name="update_config">
-Merge new settings into existing config.json:
+Объедините новые настройки с существующим config.json:
 
 ```json
 {
@@ -106,40 +106,40 @@ Merge new settings into existing config.json:
 }
 ```
 
-Write updated config to `.planning/config.json`.
+Запишите обновлённый конфиг в `.planning/config.json`.
 </step>
 
 <step name="confirm">
-Display:
+Покажите:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► SETTINGS UPDATED
+ GSD ► НАСТРОЙКИ ОБНОВЛЕНЫ
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-| Setting              | Value |
-|----------------------|-------|
-| Model Profile        | {quality/balanced/budget} |
-| Plan Researcher      | {On/Off} |
-| Plan Checker         | {On/Off} |
-| Execution Verifier   | {On/Off} |
-| Git Branching        | {None/Per Phase/Per Milestone} |
+| Настройка              | Значение |
+|------------------------|----------|
+| Профиль модели         | {quality/balanced/budget} |
+| Исследователь плана    | {Вкл/Выкл} |
+| Проверщик плана        | {Вкл/Выкл} |
+| Верификатор выполнения | {Вкл/Выкл} |
+| Git ветвление          | {Нет/По фазе/По этапу} |
 
-These settings apply to future /gsd:plan-phase and /gsd:execute-phase runs.
+Эти настройки применяются к будущим запускам /gsd:plan-phase и /gsd:execute-phase.
 
-Quick commands:
-- /gsd:set-profile <profile> — switch model profile
-- /gsd:plan-phase --research — force research
-- /gsd:plan-phase --skip-research — skip research
-- /gsd:plan-phase --skip-verify — skip plan check
+Быстрые команды:
+- /gsd:set-profile <profile> — переключить профиль модели
+- /gsd:plan-phase --research — принудительно исследовать
+- /gsd:plan-phase --skip-research — пропустить исследование
+- /gsd:plan-phase --skip-verify — пропустить проверку плана
 ```
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Current config read
-- [ ] User presented with 5 settings (profile + 3 workflow toggles + git branching)
-- [ ] Config updated with model_profile, workflow, and git sections
-- [ ] Changes confirmed to user
+- [ ] Текущий конфиг прочитан
+- [ ] Пользователю представлены 5 настроек (профиль + 3 переключателя рабочего процесса + git ветвление)
+- [ ] Конфиг обновлён секциями model_profile, workflow и git
+- [ ] Изменения подтверждены пользователю
 </success_criteria>

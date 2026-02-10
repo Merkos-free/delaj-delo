@@ -1,51 +1,51 @@
 <purpose>
-Capture an idea, task, or issue that surfaces during a GSD session as a structured todo for later work. Enables "thought → capture → continue" flow without losing context.
+Захватить идею, задачу или проблему, которая всплыла во время сессии GSD, как структурированное задание для дальнейшей работы. Обеспечивает поток «мысль → захват → продолжение» без потери контекста.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="init_context">
-Load todo context:
+Загрузите контекст задач:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init todos)
 ```
 
-Extract from init JSON: `commit_docs`, `date`, `timestamp`, `todo_count`, `todos`, `pending_dir`, `todos_dir_exists`.
+Извлеките из JSON инициализации: `commit_docs`, `date`, `timestamp`, `todo_count`, `todos`, `pending_dir`, `todos_dir_exists`.
 
-Ensure directories exist:
+Убедитесь, что каталоги существуют:
 ```bash
 mkdir -p .planning/todos/pending .planning/todos/done
 ```
 
-Note existing areas from the todos array for consistency in infer_area step.
+Запомните существующие области из массива todos для согласованности на шаге infer_area.
 </step>
 
 <step name="extract_content">
-**With arguments:** Use as the title/focus.
-- `/gsd:add-todo Add auth token refresh` → title = "Add auth token refresh"
+**С аргументами:** Используйте как заголовок/фокус.
+- `/gsd:add-todo Добавить обновление auth-токена` → title = "Добавить обновление auth-токена"
 
-**Without arguments:** Analyze recent conversation to extract:
-- The specific problem, idea, or task discussed
-- Relevant file paths mentioned
-- Technical details (error messages, line numbers, constraints)
+**Без аргументов:** Проанализируйте недавний разговор для извлечения:
+- Конкретной проблемы, идеи или задачи, обсуждённой в разговоре
+- Упомянутых путей к файлам
+- Технических деталей (сообщения об ошибках, номера строк, ограничения)
 
-Formulate:
-- `title`: 3-10 word descriptive title (action verb preferred)
-- `problem`: What's wrong or why this is needed
-- `solution`: Approach hints or "TBD" if just an idea
-- `files`: Relevant paths with line numbers from conversation
+Сформулируйте:
+- `title`: описательный заголовок из 3-10 слов (предпочтительно с глаголом действия)
+- `problem`: Что не так или почему это необходимо
+- `solution`: Подсказки по подходу или "TBD", если это просто идея
+- `files`: Соответствующие пути с номерами строк из разговора
 </step>
 
 <step name="infer_area">
-Infer area from file paths:
+Определите область по путям файлов:
 
-| Path pattern | Area |
-|--------------|------|
+| Шаблон пути | Область |
+|-------------|--------|
 | `src/api/*`, `api/*` | `api` |
 | `src/components/*`, `src/ui/*` | `ui` |
 | `src/auth/*`, `auth/*` | `auth` |
@@ -54,39 +54,39 @@ Infer area from file paths:
 | `docs/*` | `docs` |
 | `.planning/*` | `planning` |
 | `scripts/*`, `bin/*` | `tooling` |
-| No files or unclear | `general` |
+| Нет файлов или неясно | `general` |
 
-Use existing area from step 2 if similar match exists.
+Используйте существующую область из шага 2, если есть похожее совпадение.
 </step>
 
 <step name="check_duplicates">
 ```bash
-# Search for key words from title in existing todos
-grep -l -i "[key words from title]" .planning/todos/pending/*.md 2>/dev/null
+# Поиск ключевых слов из заголовка в существующих задачах
+grep -l -i "[ключевые слова из заголовка]" .planning/todos/pending/*.md 2>/dev/null
 ```
 
-If potential duplicate found:
-1. Read the existing todo
-2. Compare scope
+Если найден потенциальный дубликат:
+1. Прочитайте существующую задачу
+2. Сравните область охвата
 
-If overlapping, use AskUserQuestion:
-- header: "Duplicate?"
-- question: "Similar todo exists: [title]. What would you like to do?"
+При совпадении используйте AskUserQuestion:
+- header: "Дубликат?"
+- question: "Похожая задача существует: [заголовок]. Что вы хотите сделать?"
 - options:
-  - "Skip" — keep existing todo
-  - "Replace" — update existing with new context
-  - "Add anyway" — create as separate todo
+  - "Пропустить" — оставить существующую задачу
+  - "Заменить" — обновить существующую новым контекстом
+  - "Добавить всё равно" — создать как отдельную задачу
 </step>
 
 <step name="create_file">
-Use values from init context: `timestamp` and `date` are already available.
+Используйте значения из контекста инициализации: `timestamp` и `date` уже доступны.
 
-Generate slug for the title:
+Сгенерируйте slug для заголовка:
 ```bash
 slug=$(node ~/.claude/get-shit-done/bin/gsd-tools.js generate-slug "$title" --raw)
 ```
 
-Write to `.planning/todos/pending/${date}-${slug}.md`:
+Запишите в `.planning/todos/pending/${date}-${slug}.md`:
 
 ```markdown
 ---
@@ -99,59 +99,59 @@ files:
 
 ## Problem
 
-[problem description - enough context for future Claude to understand weeks later]
+[описание проблемы - достаточно контекста, чтобы будущий Claude понял спустя недели]
 
 ## Solution
 
-[approach hints or "TBD"]
+[подсказки по подходу или "TBD"]
 ```
 </step>
 
 <step name="update_state">
-If `.planning/STATE.md` exists:
+Если `.planning/STATE.md` существует:
 
-1. Use `todo_count` from init context (or re-run `init todos` if count changed)
-2. Update "### Pending Todos" under "## Accumulated Context"
+1. Используйте `todo_count` из контекста инициализации (или перезапустите `init todos`, если счётчик изменился)
+2. Обновите "### Pending Todos" в секции "## Accumulated Context"
 </step>
 
 <step name="git_commit">
-Commit the todo and any updated state:
+Закоммитьте задачу и обновлённое состояние:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs: capture todo - [title]" --files .planning/todos/pending/[filename] .planning/STATE.md
 ```
 
-Tool respects `commit_docs` config and gitignore automatically.
+Инструмент автоматически учитывает настройку `commit_docs` и gitignore.
 
-Confirm: "Committed: docs: capture todo - [title]"
+Подтвердите: "Закоммичено: docs: capture todo - [title]"
 </step>
 
 <step name="confirm">
 ```
-Todo saved: .planning/todos/pending/[filename]
+Задача сохранена: .planning/todos/pending/[filename]
 
   [title]
-  Area: [area]
-  Files: [count] referenced
+  Область: [area]
+  Файлы: [количество] упомянуто
 
 ---
 
-Would you like to:
+Что вы хотите сделать:
 
-1. Continue with current work
-2. Add another todo
-3. View all todos (/gsd:check-todos)
+1. Продолжить текущую работу
+2. Добавить ещё одну задачу
+3. Просмотреть все задачи (/gsd:check-todos)
 ```
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Directory structure exists
-- [ ] Todo file created with valid frontmatter
-- [ ] Problem section has enough context for future Claude
-- [ ] No duplicates (checked and resolved)
-- [ ] Area consistent with existing todos
-- [ ] STATE.md updated if exists
-- [ ] Todo and state committed to git
+- [ ] Структура каталогов существует
+- [ ] Файл задачи создан с корректным frontmatter
+- [ ] Секция Problem содержит достаточно контекста для будущего Claude
+- [ ] Дубликатов нет (проверено и разрешено)
+- [ ] Область согласована с существующими задачами
+- [ ] STATE.md обновлён, если существует
+- [ ] Задача и состояние закоммичены в git
 </success_criteria>

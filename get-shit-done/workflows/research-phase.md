@@ -1,19 +1,19 @@
 <purpose>
-Research how to implement a phase. Spawns gsd-phase-researcher with phase context.
+Исследовать способ реализации фазы. Запускает gsd-phase-researcher с контекстом фазы.
 
-Standalone research command. For most workflows, use `/gsd:plan-phase` which integrates research automatically.
+Отдельная команда исследования. Для большинства рабочих процессов используйте `/gsd:plan-phase`, который автоматически интегрирует исследование.
 </purpose>
 
 <process>
 
-## Step 0: Resolve Model Profile
+## Шаг 0: Определение профиля модели
 
 @~/.claude/get-shit-done/references/model-profile-resolution.md
 
-Resolve model for:
+Определите модель для:
 - `gsd-phase-researcher`
 
-## Step 1: Normalize and Validate Phase
+## Шаг 1: Нормализация и валидация фазы
 
 @~/.claude/get-shit-done/references/phase-argument-parsing.md
 
@@ -21,54 +21,54 @@ Resolve model for:
 PHASE_INFO=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap get-phase "${PHASE}")
 ```
 
-If `found` is false: Error and exit.
+Если `found` равно false: Ошибка и выход.
 
-## Step 2: Check Existing Research
+## Шаг 2: Проверка существующего исследования
 
 ```bash
 ls .planning/phases/${PHASE}-*/RESEARCH.md 2>/dev/null
 ```
 
-If exists: Offer update/view/skip options.
+Если существует: Предложить варианты обновить/просмотреть/пропустить.
 
-## Step 3: Gather Phase Context
+## Шаг 3: Сбор контекста фазы
 
 ```bash
-# Phase section from roadmap (already loaded in PHASE_INFO)
+# Секция фазы из дорожной карты (уже загружена в PHASE_INFO)
 echo "$PHASE_INFO" | jq -r '.section'
 cat .planning/REQUIREMENTS.md 2>/dev/null
 cat .planning/phases/${PHASE}-*/*-CONTEXT.md 2>/dev/null
-# Decisions from state-snapshot (structured JSON)
+# Решения из state-snapshot (структурированный JSON)
 node ~/.claude/get-shit-done/bin/gsd-tools.js state-snapshot | jq '.decisions'
 ```
 
-## Step 4: Spawn Researcher
+## Шаг 4: Запуск исследователя
 
 ```
 Task(
   prompt="<objective>
-Research implementation approach for Phase {phase}: {name}
+Исследовать подход к реализации Фазы {phase}: {name}
 </objective>
 
 <context>
-Phase description: {description}
-Requirements: {requirements}
-Prior decisions: {decisions}
-Phase context: {context_md}
+Описание фазы: {description}
+Требования: {requirements}
+Предыдущие решения: {decisions}
+Контекст фазы: {context_md}
 </context>
 
-<output>
-Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
-</output>",
+<o>
+Записать в: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
+</o>",
   subagent_type="gsd-phase-researcher",
   model="{researcher_model}"
 )
 ```
 
-## Step 5: Handle Return
+## Шаг 5: Обработка результата
 
-- `## RESEARCH COMPLETE` — Display summary, offer: Plan/Dig deeper/Review/Done
-- `## CHECKPOINT REACHED` — Present to user, spawn continuation
-- `## RESEARCH INCONCLUSIVE` — Show attempts, offer: Add context/Try different mode/Manual
+- `## RESEARCH COMPLETE` — Показать сводку, предложить: Планировать/Углубиться/Просмотреть/Готово
+- `## CHECKPOINT REACHED` — Представить пользователю, запустить продолжение
+- `## RESEARCH INCONCLUSIVE` — Показать попытки, предложить: Добавить контекст/Попробовать другой режим/Вручную
 
 </process>

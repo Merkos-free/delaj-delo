@@ -1,40 +1,40 @@
 <purpose>
-Create `.continue-here.md` handoff file to preserve complete work state across sessions. Enables seamless resumption with full context restoration.
+Создать файл передачи `.continue-here.md` для сохранения полного состояния работы между сессиями. Обеспечивает бесшовное возобновление с полным восстановлением контекста.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="detect">
-Find current phase directory from most recently modified files:
+Найдите текущий каталог фазы по последним изменённым файлам:
 
 ```bash
-# Find most recent phase directory with work
+# Найти самый последний каталог фазы с работой
 ls -lt .planning/phases/*/PLAN.md 2>/dev/null | head -1 | grep -oP 'phases/\K[^/]+'
 ```
 
-If no active phase detected, ask user which phase they're pausing work on.
+Если активная фаза не обнаружена, спросите пользователя, на какой фазе он приостанавливает работу.
 </step>
 
 <step name="gather">
-**Collect complete state for handoff:**
+**Соберите полное состояние для передачи:**
 
-1. **Current position**: Which phase, which plan, which task
-2. **Work completed**: What got done this session
-3. **Work remaining**: What's left in current plan/phase
-4. **Decisions made**: Key decisions and rationale
-5. **Blockers/issues**: Anything stuck
-6. **Mental context**: The approach, next steps, "vibe"
-7. **Files modified**: What's changed but not committed
+1. **Текущая позиция**: Какая фаза, какой план, какая задача
+2. **Выполненная работа**: Что было сделано в этой сессии
+3. **Оставшаяся работа**: Что осталось в текущем плане/фазе
+4. **Принятые решения**: Ключевые решения и обоснования
+5. **Блокеры/проблемы**: Что застряло
+6. **Ментальный контекст**: Подход, следующие шаги, общее направление
+7. **Изменённые файлы**: Что изменено, но не закоммичено
 
-Ask user for clarifications if needed via conversational questions.
+При необходимости задайте пользователю уточняющие вопросы.
 </step>
 
 <step name="write">
-**Write handoff to `.planning/phases/XX-name/.continue-here.md`:**
+**Запишите передачу в `.planning/phases/XX-name/.continue-here.md`:**
 
 ```markdown
 ---
@@ -46,45 +46,45 @@ last_updated: [timestamp from current-timestamp]
 ---
 
 <current_state>
-[Where exactly are we? Immediate context]
+[Где именно мы находимся? Непосредственный контекст]
 </current_state>
 
 <completed_work>
 
-- Task 1: [name] - Done
-- Task 2: [name] - Done
-- Task 3: [name] - In progress, [what's done]
+- Задача 1: [название] - Выполнена
+- Задача 2: [название] - Выполнена
+- Задача 3: [название] - В процессе, [что сделано]
 </completed_work>
 
 <remaining_work>
 
-- Task 3: [what's left]
-- Task 4: Not started
-- Task 5: Not started
+- Задача 3: [что осталось]
+- Задача 4: Не начата
+- Задача 5: Не начата
 </remaining_work>
 
 <decisions_made>
 
-- Decided to use [X] because [reason]
-- Chose [approach] over [alternative] because [reason]
+- Решили использовать [X], потому что [причина]
+- Выбрали [подход] вместо [альтернативы], потому что [причина]
 </decisions_made>
 
 <blockers>
-- [Blocker 1]: [status/workaround]
+- [Блокер 1]: [статус/обходное решение]
 </blockers>
 
 <context>
-[Mental state, what were you thinking, the plan]
+[Ментальное состояние, о чём вы думали, план]
 </context>
 
 <next_action>
-Start with: [specific first action when resuming]
+Начните с: [конкретное первое действие при возобновлении]
 </next_action>
 ```
 
-Be specific enough for a fresh Claude to understand immediately.
+Будьте достаточно конкретны, чтобы свежий Claude мог сразу понять.
 
-Use `current-timestamp` for last_updated field. You can use init todos (which provides timestamps) or call directly:
+Используйте `current-timestamp` для поля last_updated. Можно использовать init todos (который предоставляет timestamps) или вызвать напрямую:
 ```bash
 timestamp=$(node ~/.claude/get-shit-done/bin/gsd-tools.js current-timestamp full --raw)
 ```
@@ -98,16 +98,16 @@ node ~/.claude/get-shit-done/bin/gsd-tools.js commit "wip: [phase-name] paused a
 
 <step name="confirm">
 ```
-✓ Handoff created: .planning/phases/[XX-name]/.continue-here.md
+✓ Файл передачи создан: .planning/phases/[XX-name]/.continue-here.md
 
-Current state:
+Текущее состояние:
 
-- Phase: [XX-name]
-- Task: [X] of [Y]
-- Status: [in_progress/blocked]
-- Committed as WIP
+- Фаза: [XX-name]
+- Задача: [X] из [Y]
+- Статус: [in_progress/blocked]
+- Закоммичено как WIP
 
-To resume: /gsd:resume-work
+Для возобновления: /gsd:resume-work
 
 ```
 </step>
@@ -115,8 +115,8 @@ To resume: /gsd:resume-work
 </process>
 
 <success_criteria>
-- [ ] .continue-here.md created in correct phase directory
-- [ ] All sections filled with specific content
-- [ ] Committed as WIP
-- [ ] User knows location and how to resume
+- [ ] .continue-here.md создан в правильном каталоге фазы
+- [ ] Все секции заполнены конкретным содержимым
+- [ ] Закоммичено как WIP
+- [ ] Пользователь знает расположение и как возобновить
 </success_criteria>

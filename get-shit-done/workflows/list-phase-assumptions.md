@@ -1,178 +1,178 @@
 <purpose>
-Surface Claude's assumptions about a phase before planning, enabling users to correct misconceptions early.
+Выявить предположения Claude о фазе перед планированием, позволяя пользователям исправить заблуждения на ранней стадии.
 
-Key difference from discuss-phase: This is ANALYSIS of what Claude thinks, not INTAKE of what user knows. No file output - purely conversational to prompt discussion.
+Ключевое отличие от discuss-phase: Это АНАЛИЗ того, что думает Claude, а не СБОР информации от пользователя. Без файлового вывода — чисто разговорный формат для стимулирования обсуждения.
 </purpose>
 
 <process>
 
 <step name="validate_phase" priority="first">
-Phase number: $ARGUMENTS (required)
+Номер фазы: $ARGUMENTS (обязательно)
 
-**If argument missing:**
+**Если аргумент отсутствует:**
 
 ```
-Error: Phase number required.
+Ошибка: Требуется номер фазы.
 
-Usage: /gsd:list-phase-assumptions [phase-number]
-Example: /gsd:list-phase-assumptions 3
+Использование: /gsd:list-phase-assumptions [номер-фазы]
+Пример: /gsd:list-phase-assumptions 3
 ```
 
-Exit workflow.
+Выход из рабочего процесса.
 
-**If argument provided:**
-Validate phase exists in roadmap:
+**Если аргумент указан:**
+Проверьте существование фазы в дорожной карте:
 
 ```bash
 cat .planning/ROADMAP.md | grep -i "Phase ${PHASE}"
 ```
 
-**If phase not found:**
+**Если фаза не найдена:**
 
 ```
-Error: Phase ${PHASE} not found in roadmap.
+Ошибка: Фаза ${PHASE} не найдена в дорожной карте.
 
-Available phases:
-[list phases from roadmap]
+Доступные фазы:
+[список фаз из дорожной карты]
 ```
 
-Exit workflow.
+Выход из рабочего процесса.
 
-**If phase found:**
-Parse phase details from roadmap:
+**Если фаза найдена:**
+Распарсите детали фазы из дорожной карты:
 
-- Phase number
-- Phase name
-- Phase description/goal
-- Any scope details mentioned
+- Номер фазы
+- Название фазы
+- Описание/цель фазы
+- Упомянутые детали области охвата
 
-Continue to analyze_phase.
+Перейти к analyze_phase.
 </step>
 
 <step name="analyze_phase">
-Based on roadmap description and project context, identify assumptions across five areas:
+На основе описания в дорожной карте и контекста проекта определите предположения в пяти областях:
 
-**1. Technical Approach:**
-What libraries, frameworks, patterns, or tools would Claude use?
-- "I'd use X library because..."
-- "I'd follow Y pattern because..."
-- "I'd structure this as Z because..."
+**1. Технический подход:**
+Какие библиотеки, фреймворки, паттерны или инструменты Claude будет использовать?
+- "Я бы использовал библиотеку X, потому что..."
+- "Я бы следовал паттерну Y, потому что..."
+- "Я бы структурировал это как Z, потому что..."
 
-**2. Implementation Order:**
-What would Claude build first, second, third?
-- "I'd start with X because it's foundational"
-- "Then Y because it depends on X"
-- "Finally Z because..."
+**2. Порядок реализации:**
+Что Claude построил бы первым, вторым, третьим?
+- "Я бы начал с X, потому что это фундамент"
+- "Затем Y, потому что зависит от X"
+- "Наконец Z, потому что..."
 
-**3. Scope Boundaries:**
-What's included vs excluded in Claude's interpretation?
-- "This phase includes: A, B, C"
-- "This phase does NOT include: D, E, F"
-- "Boundary ambiguities: G could go either way"
+**3. Границы области охвата:**
+Что включено, а что исключено в интерпретации Claude?
+- "Эта фаза включает: A, B, C"
+- "Эта фаза НЕ включает: D, E, F"
+- "Неоднозначности границ: G может быть в любую сторону"
 
-**4. Risk Areas:**
-Where does Claude expect complexity or challenges?
-- "The tricky part is X because..."
-- "Potential issues: Y, Z"
-- "I'd watch out for..."
+**4. Области рисков:**
+Где Claude ожидает сложности или проблемы?
+- "Сложная часть — это X, потому что..."
+- "Потенциальные проблемы: Y, Z"
+- "Следует обратить внимание на..."
 
-**5. Dependencies:**
-What does Claude assume exists or needs to be in place?
-- "This assumes X from previous phases"
-- "External dependencies: Y, Z"
-- "This will be consumed by..."
+**5. Зависимости:**
+Что Claude предполагает существующим или необходимым?
+- "Это предполагает X из предыдущих фаз"
+- "Внешние зависимости: Y, Z"
+- "Это будет использоваться для..."
 
-Be honest about uncertainty. Mark assumptions with confidence levels:
-- "Fairly confident: ..." (clear from roadmap)
-- "Assuming: ..." (reasonable inference)
-- "Unclear: ..." (could go multiple ways)
+Будьте честны в отношении неопределённости. Отмечайте предположения уровнями уверенности:
+- "Достаточно уверен: ..." (ясно из дорожной карты)
+- "Предполагаю: ..." (разумный вывод)
+- "Неясно: ..." (может пойти несколькими путями)
 </step>
 
 <step name="present_assumptions">
-Present assumptions in a clear, scannable format:
+Представьте предположения в ясном, легко сканируемом формате:
 
 ```
-## My Assumptions for Phase ${PHASE}: ${PHASE_NAME}
+## Мои предположения для Фазы ${PHASE}: ${PHASE_NAME}
 
-### Technical Approach
-[List assumptions about how to implement]
+### Технический подход
+[Перечислите предположения о способе реализации]
 
-### Implementation Order
-[List assumptions about sequencing]
+### Порядок реализации
+[Перечислите предположения о последовательности]
 
-### Scope Boundaries
-**In scope:** [what's included]
-**Out of scope:** [what's excluded]
-**Ambiguous:** [what could go either way]
+### Границы области охвата
+**В области:** [что включено]
+**Вне области:** [что исключено]
+**Неоднозначно:** [что может быть в обе стороны]
 
-### Risk Areas
-[List anticipated challenges]
+### Области рисков
+[Перечислите ожидаемые трудности]
 
-### Dependencies
-**From prior phases:** [what's needed]
-**External:** [third-party needs]
-**Feeds into:** [what future phases need from this]
+### Зависимости
+**Из предыдущих фаз:** [что необходимо]
+**Внешние:** [сторонние потребности]
+**Питает:** [что будущие фазы нуждаются от этой]
 
 ---
 
-**What do you think?**
+**Что вы думаете?**
 
-Are these assumptions accurate? Let me know:
-- What I got right
-- What I got wrong
-- What I'm missing
+Эти предположения верны? Дайте знать:
+- Что я угадал правильно
+- Что я угадал неправильно
+- Что я упускаю
 ```
 
-Wait for user response.
+Ожидайте ответа пользователя.
 </step>
 
 <step name="gather_feedback">
-**If user provides corrections:**
+**Если пользователь предоставляет исправления:**
 
-Acknowledge the corrections:
-
-```
-Key corrections:
-- [correction 1]
-- [correction 2]
-
-This changes my understanding significantly. [Summarize new understanding]
-```
-
-**If user confirms assumptions:**
+Подтвердите исправления:
 
 ```
-Assumptions validated.
+Ключевые исправления:
+- [исправление 1]
+- [исправление 2]
+
+Это существенно меняет моё понимание. [Резюмируйте новое понимание]
 ```
 
-Continue to offer_next.
+**Если пользователь подтверждает предположения:**
+
+```
+Предположения подтверждены.
+```
+
+Перейти к offer_next.
 </step>
 
 <step name="offer_next">
-Present next steps:
+Предложите следующие шаги:
 
 ```
-What's next?
-1. Discuss context (/gsd:discuss-phase ${PHASE}) - Let me ask you questions to build comprehensive context
-2. Plan this phase (/gsd:plan-phase ${PHASE}) - Create detailed execution plans
-3. Re-examine assumptions - I'll analyze again with your corrections
-4. Done for now
+Что дальше?
+1. Обсудить контекст (/gsd:discuss-phase ${PHASE}) — Позвольте мне задать вам вопросы для построения всестороннего контекста
+2. Планировать эту фазу (/gsd:plan-phase ${PHASE}) — Создать детальные планы выполнения
+3. Пересмотреть предположения — Я проанализирую заново с вашими исправлениями
+4. Пока закончили
 ```
 
-Wait for user selection.
+Ожидайте выбора пользователя.
 
-If "Discuss context": Note that CONTEXT.md will incorporate any corrections discussed here
-If "Plan this phase": Proceed knowing assumptions are understood
-If "Re-examine": Return to analyze_phase with updated understanding
+Если "Обсудить контекст": Отметить, что CONTEXT.md включит все обсуждённые исправления
+Если "Планировать эту фазу": Продолжить, зная что предположения поняты
+Если "Пересмотреть": Вернуться к analyze_phase с обновлённым пониманием
 </step>
 
 </process>
 
 <success_criteria>
-- Phase number validated against roadmap
-- Assumptions surfaced across five areas: technical approach, implementation order, scope, risks, dependencies
-- Confidence levels marked where appropriate
-- "What do you think?" prompt presented
-- User feedback acknowledged
-- Clear next steps offered
+- Номер фазы проверен по дорожной карте
+- Предположения выявлены в пяти областях: технический подход, порядок реализации, область охвата, риски, зависимости
+- Уровни уверенности отмечены где уместно
+- Представлен вопрос "Что вы думаете?"
+- Обратная связь пользователя учтена
+- Предложены чёткие следующие шаги
 </success_criteria>

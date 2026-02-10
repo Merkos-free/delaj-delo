@@ -1,80 +1,80 @@
 <purpose>
-Switch the model profile used by GSD agents. Controls which Claude model each agent uses, balancing quality vs token spend.
+Переключить профиль модели, используемый агентами GSD. Контролирует, какую модель Claude использует каждый агент, балансируя между качеством и расходом токенов.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="validate">
-Validate argument:
+Проверьте аргумент:
 
 ```
 if $ARGUMENTS.profile not in ["quality", "balanced", "budget"]:
-  Error: Invalid profile "$ARGUMENTS.profile"
-  Valid profiles: quality, balanced, budget
-  EXIT
+  Ошибка: Недопустимый профиль "$ARGUMENTS.profile"
+  Допустимые профили: quality, balanced, budget
+  ВЫХОД
 ```
 </step>
 
 <step name="ensure_and_load_config">
-Ensure config exists and load current state:
+Убедитесь, что конфиг существует, и загрузите текущее состояние:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js config-ensure-section
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js state load)
 ```
 
-This creates `.planning/config.json` with defaults if missing and loads current config.
+Это создаёт `.planning/config.json` с значениями по умолчанию, если файл отсутствует, и загружает текущую конфигурацию.
 </step>
 
 <step name="update_config">
-Read current config from state load or directly:
+Прочитайте текущий конфиг из state load или напрямую:
 
-Update `model_profile` field:
+Обновите поле `model_profile`:
 ```json
 {
   "model_profile": "$ARGUMENTS.profile"
 }
 ```
 
-Write updated config back to `.planning/config.json`.
+Запишите обновлённый конфиг обратно в `.planning/config.json`.
 </step>
 
 <step name="confirm">
-Display confirmation with model table for selected profile:
+Покажите подтверждение с таблицей моделей для выбранного профиля:
 
 ```
-✓ Model profile set to: $ARGUMENTS.profile
+✓ Профиль модели установлен: $ARGUMENTS.profile
 
-Agents will now use:
+Агенты теперь будут использовать:
 
-[Show table from MODEL_PROFILES in gsd-tools.js for selected profile]
+[Покажите таблицу из MODEL_PROFILES в gsd-tools.js для выбранного профиля]
 
-Example:
-| Agent | Model |
-|-------|-------|
+Пример:
+| Агент | Модель |
+|-------|--------|
 | gsd-planner | opus |
 | gsd-executor | sonnet |
 | gsd-verifier | haiku |
 | ... | ... |
 
-Next spawned agents will use the new profile.
+Следующие запущенные агенты будут использовать новый профиль.
 ```
 
-Map profile names:
-- quality: use "quality" column from MODEL_PROFILES
-- balanced: use "balanced" column from MODEL_PROFILES
-- budget: use "budget" column from MODEL_PROFILES
+Сопоставление названий профилей:
+- quality: использовать столбец "quality" из MODEL_PROFILES
+- balanced: использовать столбец "balanced" из MODEL_PROFILES
+- budget: использовать столбец "budget" из MODEL_PROFILES
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Argument validated
-- [ ] Config file ensured
-- [ ] Config updated with new model_profile
-- [ ] Confirmation displayed with model table
+- [ ] Аргумент проверен
+- [ ] Файл конфигурации обеспечен
+- [ ] Конфиг обновлён новым model_profile
+- [ ] Показано подтверждение с таблицей моделей
 </success_criteria>

@@ -1,45 +1,45 @@
 <purpose>
-Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking) while skipping optional agents (research, plan-checker, verifier). Quick mode spawns gsd-planner (quick mode) + gsd-executor(s), tracks tasks in `.planning/quick/`, and updates STATE.md's "Quick Tasks Completed" table.
+Выполнить небольшие разовые задачи с гарантиями GSD (атомарные коммиты, отслеживание в STATE.md) при пропуске опциональных агентов (исследование, проверщик плана, верификатор). Быстрый режим запускает gsd-planner (быстрый режим) + gsd-executor(ы), отслеживает задачи в `.planning/quick/` и обновляет таблицу "Quick Tasks Completed" в STATE.md.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
-**Step 1: Get task description**
+**Шаг 1: Получить описание задачи**
 
-Prompt user interactively for the task description:
+Интерактивно запросите у пользователя описание задачи:
 
 ```
 AskUserQuestion(
-  header: "Quick Task",
-  question: "What do you want to do?",
+  header: "Быстрая задача",
+  question: "Что вы хотите сделать?",
   followUp: null
 )
 ```
 
-Store response as `$DESCRIPTION`.
+Сохраните ответ как `$DESCRIPTION`.
 
-If empty, re-prompt: "Please provide a task description."
+Если пусто, запросите повторно: "Пожалуйста, укажите описание задачи."
 
 ---
 
-**Step 2: Initialize**
+**Шаг 2: Инициализация**
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init quick "$DESCRIPTION")
 ```
 
-Parse JSON for: `planner_model`, `executor_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
+Распарсите JSON: `planner_model`, `executor_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
 
-**If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `/gsd:new-project` first.
+**Если `roadmap_exists` равно false:** Ошибка — Быстрый режим требует активного проекта с ROADMAP.md. Сначала запустите `/gsd:new-project`.
 
-Quick tasks can run mid-phase - validation only checks ROADMAP.md exists, not phase status.
+Быстрые задачи могут запускаться в середине фазы — валидация проверяет только существование ROADMAP.md, а не статус фазы.
 
 ---
 
-**Step 3: Create task directory**
+**Шаг 3: Создание каталога задачи**
 
 ```bash
 mkdir -p "${task_dir}"
@@ -47,119 +47,119 @@ mkdir -p "${task_dir}"
 
 ---
 
-**Step 4: Create quick task directory**
+**Шаг 4: Создание каталога быстрой задачи**
 
-Create the directory for this quick task:
+Создайте каталог для этой быстрой задачи:
 
 ```bash
 QUICK_DIR=".planning/quick/${next_num}-${slug}"
 mkdir -p "$QUICK_DIR"
 ```
 
-Report to user:
+Сообщите пользователю:
 ```
-Creating quick task ${next_num}: ${DESCRIPTION}
-Directory: ${QUICK_DIR}
+Создание быстрой задачи ${next_num}: ${DESCRIPTION}
+Каталог: ${QUICK_DIR}
 ```
 
-Store `$QUICK_DIR` for use in orchestration.
+Сохраните `$QUICK_DIR` для использования в оркестрации.
 
 ---
 
-**Step 5: Spawn planner (quick mode)**
+**Шаг 5: Запуск планировщика (быстрый режим)**
 
-Spawn gsd-planner with quick mode context:
+Запустите gsd-planner с контекстом быстрого режима:
 
 ```
 Task(
   prompt="
 <planning_context>
 
-**Mode:** quick
-**Directory:** ${QUICK_DIR}
-**Description:** ${DESCRIPTION}
+**Режим:** quick
+**Каталог:** ${QUICK_DIR}
+**Описание:** ${DESCRIPTION}
 
-**Project State:**
+**Состояние проекта:**
 @.planning/STATE.md
 
 </planning_context>
 
 <constraints>
-- Create a SINGLE plan with 1-3 focused tasks
-- Quick tasks should be atomic and self-contained
-- No research phase, no checker phase
-- Target ~30% context usage (simple, focused)
+- Создать ОДИН план с 1-3 сфокусированными задачами
+- Быстрые задачи должны быть атомарными и самодостаточными
+- Без фазы исследования, без фазы проверки
+- Цель ~30% использования контекста (просто, сфокусированно)
 </constraints>
 
-<output>
-Write plan to: ${QUICK_DIR}/${next_num}-PLAN.md
-Return: ## PLANNING COMPLETE with plan path
-</output>
+<o>
+Записать план в: ${QUICK_DIR}/${next_num}-PLAN.md
+Вернуть: ## PLANNING COMPLETE с путём к плану
+</o>
 ",
   subagent_type="gsd-planner",
   model="{planner_model}",
-  description="Quick plan: ${DESCRIPTION}"
+  description="Быстрый план: ${DESCRIPTION}"
 )
 ```
 
-After planner returns:
-1. Verify plan exists at `${QUICK_DIR}/${next_num}-PLAN.md`
-2. Extract plan count (typically 1 for quick tasks)
-3. Report: "Plan created: ${QUICK_DIR}/${next_num}-PLAN.md"
+После возврата планировщика:
+1. Убедитесь, что план существует по пути `${QUICK_DIR}/${next_num}-PLAN.md`
+2. Извлеките количество планов (обычно 1 для быстрых задач)
+3. Сообщите: "План создан: ${QUICK_DIR}/${next_num}-PLAN.md"
 
-If plan not found, error: "Planner failed to create ${next_num}-PLAN.md"
+Если план не найден, ошибка: "Планировщик не смог создать ${next_num}-PLAN.md"
 
 ---
 
-**Step 6: Spawn executor**
+**Шаг 6: Запуск исполнителя**
 
-Spawn gsd-executor with plan reference:
+Запустите gsd-executor со ссылкой на план:
 
 ```
 Task(
   prompt="
-Execute quick task ${next_num}.
+Выполнить быструю задачу ${next_num}.
 
-Plan: @${QUICK_DIR}/${next_num}-PLAN.md
-Project state: @.planning/STATE.md
+План: @${QUICK_DIR}/${next_num}-PLAN.md
+Состояние проекта: @.planning/STATE.md
 
 <constraints>
-- Execute all tasks in the plan
-- Commit each task atomically
-- Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
-- Do NOT update ROADMAP.md (quick tasks are separate from planned phases)
+- Выполнить все задачи в плане
+- Коммитить каждую задачу атомарно
+- Создать отчёт: ${QUICK_DIR}/${next_num}-SUMMARY.md
+- НЕ обновлять ROADMAP.md (быстрые задачи отделены от запланированных фаз)
 </constraints>
 ",
   subagent_type="gsd-executor",
   model="{executor_model}",
-  description="Execute: ${DESCRIPTION}"
+  description="Выполнить: ${DESCRIPTION}"
 )
 ```
 
-After executor returns:
-1. Verify summary exists at `${QUICK_DIR}/${next_num}-SUMMARY.md`
-2. Extract commit hash from executor output
-3. Report completion status
+После возврата исполнителя:
+1. Убедитесь, что отчёт существует по пути `${QUICK_DIR}/${next_num}-SUMMARY.md`
+2. Извлеките хеш коммита из вывода исполнителя
+3. Сообщите статус завершения
 
-**Known Claude Code bug (classifyHandoffIfNeeded):** If executor reports "failed" with error `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a real failure. Check if summary file exists and git log shows commits. If so, treat as successful.
+**Известный баг Claude Code (classifyHandoffIfNeeded):** Если исполнитель сообщает "failed" с ошибкой `classifyHandoffIfNeeded is not defined`, это баг рантайма Claude Code — не реальный сбой. Проверьте, существует ли файл summary и показывает ли git log коммиты. Если да, считайте успешным.
 
-If summary not found, error: "Executor failed to create ${next_num}-SUMMARY.md"
+Если отчёт не найден, ошибка: "Исполнитель не смог создать ${next_num}-SUMMARY.md"
 
-Note: For quick tasks producing multiple plans (rare), spawn executors in parallel waves per execute-phase patterns.
+Примечание: Для быстрых задач с несколькими планами (редко) запускайте исполнителей параллельными волнами по шаблонам execute-phase.
 
 ---
 
-**Step 7: Update STATE.md**
+**Шаг 7: Обновление STATE.md**
 
-Update STATE.md with quick task completion record.
+Обновите STATE.md записью о завершении быстрой задачи.
 
-**7a. Check if "Quick Tasks Completed" section exists:**
+**7a. Проверьте существование секции "Quick Tasks Completed":**
 
-Read STATE.md and check for `### Quick Tasks Completed` section.
+Прочитайте STATE.md и проверьте наличие секции `### Quick Tasks Completed`.
 
-**7b. If section doesn't exist, create it:**
+**7b. Если секция не существует, создайте её:**
 
-Insert after `### Blockers/Concerns` section:
+Вставьте после секции `### Blockers/Concerns`:
 
 ```markdown
 ### Quick Tasks Completed
@@ -168,63 +168,63 @@ Insert after `### Blockers/Concerns` section:
 |---|-------------|------|--------|-----------|
 ```
 
-**7c. Append new row to table:**
+**7c. Добавьте новую строку в таблицу:**
 
-Use `date` from init:
+Используйте `date` из инициализации:
 ```markdown
 | ${next_num} | ${DESCRIPTION} | ${date} | ${commit_hash} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
 ```
 
-**7d. Update "Last activity" line:**
+**7d. Обновите строку "Last activity":**
 
-Use `date` from init:
+Используйте `date` из инициализации:
 ```
 Last activity: ${date} - Completed quick task ${next_num}: ${DESCRIPTION}
 ```
 
-Use Edit tool to make these changes atomically
+Используйте инструмент Edit для атомарного выполнения этих изменений
 
 ---
 
-**Step 8: Final commit and completion**
+**Шаг 8: Финальный коммит и завершение**
 
-Stage and commit quick task artifacts:
+Проиндексируйте и закоммитьте артефакты быстрой задачи:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(quick-${next_num}): ${DESCRIPTION}" --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
 ```
 
-Get final commit hash:
+Получите финальный хеш коммита:
 ```bash
 commit_hash=$(git rev-parse --short HEAD)
 ```
 
-Display completion output:
+Покажите вывод завершения:
 ```
 ---
 
-GSD > QUICK TASK COMPLETE
+GSD > БЫСТРАЯ ЗАДАЧА ВЫПОЛНЕНА
 
-Quick Task ${next_num}: ${DESCRIPTION}
+Быстрая задача ${next_num}: ${DESCRIPTION}
 
-Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
-Commit: ${commit_hash}
+Отчёт: ${QUICK_DIR}/${next_num}-SUMMARY.md
+Коммит: ${commit_hash}
 
 ---
 
-Ready for next task: /gsd:quick
+Готовы к следующей задаче: /gsd:quick
 ```
 
 </process>
 
 <success_criteria>
-- [ ] ROADMAP.md validation passes
-- [ ] User provides task description
-- [ ] Slug generated (lowercase, hyphens, max 40 chars)
-- [ ] Next number calculated (001, 002, 003...)
-- [ ] Directory created at `.planning/quick/NNN-slug/`
-- [ ] `${next_num}-PLAN.md` created by planner
-- [ ] `${next_num}-SUMMARY.md` created by executor
-- [ ] STATE.md updated with quick task row
-- [ ] Artifacts committed
+- [ ] Валидация ROADMAP.md пройдена
+- [ ] Пользователь предоставил описание задачи
+- [ ] Slug сгенерирован (нижний регистр, дефисы, макс. 40 символов)
+- [ ] Следующий номер вычислен (001, 002, 003...)
+- [ ] Каталог создан по пути `.planning/quick/NNN-slug/`
+- [ ] `${next_num}-PLAN.md` создан планировщиком
+- [ ] `${next_num}-SUMMARY.md` создан исполнителем
+- [ ] STATE.md обновлён строкой быстрой задачи
+- [ ] Артефакты закоммичены
 </success_criteria>

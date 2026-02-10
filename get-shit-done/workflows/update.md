@@ -1,18 +1,18 @@
 <purpose>
-Check for GSD updates via npm, display changelog for versions between installed and latest, obtain user confirmation, and execute clean installation with cache clearing.
+Проверить обновления GSD через npm, показать журнал изменений для версий между установленной и последней, получить подтверждение пользователя и выполнить чистую установку с очисткой кэша.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="get_installed_version">
-Detect whether GSD is installed locally or globally by checking both locations:
+Определите, установлен ли GSD локально или глобально, проверив оба расположения:
 
 ```bash
-# Check local first (takes priority)
+# Сначала проверить локально (приоритет)
 if [ -f "./.claude/get-shit-done/VERSION" ]; then
   cat "./.claude/get-shit-done/VERSION"
   echo "LOCAL"
@@ -24,189 +24,189 @@ else
 fi
 ```
 
-Parse output:
-- If last line is "LOCAL": installed version is first line, use `--local` flag for update
-- If last line is "GLOBAL": installed version is first line, use `--global` flag for update
-- If "UNKNOWN": proceed to install step (treat as version 0.0.0)
+Разберите вывод:
+- Если последняя строка "LOCAL": установленная версия — первая строка, использовать флаг `--local` для обновления
+- Если последняя строка "GLOBAL": установленная версия — первая строка, использовать флаг `--global` для обновления
+- Если "UNKNOWN": перейти к шагу установки (считать версию 0.0.0)
 
-**If VERSION file missing:**
+**Если файл VERSION отсутствует:**
 ```
-## GSD Update
+## Обновление GSD
 
-**Installed version:** Unknown
+**Установленная версия:** Неизвестна
 
-Your installation doesn't include version tracking.
+Ваша установка не включает отслеживание версий.
 
-Running fresh install...
+Запуск свежей установки...
 ```
 
-Proceed to install step (treat as version 0.0.0 for comparison).
+Перейти к шагу установки (считать версию 0.0.0 для сравнения).
 </step>
 
 <step name="check_latest_version">
-Check npm for latest version:
+Проверьте npm на наличие последней версии:
 
 ```bash
 npm view get-shit-done-cc version 2>/dev/null
 ```
 
-**If npm check fails:**
+**Если проверка npm не удалась:**
 ```
-Couldn't check for updates (offline or npm unavailable).
+Не удалось проверить обновления (нет сети или npm недоступен).
 
-To update manually: `npx get-shit-done-cc --global`
+Для обновления вручную: `npx get-shit-done-cc --global`
 ```
 
-Exit.
+Выход.
 </step>
 
 <step name="compare_versions">
-Compare installed vs latest:
+Сравните установленную и последнюю версии:
 
-**If installed == latest:**
+**Если установленная == последняя:**
 ```
-## GSD Update
+## Обновление GSD
 
-**Installed:** X.Y.Z
-**Latest:** X.Y.Z
+**Установлена:** X.Y.Z
+**Последняя:** X.Y.Z
 
-You're already on the latest version.
-```
-
-Exit.
-
-**If installed > latest:**
-```
-## GSD Update
-
-**Installed:** X.Y.Z
-**Latest:** A.B.C
-
-You're ahead of the latest release (development version?).
+У вас уже установлена последняя версия.
 ```
 
-Exit.
+Выход.
+
+**Если установленная > последняя:**
+```
+## Обновление GSD
+
+**Установлена:** X.Y.Z
+**Последняя:** A.B.C
+
+Вы опережаете последний релиз (версия для разработки?).
+```
+
+Выход.
 </step>
 
 <step name="show_changes_and_confirm">
-**If update available**, fetch and show what's new BEFORE updating:
+**Если доступно обновление**, получите и покажите что нового ПЕРЕД обновлением:
 
-1. Fetch changelog from GitHub raw URL
-2. Extract entries between installed and latest versions
-3. Display preview and ask for confirmation:
+1. Загрузите changelog с GitHub raw URL
+2. Извлеките записи между установленной и последней версиями
+3. Покажите предпросмотр и запросите подтверждение:
 
 ```
-## GSD Update Available
+## Доступно обновление GSD
 
-**Installed:** 1.5.10
-**Latest:** 1.5.15
+**Установлена:** 1.5.10
+**Последняя:** 1.5.15
 
-### What's New
+### Что нового
 ────────────────────────────────────────────────────────────
 
 ## [1.5.15] - 2026-01-20
 
-### Added
-- Feature X
+### Добавлено
+- Функция X
 
 ## [1.5.14] - 2026-01-18
 
-### Fixed
-- Bug fix Y
+### Исправлено
+- Исправление бага Y
 
 ────────────────────────────────────────────────────────────
 
-⚠️  **Note:** The installer performs a clean install of GSD folders:
-- `commands/gsd/` will be wiped and replaced
-- `get-shit-done/` will be wiped and replaced
-- `agents/gsd-*` files will be replaced
+⚠️  **Примечание:** Установщик выполняет чистую установку папок GSD:
+- `commands/gsd/` будет очищена и заменена
+- `get-shit-done/` будет очищена и заменена
+- Файлы `agents/gsd-*` будут заменены
 
-(Paths are relative to your install location: `~/.claude/` for global, `./.claude/` for local)
+(Пути относительно вашего расположения установки: `~/.claude/` для глобальной, `./.claude/` для локальной)
 
-Your custom files in other locations are preserved:
-- Custom commands not in `commands/gsd/` ✓
-- Custom agents not prefixed with `gsd-` ✓
-- Custom hooks ✓
-- Your CLAUDE.md files ✓
+Ваши пользовательские файлы в других расположениях сохранены:
+- Пользовательские команды не в `commands/gsd/` ✓
+- Пользовательские агенты без префикса `gsd-` ✓
+- Пользовательские хуки ✓
+- Ваши файлы CLAUDE.md ✓
 
-If you've modified any GSD files directly, they'll be automatically backed up to `gsd-local-patches/` and can be reapplied with `/gsd:reapply-patches` after the update.
+Если вы изменяли файлы GSD напрямую, они будут автоматически скопированы в `gsd-local-patches/` и могут быть повторно применены командой `/gsd:reapply-patches` после обновления.
 ```
 
-Use AskUserQuestion:
-- Question: "Proceed with update?"
+Используйте AskUserQuestion:
+- Question: "Продолжить обновление?"
 - Options:
-  - "Yes, update now"
-  - "No, cancel"
+  - "Да, обновить сейчас"
+  - "Нет, отменить"
 
-**If user cancels:** Exit.
+**Если пользователь отменяет:** Выход.
 </step>
 
 <step name="run_update">
-Run the update using the install type detected in step 1:
+Запустите обновление, используя тип установки, определённый на шаге 1:
 
-**If LOCAL install:**
+**Если ЛОКАЛЬНАЯ установка:**
 ```bash
 npx get-shit-done-cc --local
 ```
 
-**If GLOBAL install (or unknown):**
+**Если ГЛОБАЛЬНАЯ установка (или неизвестно):**
 ```bash
 npx get-shit-done-cc --global
 ```
 
-Capture output. If install fails, show error and exit.
+Захватите вывод. Если установка не удалась, покажите ошибку и выйдите.
 
-Clear the update cache so statusline indicator disappears:
+Очистите кэш обновления, чтобы индикатор в строке статуса исчез:
 
-**If LOCAL install:**
+**Если ЛОКАЛЬНАЯ установка:**
 ```bash
 rm -f ./.claude/cache/gsd-update-check.json
 ```
 
-**If GLOBAL install:**
+**Если ГЛОБАЛЬНАЯ установка:**
 ```bash
 rm -f ~/.claude/cache/gsd-update-check.json
 ```
 </step>
 
 <step name="display_result">
-Format completion message (changelog was already shown in confirmation step):
+Сформатируйте сообщение о завершении (changelog уже был показан на шаге подтверждения):
 
 ```
 ╔═══════════════════════════════════════════════════════════╗
-║  GSD Updated: v1.5.10 → v1.5.15                           ║
+║  GSD Обновлён: v1.5.10 → v1.5.15                          ║
 ╚═══════════════════════════════════════════════════════════╝
 
-⚠️  Restart Claude Code to pick up the new commands.
+⚠️  Перезапустите Claude Code, чтобы подхватить новые команды.
 
-[View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
+[Полный changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
 ```
 </step>
 
 
 <step name="check_local_patches">
-After update completes, check if the installer detected and backed up any locally modified files:
+После завершения обновления проверьте, обнаружил ли установщик и сохранил ли локально изменённые файлы:
 
-Check for gsd-local-patches/backup-meta.json in the config directory.
+Проверьте наличие gsd-local-patches/backup-meta.json в каталоге конфигурации.
 
-**If patches found:**
+**Если патчи найдены:**
 
 ```
-Local patches were backed up before the update.
-Run /gsd:reapply-patches to merge your modifications into the new version.
+Локальные патчи были сохранены перед обновлением.
+Запустите /gsd:reapply-patches для объединения ваших изменений с новой версией.
 ```
 
-**If no patches:** Continue normally.
+**Если патчей нет:** Продолжить нормально.
 </step>
 </process>
 
 <success_criteria>
-- [ ] Installed version read correctly
-- [ ] Latest version checked via npm
-- [ ] Update skipped if already current
-- [ ] Changelog fetched and displayed BEFORE update
-- [ ] Clean install warning shown
-- [ ] User confirmation obtained
-- [ ] Update executed successfully
-- [ ] Restart reminder shown
+- [ ] Установленная версия прочитана корректно
+- [ ] Последняя версия проверена через npm
+- [ ] Обновление пропущено, если уже актуальная версия
+- [ ] Changelog загружен и показан ПЕРЕД обновлением
+- [ ] Предупреждение о чистой установке показано
+- [ ] Подтверждение пользователя получено
+- [ ] Обновление выполнено успешно
+- [ ] Напоминание о перезапуске показано
 </success_criteria>

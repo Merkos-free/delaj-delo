@@ -1,100 +1,100 @@
 <purpose>
-Add a new integer phase to the end of the current milestone in the roadmap. Automatically calculates next phase number, creates phase directory, and updates roadmap structure.
+Добавить новую целочисленную фазу в конец текущего этапа в дорожной карте. Автоматически вычисляет следующий номер фазы, создаёт каталог фазы и обновляет структуру дорожной карты.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="parse_arguments">
-Parse the command arguments:
-- All arguments become the phase description
-- Example: `/gsd:add-phase Add authentication` → description = "Add authentication"
-- Example: `/gsd:add-phase Fix critical performance issues` → description = "Fix critical performance issues"
+Разберите аргументы команды:
+- Все аргументы становятся описанием фазы
+- Пример: `/gsd:add-phase Добавить аутентификацию` → description = "Добавить аутентификацию"
+- Пример: `/gsd:add-phase Исправить критические проблемы производительности` → description = "Исправить критические проблемы производительности"
 
-If no arguments provided:
+Если аргументы не указаны:
 
 ```
-ERROR: Phase description required
-Usage: /gsd:add-phase <description>
-Example: /gsd:add-phase Add authentication system
+ОШИБКА: Требуется описание фазы
+Использование: /gsd:add-phase <описание>
+Пример: /gsd:add-phase Добавить систему аутентификации
 ```
 
-Exit.
+Выход.
 </step>
 
 <step name="init_context">
-Load phase operation context:
+Загрузите контекст операции с фазой:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init phase-op "0")
 ```
 
-Check `roadmap_exists` from init JSON. If false:
+Проверьте `roadmap_exists` из JSON инициализации. Если false:
 ```
-ERROR: No roadmap found (.planning/ROADMAP.md)
-Run /gsd:new-project to initialize.
+ОШИБКА: Дорожная карта не найдена (.planning/ROADMAP.md)
+Запустите /gsd:new-project для инициализации.
 ```
-Exit.
+Выход.
 </step>
 
 <step name="add_phase">
-**Delegate the phase addition to gsd-tools:**
+**Делегируйте добавление фазы в gsd-tools:**
 
 ```bash
 RESULT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phase add "${description}")
 ```
 
-The CLI handles:
-- Finding the highest existing integer phase number
-- Calculating next phase number (max + 1)
-- Generating slug from description
-- Creating the phase directory (`.planning/phases/{NN}-{slug}/`)
-- Inserting the phase entry into ROADMAP.md with Goal, Depends on, and Plans sections
+CLI выполняет:
+- Поиск наибольшего существующего целочисленного номера фазы
+- Вычисление следующего номера фазы (max + 1)
+- Генерацию slug из описания
+- Создание каталога фазы (`.planning/phases/{NN}-{slug}/`)
+- Вставку записи фазы в ROADMAP.md с секциями Goal, Depends on и Plans
 
-Extract from result: `phase_number`, `padded`, `name`, `slug`, `directory`.
+Извлеките из результата: `phase_number`, `padded`, `name`, `slug`, `directory`.
 </step>
 
 <step name="update_project_state">
-Update STATE.md to reflect the new phase:
+Обновите STATE.md для отражения новой фазы:
 
-1. Read `.planning/STATE.md`
-2. Under "## Accumulated Context" → "### Roadmap Evolution" add entry:
+1. Прочитайте `.planning/STATE.md`
+2. В секции "## Accumulated Context" → "### Roadmap Evolution" добавьте запись:
    ```
    - Phase {N} added: {description}
    ```
 
-If "Roadmap Evolution" section doesn't exist, create it.
+Если секция "Roadmap Evolution" не существует, создайте её.
 </step>
 
 <step name="completion">
-Present completion summary:
+Представьте итоговый отчёт:
 
 ```
-Phase {N} added to current milestone:
-- Description: {description}
-- Directory: .planning/phases/{phase-num}-{slug}/
-- Status: Not planned yet
+Фаза {N} добавлена в текущий этап:
+- Описание: {description}
+- Каталог: .planning/phases/{phase-num}-{slug}/
+- Статус: Ещё не запланирована
 
-Roadmap updated: .planning/ROADMAP.md
+Дорожная карта обновлена: .planning/ROADMAP.md
 
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Phase {N}: {description}**
+**Фаза {N}: {description}**
 
 `/gsd:plan-phase {N}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:add-phase <description>` — add another phase
-- Review roadmap
+**Также доступно:**
+- `/gsd:add-phase <описание>` — добавить ещё одну фазу
+- Просмотр дорожной карты
 
 ---
 ```
@@ -103,9 +103,9 @@ Roadmap updated: .planning/ROADMAP.md
 </process>
 
 <success_criteria>
-- [ ] `gsd-tools phase add` executed successfully
-- [ ] Phase directory created
-- [ ] Roadmap updated with new phase entry
-- [ ] STATE.md updated with roadmap evolution note
-- [ ] User informed of next steps
+- [ ] `gsd-tools phase add` выполнена успешно
+- [ ] Каталог фазы создан
+- [ ] Дорожная карта обновлена записью о новой фазе
+- [ ] STATE.md обновлён заметкой об эволюции дорожной карты
+- [ ] Пользователь проинформирован о следующих шагах
 </success_criteria>

@@ -1,133 +1,133 @@
 <purpose>
-Remove an unstarted future phase from the project roadmap, delete its directory, renumber all subsequent phases to maintain a clean linear sequence, and commit the change. The git commit serves as the historical record of removal.
+Удалить неначатую будущую фазу из дорожной карты проекта, удалить её каталог, перенумеровать все последующие фазы для поддержания чистой линейной последовательности и закоммитить изменение. Git-коммит служит историческим журналом удаления.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="parse_arguments">
-Parse the command arguments:
-- Argument is the phase number to remove (integer or decimal)
-- Example: `/gsd:remove-phase 17` → phase = 17
-- Example: `/gsd:remove-phase 16.1` → phase = 16.1
+Разберите аргументы команды:
+- Аргумент — номер фазы для удаления (целое или десятичное число)
+- Пример: `/gsd:remove-phase 17` → phase = 17
+- Пример: `/gsd:remove-phase 16.1` → phase = 16.1
 
-If no argument provided:
+Если аргумент не указан:
 
 ```
-ERROR: Phase number required
-Usage: /gsd:remove-phase <phase-number>
-Example: /gsd:remove-phase 17
+ОШИБКА: Требуется номер фазы
+Использование: /gsd:remove-phase <номер-фазы>
+Пример: /gsd:remove-phase 17
 ```
 
-Exit.
+Выход.
 </step>
 
 <step name="init_context">
-Load phase operation context:
+Загрузите контекст операции с фазой:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init phase-op "${target}")
 ```
 
-Extract: `phase_found`, `phase_dir`, `phase_number`, `commit_docs`, `roadmap_exists`.
+Извлеките: `phase_found`, `phase_dir`, `phase_number`, `commit_docs`, `roadmap_exists`.
 
-Also read STATE.md and ROADMAP.md content for parsing current position.
+Также прочитайте содержимое STATE.md и ROADMAP.md для определения текущей позиции.
 </step>
 
 <step name="validate_future_phase">
-Verify the phase is a future phase (not started):
+Убедитесь, что фаза является будущей (не начата):
 
-1. Compare target phase to current phase from STATE.md
-2. Target must be > current phase number
+1. Сравните целевую фазу с текущей фазой из STATE.md
+2. Целевая должна быть > текущего номера фазы
 
-If target <= current phase:
+Если target <= текущей фазы:
 
 ```
-ERROR: Cannot remove Phase {target}
+ОШИБКА: Невозможно удалить Фазу {target}
 
-Only future phases can be removed:
-- Current phase: {current}
-- Phase {target} is current or completed
+Удалять можно только будущие фазы:
+- Текущая фаза: {current}
+- Фаза {target} является текущей или завершённой
 
-To abandon current work, use /gsd:pause-work instead.
+Для отказа от текущей работы используйте /gsd:pause-work.
 ```
 
-Exit.
+Выход.
 </step>
 
 <step name="confirm_removal">
-Present removal summary and confirm:
+Представьте сводку удаления и подтвердите:
 
 ```
-Removing Phase {target}: {Name}
+Удаление Фазы {target}: {Name}
 
-This will:
-- Delete: .planning/phases/{target}-{slug}/
-- Renumber all subsequent phases
-- Update: ROADMAP.md, STATE.md
+Будет выполнено:
+- Удалён: .planning/phases/{target}-{slug}/
+- Перенумерованы все последующие фазы
+- Обновлены: ROADMAP.md, STATE.md
 
-Proceed? (y/n)
+Продолжить? (y/n)
 ```
 
-Wait for confirmation.
+Ожидайте подтверждения.
 </step>
 
 <step name="execute_removal">
-**Delegate the entire removal operation to gsd-tools:**
+**Делегируйте всю операцию удаления в gsd-tools:**
 
 ```bash
 RESULT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phase remove "${target}")
 ```
 
-If the phase has executed plans (SUMMARY.md files), gsd-tools will error. Use `--force` only if the user confirms:
+Если у фазы есть выполненные планы (файлы SUMMARY.md), gsd-tools вернёт ошибку. Используйте `--force` только после подтверждения пользователя:
 
 ```bash
 RESULT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phase remove "${target}" --force)
 ```
 
-The CLI handles:
-- Deleting the phase directory
-- Renumbering all subsequent directories (in reverse order to avoid conflicts)
-- Renaming all files inside renumbered directories (PLAN.md, SUMMARY.md, etc.)
-- Updating ROADMAP.md (removing section, renumbering all phase references, updating dependencies)
-- Updating STATE.md (decrementing phase count)
+CLI выполняет:
+- Удаление каталога фазы
+- Перенумерацию всех последующих каталогов (в обратном порядке для избежания конфликтов)
+- Переименование всех файлов внутри перенумерованных каталогов (PLAN.md, SUMMARY.md и т.д.)
+- Обновление ROADMAP.md (удаление секции, перенумерация всех ссылок на фазы, обновление зависимостей)
+- Обновление STATE.md (уменьшение счётчика фаз)
 
-Extract from result: `removed`, `directory_deleted`, `renamed_directories`, `renamed_files`, `roadmap_updated`, `state_updated`.
+Извлеките из результата: `removed`, `directory_deleted`, `renamed_directories`, `renamed_files`, `roadmap_updated`, `state_updated`.
 </step>
 
 <step name="commit">
-Stage and commit the removal:
+Проиндексируйте и закоммитьте удаление:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "chore: remove phase {target} ({original-phase-name})" --files .planning/
 ```
 
-The commit message preserves the historical record of what was removed.
+Сообщение коммита сохраняет историческую запись о том, что было удалено.
 </step>
 
 <step name="completion">
-Present completion summary:
+Представьте итоговый отчёт:
 
 ```
-Phase {target} ({original-name}) removed.
+Фаза {target} ({original-name}) удалена.
 
-Changes:
-- Deleted: .planning/phases/{target}-{slug}/
-- Renumbered: {N} directories and {M} files
-- Updated: ROADMAP.md, STATE.md
-- Committed: chore: remove phase {target} ({original-name})
+Изменения:
+- Удалён: .planning/phases/{target}-{slug}/
+- Перенумеровано: {N} каталогов и {M} файлов
+- Обновлены: ROADMAP.md, STATE.md
+- Закоммичено: chore: remove phase {target} ({original-name})
 
 ---
 
-## What's Next
+## Что дальше
 
-Would you like to:
-- `/gsd:progress` — see updated roadmap status
-- Continue with current phase
-- Review roadmap
+Что вы хотите сделать:
+- `/gsd:progress` — посмотреть обновлённый статус дорожной карты
+- Продолжить текущую фазу
+- Просмотреть дорожную карту
 
 ---
 ```
@@ -137,18 +137,18 @@ Would you like to:
 
 <anti_patterns>
 
-- Don't remove completed phases (have SUMMARY.md files) without --force
-- Don't remove current or past phases
-- Don't manually renumber — use `gsd-tools phase remove` which handles all renumbering
-- Don't add "removed phase" notes to STATE.md — git commit is the record
-- Don't modify completed phase directories
+- Не удаляйте завершённые фазы (имеющие файлы SUMMARY.md) без --force
+- Не удаляйте текущие или прошлые фазы
+- Не перенумеровывайте вручную — используйте `gsd-tools phase remove`, который обрабатывает всю перенумерацию
+- Не добавляйте заметки об удалённой фазе в STATE.md — git-коммит является записью
+- Не модифицируйте каталоги завершённых фаз
 </anti_patterns>
 
 <success_criteria>
-Phase removal is complete when:
+Удаление фазы завершено, когда:
 
-- [ ] Target phase validated as future/unstarted
-- [ ] `gsd-tools phase remove` executed successfully
-- [ ] Changes committed with descriptive message
-- [ ] User informed of changes
+- [ ] Целевая фаза подтверждена как будущая/неначатая
+- [ ] `gsd-tools phase remove` выполнена успешно
+- [ ] Изменения закоммичены с описательным сообщением
+- [ ] Пользователь проинформирован об изменениях
 </success_criteria>
