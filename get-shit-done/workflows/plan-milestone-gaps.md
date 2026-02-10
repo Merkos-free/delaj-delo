@@ -1,256 +1,256 @@
 <purpose>
-Create all phases necessary to close gaps identified by `/gsd:audit-milestone`. Reads MILESTONE-AUDIT.md, groups gaps into logical phases, creates phase entries in ROADMAP.md, and offers to plan each phase. One command creates all fix phases — no manual `/gsd:add-phase` per gap.
+Создать все фазы, необходимые для закрытия пробелов, выявленных `/gsd:audit-milestone`. Читает MILESTONE-AUDIT.md, группирует пробелы в логические фазы, создаёт записи фаз в ROADMAP.md и предлагает спланировать каждую фазу. Одна команда создаёт все фазы исправления — без ручного `/gsd:add-phase` для каждого пробела.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
-## 1. Load Audit Results
+## 1. Загрузка результатов аудита
 
 ```bash
-# Find the most recent audit file
+# Найти самый свежий файл аудита
 ls -t .planning/v*-MILESTONE-AUDIT.md 2>/dev/null | head -1
 ```
 
-Parse YAML frontmatter to extract structured gaps:
-- `gaps.requirements` — unsatisfied requirements
-- `gaps.integration` — missing cross-phase connections
-- `gaps.flows` — broken E2E flows
+Разберите YAML frontmatter для извлечения структурированных пробелов:
+- `gaps.requirements` — неудовлетворённые требования
+- `gaps.integration` — отсутствующие межфазные связи
+- `gaps.flows` — нарушенные сквозные потоки
 
-If no audit file exists or has no gaps, error:
+Если файл аудита отсутствует или пробелов нет, ошибка:
 ```
-No audit gaps found. Run `/gsd:audit-milestone` first.
-```
-
-## 2. Prioritize Gaps
-
-Group gaps by priority from REQUIREMENTS.md:
-
-| Priority | Action |
-|----------|--------|
-| `must` | Create phase, blocks milestone |
-| `should` | Create phase, recommended |
-| `nice` | Ask user: include or defer? |
-
-For integration/flow gaps, infer priority from affected requirements.
-
-## 3. Group Gaps into Phases
-
-Cluster related gaps into logical phases:
-
-**Grouping rules:**
-- Same affected phase → combine into one fix phase
-- Same subsystem (auth, API, UI) → combine
-- Dependency order (fix stubs before wiring)
-- Keep phases focused: 2-4 tasks each
-
-**Example grouping:**
-```
-Gap: DASH-01 unsatisfied (Dashboard doesn't fetch)
-Gap: Integration Phase 1→3 (Auth not passed to API calls)
-Gap: Flow "View dashboard" broken at data fetch
-
-→ Phase 6: "Wire Dashboard to API"
-  - Add fetch to Dashboard.tsx
-  - Include auth header in fetch
-  - Handle response, update state
-  - Render user data
+Пробелы аудита не найдены. Сначала запустите `/gsd:audit-milestone`.
 ```
 
-## 4. Determine Phase Numbers
+## 2. Приоритизация пробелов
 
-Find highest existing phase:
+Группировка пробелов по приоритету из REQUIREMENTS.md:
+
+| Приоритет | Действие |
+|-----------|----------|
+| `must` | Создать фазу, блокирует этап |
+| `should` | Создать фазу, рекомендуется |
+| `nice` | Спросить пользователя: включить или отложить? |
+
+Для пробелов интеграции/потоков определите приоритет по затронутым требованиям.
+
+## 3. Группировка пробелов в фазы
+
+Кластеризация связанных пробелов в логические фазы:
+
+**Правила группировки:**
+- Та же затронутая фаза → объединить в одну фазу исправления
+- Та же подсистема (auth, API, UI) → объединить
+- Порядок зависимостей (исправить заглушки перед связыванием)
+- Фазы должны быть фокусированными: 2-4 задачи каждая
+
+**Пример группировки:**
+```
+Пробел: DASH-01 не удовлетворён (Дашборд не получает данные)
+Пробел: Интеграция Фаза 1→3 (Auth не передаётся в API-вызовы)
+Пробел: Поток "Просмотр дашборда" нарушен на этапе получения данных
+
+→ Фаза 6: "Подключение дашборда к API"
+  - Добавить fetch в Dashboard.tsx
+  - Включить auth-заголовок в fetch
+  - Обработать ответ, обновить состояние
+  - Отрендерить данные пользователя
+```
+
+## 4. Определение номеров фаз
+
+Найти наибольшую существующую фазу:
 ```bash
-# Get sorted phase list, extract last one
+# Получить сортированный список фаз, извлечь последнюю
 PHASES=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phases list)
 HIGHEST=$(echo "$PHASES" | jq -r '.directories[-1]')
 ```
 
-New phases continue from there:
-- If Phase 5 is highest, gaps become Phase 6, 7, 8...
+Новые фазы продолжают нумерацию:
+- Если Фаза 5 — наибольшая, пробелы становятся Фазой 6, 7, 8...
 
-## 5. Present Gap Closure Plan
+## 5. Представление плана закрытия пробелов
 
 ```markdown
-## Gap Closure Plan
+## План закрытия пробелов
 
-**Milestone:** {version}
-**Gaps to close:** {N} requirements, {M} integration, {K} flows
+**Этап:** {версия}
+**Пробелов к закрытию:** {N} требований, {M} интеграций, {K} потоков
 
-### Proposed Phases
+### Предложенные фазы
 
-**Phase {N}: {Name}**
-Closes:
-- {REQ-ID}: {description}
-- Integration: {from} → {to}
-Tasks: {count}
+**Фаза {N}: {Название}**
+Закрывает:
+- {REQ-ID}: {описание}
+- Интеграция: {от} → {к}
+Задач: {количество}
 
-**Phase {N+1}: {Name}**
-Closes:
-- {REQ-ID}: {description}
-- Flow: {flow name}
-Tasks: {count}
+**Фаза {N+1}: {Название}**
+Закрывает:
+- {REQ-ID}: {описание}
+- Поток: {название потока}
+Задач: {количество}
 
-{If nice-to-have gaps exist:}
+{Если есть необязательные пробелы:}
 
-### Deferred (nice-to-have)
+### Отложенные (необязательные)
 
-These gaps are optional. Include them?
-- {gap description}
-- {gap description}
+Эти пробелы необязательны. Включить их?
+- {описание пробела}
+- {описание пробела}
 
 ---
 
-Create these {X} phases? (yes / adjust / defer all optional)
+Создать эти {X} фаз? (да / скорректировать / отложить все необязательные)
 ```
 
-Wait for user confirmation.
+Ожидайте подтверждения пользователя.
 
-## 6. Update ROADMAP.md
+## 6. Обновление ROADMAP.md
 
-Add new phases to current milestone:
+Добавьте новые фазы в текущий этап:
 
 ```markdown
-### Phase {N}: {Name}
-**Goal:** {derived from gaps being closed}
-**Requirements:** {REQ-IDs being satisfied}
-**Gap Closure:** Closes gaps from audit
+### Phase {N}: {Название}
+**Goal:** {выведена из закрываемых пробелов}
+**Requirements:** {REQ-ID, которые удовлетворяются}
+**Gap Closure:** Закрывает пробелы из аудита
 
-### Phase {N+1}: {Name}
+### Phase {N+1}: {Название}
 ...
 ```
 
-## 7. Create Phase Directories
+## 7. Создание каталогов фаз
 
 ```bash
 mkdir -p ".planning/phases/{NN}-{name}"
 ```
 
-## 8. Commit Roadmap Update
+## 8. Коммит обновления дорожной карты
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md
 ```
 
-## 9. Offer Next Steps
+## 9. Предложение следующих шагов
 
 ```markdown
-## ✓ Gap Closure Phases Created
+## ✓ Фазы закрытия пробелов созданы
 
-**Phases added:** {N} - {M}
-**Gaps addressed:** {count} requirements, {count} integration, {count} flows
+**Добавлены фазы:** {N} - {M}
+**Устранённые пробелы:** {количество} требований, {количество} интеграций, {количество} потоков
 
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Plan first gap closure phase**
+**Спланировать первую фазу закрытия пробелов**
 
 `/gsd:plan-phase {N}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:execute-phase {N}` — if plans already exist
-- `cat .planning/ROADMAP.md` — see updated roadmap
+**Также доступно:**
+- `/gsd:execute-phase {N}` — если планы уже существуют
+- `cat .planning/ROADMAP.md` — просмотреть обновлённую дорожную карту
 
 ---
 
-**After all gap phases complete:**
+**После завершения всех фаз закрытия пробелов:**
 
-`/gsd:audit-milestone` — re-audit to verify gaps closed
-`/gsd:complete-milestone {version}` — archive when audit passes
+`/gsd:audit-milestone` — повторный аудит для проверки закрытия пробелов
+`/gsd:complete-milestone {version}` — архивировать когда аудит пройден
 ```
 
 </process>
 
 <gap_to_phase_mapping>
 
-## How Gaps Become Tasks
+## Как пробелы превращаются в задачи
 
-**Requirement gap → Tasks:**
+**Пробел требования → Задачи:**
 ```yaml
 gap:
   id: DASH-01
-  description: "User sees their data"
-  reason: "Dashboard exists but doesn't fetch from API"
+  description: "Пользователь видит свои данные"
+  reason: "Дашборд существует, но не получает данные из API"
   missing:
-    - "useEffect with fetch to /api/user/data"
-    - "State for user data"
-    - "Render user data in JSX"
+    - "useEffect с fetch на /api/user/data"
+    - "Состояние для данных пользователя"
+    - "Рендер данных пользователя в JSX"
 
-becomes:
+становится:
 
-phase: "Wire Dashboard Data"
+phase: "Подключение данных дашборда"
 tasks:
-  - name: "Add data fetching"
+  - name: "Добавить получение данных"
     files: [src/components/Dashboard.tsx]
-    action: "Add useEffect that fetches /api/user/data on mount"
+    action: "Добавить useEffect, который получает /api/user/data при монтировании"
 
-  - name: "Add state management"
+  - name: "Добавить управление состоянием"
     files: [src/components/Dashboard.tsx]
-    action: "Add useState for userData, loading, error states"
+    action: "Добавить useState для userData, loading, error состояний"
 
-  - name: "Render user data"
+  - name: "Отрендерить данные пользователя"
     files: [src/components/Dashboard.tsx]
-    action: "Replace placeholder with userData.map rendering"
+    action: "Заменить заглушку на рендер userData.map"
 ```
 
-**Integration gap → Tasks:**
+**Пробел интеграции → Задачи:**
 ```yaml
 gap:
   from_phase: 1
   to_phase: 3
-  connection: "Auth token → API calls"
-  reason: "Dashboard API calls don't include auth header"
+  connection: "Auth-токен → API-вызовы"
+  reason: "API-вызовы дашборда не включают auth-заголовок"
   missing:
-    - "Auth header in fetch calls"
-    - "Token refresh on 401"
+    - "Auth-заголовок в fetch-вызовах"
+    - "Обновление токена при 401"
 
-becomes:
+становится:
 
-phase: "Add Auth to Dashboard API Calls"
+phase: "Добавление Auth в API-вызовы дашборда"
 tasks:
-  - name: "Add auth header to fetches"
+  - name: "Добавить auth-заголовок в fetch"
     files: [src/components/Dashboard.tsx, src/lib/api.ts]
-    action: "Include Authorization header with token in all API calls"
+    action: "Включить заголовок Authorization с токеном во все API-вызовы"
 
-  - name: "Handle 401 responses"
+  - name: "Обработать ответы 401"
     files: [src/lib/api.ts]
-    action: "Add interceptor to refresh token or redirect to login on 401"
+    action: "Добавить перехватчик для обновления токена или перенаправления на логин при 401"
 ```
 
-**Flow gap → Tasks:**
+**Пробел потока → Задачи:**
 ```yaml
 gap:
-  name: "User views dashboard after login"
-  broken_at: "Dashboard data load"
-  reason: "No fetch call"
+  name: "Пользователь просматривает дашборд после логина"
+  broken_at: "Загрузка данных дашборда"
+  reason: "Нет вызова fetch"
   missing:
-    - "Fetch user data on mount"
-    - "Display loading state"
-    - "Render user data"
+    - "Получить данные пользователя при монтировании"
+    - "Показать состояние загрузки"
+    - "Отрендерить данные пользователя"
 
-becomes:
+становится:
 
-# Usually same phase as requirement/integration gap
-# Flow gaps often overlap with other gap types
+# Обычно та же фаза, что и пробел требования/интеграции
+# Пробелы потоков часто пересекаются с другими типами пробелов
 ```
 
 </gap_to_phase_mapping>
 
 <success_criteria>
-- [ ] MILESTONE-AUDIT.md loaded and gaps parsed
-- [ ] Gaps prioritized (must/should/nice)
-- [ ] Gaps grouped into logical phases
-- [ ] User confirmed phase plan
-- [ ] ROADMAP.md updated with new phases
-- [ ] Phase directories created
-- [ ] Changes committed
-- [ ] User knows to run `/gsd:plan-phase` next
+- [ ] MILESTONE-AUDIT.md загружен и пробелы разобраны
+- [ ] Пробелы приоритизированы (must/should/nice)
+- [ ] Пробелы сгруппированы в логические фазы
+- [ ] Пользователь подтвердил план фаз
+- [ ] ROADMAP.md обновлён новыми фазами
+- [ ] Каталоги фаз созданы
+- [ ] Изменения закоммичены
+- [ ] Пользователь знает о необходимости запустить `/gsd:plan-phase` далее
 </success_criteria>

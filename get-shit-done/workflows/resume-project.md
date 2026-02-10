@@ -1,13 +1,13 @@
 <trigger>
-Use this workflow when:
-- Starting a new session on an existing project
-- User says "continue", "what's next", "where were we", "resume"
-- Any planning operation when .planning/ already exists
-- User returns after time away from project
+Используйте этот рабочий процесс когда:
+- Начинаете новую сессию для существующего проекта
+- Пользователь говорит "продолжить", "что дальше", "где мы остановились", "возобновить"
+- Любая операция планирования когда .planning/ уже существует
+- Пользователь возвращается после перерыва в работе над проектом
 </trigger>
 
 <purpose>
-Instantly restore full project context so "Where were we?" has an immediate, complete answer.
+Мгновенно восстановить полный контекст проекта, чтобы на "Где мы остановились?" был немедленный, полный ответ.
 </purpose>
 
 <required_reading>
@@ -17,290 +17,290 @@ Instantly restore full project context so "Where were we?" has an immediate, com
 <process>
 
 <step name="initialize">
-Load all context in one call:
+Загрузите весь контекст одним вызовом:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init resume)
 ```
 
-Parse JSON for: `state_exists`, `roadmap_exists`, `project_exists`, `planning_exists`, `has_interrupted_agent`, `interrupted_agent_id`, `commit_docs`.
+Разберите JSON для: `state_exists`, `roadmap_exists`, `project_exists`, `planning_exists`, `has_interrupted_agent`, `interrupted_agent_id`, `commit_docs`.
 
-**If `state_exists` is true:** Proceed to load_state
-**If `state_exists` is false but `roadmap_exists` or `project_exists` is true:** Offer to reconstruct STATE.md
-**If `planning_exists` is false:** This is a new project - route to /gsd:new-project
+**Если `state_exists` равно true:** Перейти к load_state
+**Если `state_exists` равно false, но `roadmap_exists` или `project_exists` равно true:** Предложить реконструкцию STATE.md
+**Если `planning_exists` равно false:** Это новый проект — направить к /gsd:new-project
 </step>
 
 <step name="load_state">
 
-Read and parse STATE.md, then PROJECT.md:
+Прочитайте и разберите STATE.md, затем PROJECT.md:
 
 ```bash
 cat .planning/STATE.md
 cat .planning/PROJECT.md
 ```
 
-**From STATE.md extract:**
+**Из STATE.md извлеките:**
 
-- **Project Reference**: Core value and current focus
-- **Current Position**: Phase X of Y, Plan A of B, Status
-- **Progress**: Visual progress bar
-- **Recent Decisions**: Key decisions affecting current work
-- **Pending Todos**: Ideas captured during sessions
-- **Blockers/Concerns**: Issues carried forward
-- **Session Continuity**: Where we left off, any resume files
+- **Ссылка на проект**: Ключевая ценность и текущий фокус
+- **Текущая позиция**: Фаза X из Y, План A из B, Статус
+- **Прогресс**: Визуальный прогресс-бар
+- **Недавние решения**: Ключевые решения, влияющие на текущую работу
+- **Ожидающие задачи**: Идеи, захваченные во время сессий
+- **Блокеры/Проблемы**: Проблемы, перенесённые вперёд
+- **Непрерывность сессии**: Где мы остановились, файлы возобновления
 
-**From PROJECT.md extract:**
+**Из PROJECT.md извлеките:**
 
-- **What This Is**: Current accurate description
-- **Requirements**: Validated, Active, Out of Scope
-- **Key Decisions**: Full decision log with outcomes
-- **Constraints**: Hard limits on implementation
+- **Что это**: Текущее точное описание
+- **Требования**: Валидированные, Активные, Вне области
+- **Ключевые решения**: Полный журнал решений с результатами
+- **Ограничения**: Жёсткие пределы реализации
 
 </step>
 
 <step name="check_incomplete_work">
-Look for incomplete work that needs attention:
+Ищите незавершённую работу, требующую внимания:
 
 ```bash
-# Check for continue-here files (mid-plan resumption)
+# Проверка файлов continue-here (возобновление в середине плана)
 ls .planning/phases/*/.continue-here*.md 2>/dev/null
 
-# Check for plans without summaries (incomplete execution)
+# Проверка планов без отчётов (незавершённое выполнение)
 for plan in .planning/phases/*/*-PLAN.md; do
   summary="${plan/PLAN/SUMMARY}"
-  [ ! -f "$summary" ] && echo "Incomplete: $plan"
+  [ ! -f "$summary" ] && echo "Незавершено: $plan"
 done 2>/dev/null
 
-# Check for interrupted agents (use has_interrupted_agent and interrupted_agent_id from init)
+# Проверка прерванных агентов (используя has_interrupted_agent и interrupted_agent_id из init)
 if [ "$has_interrupted_agent" = "true" ]; then
-  echo "Interrupted agent: $interrupted_agent_id"
+  echo "Прерванный агент: $interrupted_agent_id"
 fi
 ```
 
-**If .continue-here file exists:**
+**Если файл .continue-here существует:**
 
-- This is a mid-plan resumption point
-- Read the file for specific resumption context
-- Flag: "Found mid-plan checkpoint"
+- Это точка возобновления в середине плана
+- Прочитайте файл для конкретного контекста возобновления
+- Пометьте: "Найдена контрольная точка в середине плана"
 
-**If PLAN without SUMMARY exists:**
+**Если PLAN без SUMMARY существует:**
 
-- Execution was started but not completed
-- Flag: "Found incomplete plan execution"
+- Выполнение было начато, но не завершено
+- Пометьте: "Найдено незавершённое выполнение плана"
 
-**If interrupted agent found:**
+**Если найден прерванный агент:**
 
-- Subagent was spawned but session ended before completion
-- Read agent-history.json for task details
-- Flag: "Found interrupted agent"
+- Субагент был запущен, но сессия завершилась до окончания
+- Прочитайте agent-history.json для деталей задачи
+- Пометьте: "Найден прерванный агент"
   </step>
 
 <step name="present_status">
-Present complete project status to user:
+Представьте пользователю полный статус проекта:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  PROJECT STATUS                                               ║
+║  СТАТУС ПРОЕКТА                                              ║
 ╠══════════════════════════════════════════════════════════════╣
-║  Building: [one-liner from PROJECT.md "What This Is"]         ║
+║  Строим: [одна строка из PROJECT.md "Что это"]               ║
 ║                                                               ║
-║  Phase: [X] of [Y] - [Phase name]                            ║
-║  Plan:  [A] of [B] - [Status]                                ║
-║  Progress: [██████░░░░] XX%                                  ║
+║  Фаза: [X] из [Y] - [Название фазы]                         ║
+║  План:  [A] из [B] - [Статус]                                ║
+║  Прогресс: [██████░░░░] XX%                                  ║
 ║                                                               ║
-║  Last activity: [date] - [what happened]                     ║
+║  Последняя активность: [дата] - [что произошло]              ║
 ╚══════════════════════════════════════════════════════════════╝
 
-[If incomplete work found:]
-⚠️  Incomplete work detected:
-    - [.continue-here file or incomplete plan]
+[Если найдена незавершённая работа:]
+⚠️  Обнаружена незавершённая работа:
+    - [файл .continue-here или незавершённый план]
 
-[If interrupted agent found:]
-⚠️  Interrupted agent detected:
-    Agent ID: [id]
-    Task: [task description from agent-history.json]
-    Interrupted: [timestamp]
+[Если найден прерванный агент:]
+⚠️  Обнаружен прерванный агент:
+    ID агента: [id]
+    Задача: [описание задачи из agent-history.json]
+    Прервано: [метка времени]
 
-    Resume with: Task tool (resume parameter with agent ID)
+    Возобновить с: Task tool (параметр resume с ID агента)
 
-[If pending todos exist:]
-📋 [N] pending todos — /gsd:check-todos to review
+[Если есть ожидающие задачи:]
+📋 [N] ожидающих задач — /gsd:check-todos для просмотра
 
-[If blockers exist:]
-⚠️  Carried concerns:
-    - [blocker 1]
-    - [blocker 2]
+[Если есть блокеры:]
+⚠️  Перенесённые проблемы:
+    - [блокер 1]
+    - [блокер 2]
 
-[If alignment is not ✓:]
-⚠️  Brief alignment: [status] - [assessment]
+[Если выравнивание не ✓:]
+⚠️  Краткое выравнивание: [статус] - [оценка]
 ```
 
 </step>
 
 <step name="determine_next_action">
-Based on project state, determine the most logical next action:
+На основе состояния проекта определите наиболее логичное следующее действие:
 
-**If interrupted agent exists:**
-→ Primary: Resume interrupted agent (Task tool with resume parameter)
-→ Option: Start fresh (abandon agent work)
+**Если существует прерванный агент:**
+→ Основное: Возобновить прерванного агента (Task tool с параметром resume)
+→ Опция: Начать заново (отказаться от работы агента)
 
-**If .continue-here file exists:**
-→ Primary: Resume from checkpoint
-→ Option: Start fresh on current plan
+**Если файл .continue-here существует:**
+→ Основное: Возобновить с контрольной точки
+→ Опция: Начать заново текущий план
 
-**If incomplete plan (PLAN without SUMMARY):**
-→ Primary: Complete the incomplete plan
-→ Option: Abandon and move on
+**Если незавершённый план (PLAN без SUMMARY):**
+→ Основное: Завершить незавершённый план
+→ Опция: Отказаться и двигаться дальше
 
-**If phase in progress, all plans complete:**
-→ Primary: Transition to next phase
-→ Option: Review completed work
+**Если фаза в процессе, все планы завершены:**
+→ Основное: Перейти к следующей фазе
+→ Опция: Просмотреть завершённую работу
 
-**If phase ready to plan:**
-→ Check if CONTEXT.md exists for this phase:
+**Если фаза готова к планированию:**
+→ Проверьте, существует ли CONTEXT.md для этой фазы:
 
-- If CONTEXT.md missing:
-  → Primary: Discuss phase vision (how user imagines it working)
-  → Secondary: Plan directly (skip context gathering)
-- If CONTEXT.md exists:
-  → Primary: Plan the phase
-  → Option: Review roadmap
+- Если CONTEXT.md отсутствует:
+  → Основное: Обсудить видение фазы (как пользователь представляет её работу)
+  → Вторичное: Планировать напрямую (пропустить сбор контекста)
+- Если CONTEXT.md существует:
+  → Основное: Спланировать фазу
+  → Опция: Просмотреть дорожную карту
 
-**If phase ready to execute:**
-→ Primary: Execute next plan
-→ Option: Review the plan first
+**Если фаза готова к выполнению:**
+→ Основное: Выполнить следующий план
+→ Опция: Сначала просмотреть план
 </step>
 
 <step name="offer_options">
-Present contextual options based on project state:
+Представьте контекстные опции на основе состояния проекта:
 
 ```
-What would you like to do?
+Что вы хотите сделать?
 
-[Primary action based on state - e.g.:]
-1. Resume interrupted agent [if interrupted agent found]
-   OR
-1. Execute phase (/gsd:execute-phase {phase})
-   OR
-1. Discuss Phase 3 context (/gsd:discuss-phase 3) [if CONTEXT.md missing]
-   OR
-1. Plan Phase 3 (/gsd:plan-phase 3) [if CONTEXT.md exists or discuss option declined]
+[Основное действие на основе состояния - например:]
+1. Возобновить прерванного агента [если найден прерванный агент]
+   ИЛИ
+1. Выполнить фазу (/gsd:execute-phase {phase})
+   ИЛИ
+1. Обсудить контекст Фазы 3 (/gsd:discuss-phase 3) [если CONTEXT.md отсутствует]
+   ИЛИ
+1. Спланировать Фазу 3 (/gsd:plan-phase 3) [если CONTEXT.md существует или обсуждение отклонено]
 
-[Secondary options:]
-2. Review current phase status
-3. Check pending todos ([N] pending)
-4. Review brief alignment
-5. Something else
+[Вторичные опции:]
+2. Просмотреть статус текущей фазы
+3. Проверить ожидающие задачи ([N] ожидающих)
+4. Просмотреть краткое выравнивание
+5. Другое
 ```
 
-**Note:** When offering phase planning, check for CONTEXT.md existence first:
+**Примечание:** При предложении планирования фазы сначала проверьте существование CONTEXT.md:
 
 ```bash
 ls .planning/phases/XX-name/*-CONTEXT.md 2>/dev/null
 ```
 
-If missing, suggest discuss-phase before plan. If exists, offer plan directly.
+Если отсутствует, предложите discuss-phase перед plan. Если существует, предложите plan напрямую.
 
-Wait for user selection.
+Ожидайте выбора пользователя.
 </step>
 
 <step name="route_to_workflow">
-Based on user selection, route to appropriate workflow:
+На основе выбора пользователя направьте к соответствующему рабочему процессу:
 
-- **Execute plan** → Show command for user to run after clearing:
+- **Выполнить план** → Покажите команду для запуска после очистки:
   ```
   ---
 
-  ## ▶ Next Up
+  ## ▶ Далее
 
-  **{phase}-{plan}: [Plan Name]** — [objective from PLAN.md]
+  **{phase}-{plan}: [Название плана]** — [цель из PLAN.md]
 
   `/gsd:execute-phase {phase}`
 
-  <sub>`/clear` first → fresh context window</sub>
+  <sub>`/clear` сначала → чистое контекстное окно</sub>
 
   ---
   ```
-- **Plan phase** → Show command for user to run after clearing:
+- **Спланировать фазу** → Покажите команду для запуска после очистки:
   ```
   ---
 
-  ## ▶ Next Up
+  ## ▶ Далее
 
-  **Phase [N]: [Name]** — [Goal from ROADMAP.md]
+  **Фаза [N]: [Название]** — [Цель из ROADMAP.md]
 
-  `/gsd:plan-phase [phase-number]`
+  `/gsd:plan-phase [номер-фазы]`
 
-  <sub>`/clear` first → fresh context window</sub>
+  <sub>`/clear` сначала → чистое контекстное окно</sub>
 
   ---
 
-  **Also available:**
-  - `/gsd:discuss-phase [N]` — gather context first
-  - `/gsd:research-phase [N]` — investigate unknowns
+  **Также доступно:**
+  - `/gsd:discuss-phase [N]` — сначала собрать контекст
+  - `/gsd:research-phase [N]` — исследовать неизвестное
 
   ---
   ```
-- **Transition** → ./transition.md
-- **Check todos** → Read .planning/todos/pending/, present summary
-- **Review alignment** → Read PROJECT.md, compare to current state
-- **Something else** → Ask what they need
+- **Переход** → ./transition.md
+- **Проверить задачи** → Прочитать .planning/todos/pending/, представить сводку
+- **Просмотреть выравнивание** → Прочитать PROJECT.md, сравнить с текущим состоянием
+- **Другое** → Спросить, что нужно
 </step>
 
 <step name="update_session">
-Before proceeding to routed workflow, update session continuity:
+Перед переходом к направленному рабочему процессу обновите непрерывность сессии:
 
-Update STATE.md:
+Обновите STATE.md:
 
 ```markdown
 ## Session Continuity
 
-Last session: [now]
-Stopped at: Session resumed, proceeding to [action]
-Resume file: [updated if applicable]
+Last session: [сейчас]
+Stopped at: Сессия возобновлена, переход к [действие]
+Resume file: [обновлено если применимо]
 ```
 
-This ensures if session ends unexpectedly, next resume knows the state.
+Это гарантирует, что если сессия завершится неожиданно, следующее возобновление знает состояние.
 </step>
 
 </process>
 
 <reconstruction>
-If STATE.md is missing but other artifacts exist:
+Если STATE.md отсутствует, но другие артефакты существуют:
 
-"STATE.md missing. Reconstructing from artifacts..."
+"STATE.md отсутствует. Реконструкция из артефактов..."
 
-1. Read PROJECT.md → Extract "What This Is" and Core Value
-2. Read ROADMAP.md → Determine phases, find current position
-3. Scan \*-SUMMARY.md files → Extract decisions, concerns
-4. Count pending todos in .planning/todos/pending/
-5. Check for .continue-here files → Session continuity
+1. Прочитайте PROJECT.md → Извлеките "Что это" и Ключевую ценность
+2. Прочитайте ROADMAP.md → Определите фазы, найдите текущую позицию
+3. Просканируйте файлы \*-SUMMARY.md → Извлеките решения, проблемы
+4. Подсчитайте ожидающие задачи в .planning/todos/pending/
+5. Проверьте файлы .continue-here → Непрерывность сессии
 
-Reconstruct and write STATE.md, then proceed normally.
+Реконструируйте и запишите STATE.md, затем продолжайте нормально.
 
-This handles cases where:
+Это обрабатывает случаи когда:
 
-- Project predates STATE.md introduction
-- File was accidentally deleted
-- Cloning repo without full .planning/ state
+- Проект предшествует введению STATE.md
+- Файл был случайно удалён
+- Клонирование репозитория без полного состояния .planning/
   </reconstruction>
 
 <quick_resume>
-If user says "continue" or "go":
-- Load state silently
-- Determine primary action
-- Execute immediately without presenting options
+Если пользователь говорит "продолжить" или "поехали":
+- Загрузите состояние молча
+- Определите основное действие
+- Выполните немедленно без представления опций
 
-"Continuing from [state]... [action]"
+"Продолжаем с [состояние]... [действие]"
 </quick_resume>
 
 <success_criteria>
-Resume is complete when:
+Возобновление завершено когда:
 
-- [ ] STATE.md loaded (or reconstructed)
-- [ ] Incomplete work detected and flagged
-- [ ] Clear status presented to user
-- [ ] Contextual next actions offered
-- [ ] User knows exactly where project stands
-- [ ] Session continuity updated
+- [ ] STATE.md загружен (или реконструирован)
+- [ ] Незавершённая работа обнаружена и помечена
+- [ ] Ясный статус представлен пользователю
+- [ ] Контекстные следующие действия предложены
+- [ ] Пользователь точно знает где проект находится
+- [ ] Непрерывность сессии обновлена
       </success_criteria>

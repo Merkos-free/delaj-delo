@@ -1,17 +1,17 @@
 <purpose>
-Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds gaps into /gsd:plan-phase --gaps.
+Валидация построенных функций через диалоговое тестирование с постоянным состоянием. Создаёт UAT.md, который отслеживает прогресс тестирования, сохраняется после /clear и передаёт пробелы в /gsd:plan-phase --gaps.
 
-User tests, Claude records. One test at a time. Plain text responses.
+Пользователь тестирует, Claude записывает. Один тест за раз. Ответы простым текстом.
 </purpose>
 
 <philosophy>
-**Show expected, ask if reality matches.**
+**Показать ожидаемое, спросить соответствует ли реальность.**
 
-Claude presents what SHOULD happen. User confirms or describes what's different.
-- "yes" / "y" / "next" / empty → pass
-- Anything else → logged as issue, severity inferred
+Claude представляет что ДОЛЖНО произойти. Пользователь подтверждает или описывает отличия.
+- "да" / "y" / "далее" / пусто → пройдено
+- Что угодно другое → записывается как проблема, серьёзность определяется автоматически
 
-No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. Does it?"
+Никаких кнопок Пройдено/Провалено. Никаких вопросов о серьёзности. Просто: "Вот что должно произойти. Так и есть?"
 </philosophy>
 
 <template>
@@ -21,132 +21,132 @@ No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. D
 <process>
 
 <step name="initialize" priority="first">
-If $ARGUMENTS contains a phase number, load context:
+Если $ARGUMENTS содержит номер фазы, загрузите контекст:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init verify-work "${PHASE_ARG}")
 ```
 
-Parse JSON for: `planner_model`, `checker_model`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `has_verification`.
+Разберите JSON для: `planner_model`, `checker_model`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `has_verification`.
 </step>
 
 <step name="check_active_session">
-**First: Check for active UAT sessions**
+**Сначала: Проверка активных UAT-сессий**
 
 ```bash
 find .planning/phases -name "*-UAT.md" -type f 2>/dev/null | head -5
 ```
 
-**If active sessions exist AND no $ARGUMENTS provided:**
+**Если активные сессии существуют И $ARGUMENTS не указаны:**
 
-Read each file's frontmatter (status, phase) and Current Test section.
+Прочитайте frontmatter каждого файла (status, phase) и секцию Current Test.
 
-Display inline:
-
-```
-## Active UAT Sessions
-
-| # | Phase | Status | Current Test | Progress |
-|---|-------|--------|--------------|----------|
-| 1 | 04-comments | testing | 3. Reply to Comment | 2/6 |
-| 2 | 05-auth | testing | 1. Login Form | 0/4 |
-
-Reply with a number to resume, or provide a phase number to start new.
-```
-
-Wait for user response.
-
-- If user replies with number (1, 2) → Load that file, go to `resume_from_file`
-- If user replies with phase number → Treat as new session, go to `create_uat_file`
-
-**If active sessions exist AND $ARGUMENTS provided:**
-
-Check if session exists for that phase. If yes, offer to resume or restart.
-If no, continue to `create_uat_file`.
-
-**If no active sessions AND no $ARGUMENTS:**
+Отобразите встроенно:
 
 ```
-No active UAT sessions.
+## Активные UAT-сессии
 
-Provide a phase number to start testing (e.g., /gsd:verify-work 4)
+| # | Фаза | Статус | Текущий тест | Прогресс |
+|---|------|--------|-------------|----------|
+| 1 | 04-comments | тестирование | 3. Ответ на комментарий | 2/6 |
+| 2 | 05-auth | тестирование | 1. Форма входа | 0/4 |
+
+Ответьте номером для возобновления или укажите номер фазы для начала нового.
 ```
 
-**If no active sessions AND $ARGUMENTS provided:**
+Ожидайте ответа пользователя.
 
-Continue to `create_uat_file`.
+- Если пользователь отвечает номером (1, 2) → Загрузить этот файл, перейти к `resume_from_file`
+- Если пользователь отвечает номером фазы → Обработать как новую сессию, перейти к `create_uat_file`
+
+**Если активные сессии существуют И $ARGUMENTS указаны:**
+
+Проверьте, существует ли сессия для этой фазы. Если да, предложите возобновить или начать заново.
+Если нет, продолжите к `create_uat_file`.
+
+**Если нет активных сессий И $ARGUMENTS не указаны:**
+
+```
+Нет активных UAT-сессий.
+
+Укажите номер фазы для начала тестирования (например, /gsd:verify-work 4)
+```
+
+**Если нет активных сессий И $ARGUMENTS указаны:**
+
+Продолжите к `create_uat_file`.
 </step>
 
 <step name="find_summaries">
-**Find what to test:**
+**Найти что тестировать:**
 
-Use `phase_dir` from init (or run init if not already done).
+Используйте `phase_dir` из init (или запустите init, если ещё не сделано).
 
 ```bash
 ls "$phase_dir"/*-SUMMARY.md 2>/dev/null
 ```
 
-Read each SUMMARY.md to extract testable deliverables.
+Прочитайте каждый SUMMARY.md для извлечения тестируемых результатов.
 </step>
 
 <step name="extract_tests">
-**Extract testable deliverables from SUMMARY.md:**
+**Извлечение тестируемых результатов из SUMMARY.md:**
 
-Parse for:
-1. **Accomplishments** - Features/functionality added
-2. **User-facing changes** - UI, workflows, interactions
+Разберите для:
+1. **Достижения** — Добавленные функции/функциональность
+2. **Изменения, видимые пользователю** — UI, рабочие процессы, взаимодействия
 
-Focus on USER-OBSERVABLE outcomes, not implementation details.
+Фокус на НАБЛЮДАЕМЫХ ПОЛЬЗОВАТЕЛЕМ результатах, не на деталях реализации.
 
-For each deliverable, create a test:
-- name: Brief test name
-- expected: What the user should see/experience (specific, observable)
+Для каждого результата создайте тест:
+- name: Краткое название теста
+- expected: Что пользователь должен увидеть/испытать (конкретно, наблюдаемо)
 
-Examples:
-- Accomplishment: "Added comment threading with infinite nesting"
-  → Test: "Reply to a Comment"
-  → Expected: "Clicking Reply opens inline composer below comment. Submitting shows reply nested under parent with visual indentation."
+Примеры:
+- Достижение: "Добавлена система вложенных комментариев с бесконечной вложенностью"
+  → Тест: "Ответ на комментарий"
+  → Ожидаемое: "Нажатие Ответить открывает встроенный редактор под комментарием. Отправка показывает ответ вложенным под родительским с визуальным отступом."
 
-Skip internal/non-observable items (refactors, type changes, etc.).
+Пропускайте внутренние/ненаблюдаемые элементы (рефакторинги, изменения типов и т.д.).
 </step>
 
 <step name="create_uat_file">
-**Create UAT file with all tests:**
+**Создание UAT-файла со всеми тестами:**
 
 ```bash
 mkdir -p "$PHASE_DIR"
 ```
 
-Build test list from extracted deliverables.
+Постройте список тестов из извлечённых результатов.
 
-Create file:
+Создайте файл:
 
 ```markdown
 ---
 status: testing
 phase: XX-name
-source: [list of SUMMARY.md files]
-started: [ISO timestamp]
-updated: [ISO timestamp]
+source: [список файлов SUMMARY.md]
+started: [ISO метка времени]
+updated: [ISO метка времени]
 ---
 
 ## Current Test
-<!-- OVERWRITE each test - shows where we are -->
+<!-- ПЕРЕЗАПИСЫВАТЬ каждый тест — показывает где мы находимся -->
 
 number: 1
-name: [first test name]
+name: [название первого теста]
 expected: |
-  [what user should observe]
-awaiting: user response
+  [что пользователь должен наблюдать]
+awaiting: ответ пользователя
 
 ## Tests
 
-### 1. [Test Name]
-expected: [observable behavior]
+### 1. [Название теста]
+expected: [наблюдаемое поведение]
 result: [pending]
 
-### 2. [Test Name]
-expected: [observable behavior]
+### 2. [Название теста]
+expected: [наблюдаемое поведение]
 result: [pending]
 
 ...
@@ -161,201 +161,201 @@ skipped: 0
 
 ## Gaps
 
-[none yet]
+[пока нет]
 ```
 
-Write to `.planning/phases/XX-name/{phase}-UAT.md`
+Запишите в `.planning/phases/XX-name/{phase}-UAT.md`
 
-Proceed to `present_test`.
+Перейдите к `present_test`.
 </step>
 
 <step name="present_test">
-**Present current test to user:**
+**Представление текущего теста пользователю:**
 
-Read Current Test section from UAT file.
+Прочитайте секцию Current Test из UAT-файла.
 
-Display using checkpoint box format:
+Отобразите в формате контрольной точки:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  CHECKPOINT: Verification Required                           ║
+║  КОНТРОЛЬНАЯ ТОЧКА: Требуется верификация                     ║
 ╚══════════════════════════════════════════════════════════════╝
 
-**Test {number}: {name}**
+**Тест {number}: {name}**
 
 {expected}
 
 ──────────────────────────────────────────────────────────────
-→ Type "pass" or describe what's wrong
+→ Напишите "пройдено" или опишите что не так
 ──────────────────────────────────────────────────────────────
 ```
 
-Wait for user response (plain text, no AskUserQuestion).
+Ожидайте ответа пользователя (простой текст, без AskUserQuestion).
 </step>
 
 <step name="process_response">
-**Process user response and update file:**
+**Обработка ответа пользователя и обновление файла:**
 
-**If response indicates pass:**
-- Empty response, "yes", "y", "ok", "pass", "next", "approved", "✓"
+**Если ответ указывает на успех:**
+- Пустой ответ, "да", "y", "ок", "пройдено", "pass", "далее", "next", "одобрено", "✓"
 
-Update Tests section:
+Обновите секцию Tests:
 ```
 ### {N}. {name}
 expected: {expected}
 result: pass
 ```
 
-**If response indicates skip:**
-- "skip", "can't test", "n/a"
+**Если ответ указывает на пропуск:**
+- "пропустить", "skip", "не могу протестировать", "n/a"
 
-Update Tests section:
+Обновите секцию Tests:
 ```
 ### {N}. {name}
 expected: {expected}
 result: skipped
-reason: [user's reason if provided]
+reason: [причина пользователя если указана]
 ```
 
-**If response is anything else:**
-- Treat as issue description
+**Если ответ — что угодно другое:**
+- Обработать как описание проблемы
 
-Infer severity from description:
-- Contains: crash, error, exception, fails, broken, unusable → blocker
-- Contains: doesn't work, wrong, missing, can't → major
-- Contains: slow, weird, off, minor, small → minor
-- Contains: color, font, spacing, alignment, visual → cosmetic
-- Default if unclear: major
+Определите серьёзность из описания:
+- Содержит: crash, error, exception, fails, broken, unusable, крашится, ошибка, падает → blocker
+- Содержит: doesn't work, wrong, missing, can't, не работает, неправильно, отсутствует → major
+- Содержит: slow, weird, off, minor, small, медленно, странно → minor
+- Содержит: color, font, spacing, alignment, visual, цвет, шрифт, отступ → cosmetic
+- По умолчанию если неясно: major
 
-Update Tests section:
+Обновите секцию Tests:
 ```
 ### {N}. {name}
 expected: {expected}
 result: issue
-reported: "{verbatim user response}"
-severity: {inferred}
+reported: "{дословный ответ пользователя}"
+severity: {определённая}
 ```
 
-Append to Gaps section (structured YAML for plan-phase --gaps):
+Добавьте в секцию Gaps (структурированный YAML для plan-phase --gaps):
 ```yaml
-- truth: "{expected behavior from test}"
+- truth: "{ожидаемое поведение из теста}"
   status: failed
-  reason: "User reported: {verbatim user response}"
-  severity: {inferred}
+  reason: "Пользователь сообщил: {дословный ответ пользователя}"
+  severity: {определённая}
   test: {N}
-  artifacts: []  # Filled by diagnosis
-  missing: []    # Filled by diagnosis
+  artifacts: []  # Заполняется при диагностике
+  missing: []    # Заполняется при диагностике
 ```
 
-**After any response:**
+**После любого ответа:**
 
-Update Summary counts.
-Update frontmatter.updated timestamp.
+Обновите счётчики Summary.
+Обновите метку времени frontmatter.updated.
 
-If more tests remain → Update Current Test, go to `present_test`
-If no more tests → Go to `complete_session`
+Если остались тесты → Обновите Current Test, перейдите к `present_test`
+Если больше тестов нет → Перейдите к `complete_session`
 </step>
 
 <step name="resume_from_file">
-**Resume testing from UAT file:**
+**Возобновление тестирования из UAT-файла:**
 
-Read the full UAT file.
+Прочитайте полный UAT-файл.
 
-Find first test with `result: [pending]`.
+Найдите первый тест с `result: [pending]`.
 
-Announce:
+Объявите:
 ```
-Resuming: Phase {phase} UAT
-Progress: {passed + issues + skipped}/{total}
-Issues found so far: {issues count}
+Возобновление: UAT Фазы {phase}
+Прогресс: {passed + issues + skipped}/{total}
+Проблем найдено: {количество issues}
 
-Continuing from Test {N}...
+Продолжаем с Теста {N}...
 ```
 
-Update Current Test section with the pending test.
-Proceed to `present_test`.
+Обновите секцию Current Test ожидающим тестом.
+Перейдите к `present_test`.
 </step>
 
 <step name="complete_session">
-**Complete testing and commit:**
+**Завершение тестирования и коммит:**
 
-Update frontmatter:
+Обновите frontmatter:
 - status: complete
-- updated: [now]
+- updated: [сейчас]
 
-Clear Current Test section:
+Очистите секцию Current Test:
 ```
 ## Current Test
 
-[testing complete]
+[тестирование завершено]
 ```
 
-Commit the UAT file:
+Закоммитьте UAT-файл:
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "test({phase}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase}-UAT.md"
 ```
 
-Present summary:
+Представьте сводку:
 ```
-## UAT Complete: Phase {phase}
+## UAT завершён: Фаза {phase}
 
-| Result | Count |
-|--------|-------|
-| Passed | {N}   |
-| Issues | {N}   |
-| Skipped| {N}   |
+| Результат | Количество |
+|-----------|------------|
+| Пройдено  | {N}        |
+| Проблем   | {N}        |
+| Пропущено | {N}        |
 
-[If issues > 0:]
-### Issues Found
+[Если issues > 0:]
+### Найденные проблемы
 
-[List from Issues section]
+[Список из секции Issues]
 ```
 
-**If issues > 0:** Proceed to `diagnose_issues`
+**Если issues > 0:** Перейдите к `diagnose_issues`
 
-**If issues == 0:**
+**Если issues == 0:**
 ```
-All tests passed. Ready to continue.
+Все тесты пройдены. Готово к продолжению.
 
-- `/gsd:plan-phase {next}` — Plan next phase
-- `/gsd:execute-phase {next}` — Execute next phase
+- `/gsd:plan-phase {next}` — Спланировать следующую фазу
+- `/gsd:execute-phase {next}` — Выполнить следующую фазу
 ```
 </step>
 
 <step name="diagnose_issues">
-**Diagnose root causes before planning fixes:**
+**Диагностика корневых причин перед планированием исправлений:**
 
 ```
 ---
 
-{N} issues found. Diagnosing root causes...
+{N} проблем найдено. Диагностика корневых причин...
 
-Spawning parallel debug agents to investigate each issue.
+Запуск параллельных агентов отладки для исследования каждой проблемы.
 ```
 
-- Load diagnose-issues workflow
-- Follow @~/.claude/get-shit-done/workflows/diagnose-issues.md
-- Spawn parallel debug agents for each issue
-- Collect root causes
-- Update UAT.md with root causes
-- Proceed to `plan_gap_closure`
+- Загрузите рабочий процесс diagnose-issues
+- Следуйте @~/.claude/get-shit-done/workflows/diagnose-issues.md
+- Запустите параллельных агентов отладки для каждой проблемы
+- Соберите корневые причины
+- Обновите UAT.md корневыми причинами
+- Перейдите к `plan_gap_closure`
 
-Diagnosis runs automatically - no user prompt. Parallel agents investigate simultaneously, so overhead is minimal and fixes are more accurate.
+Диагностика запускается автоматически — без запроса пользователя. Параллельные агенты исследуют одновременно, поэтому накладные расходы минимальны, а исправления более точны.
 </step>
 
 <step name="plan_gap_closure">
-**Auto-plan fixes from diagnosed gaps:**
+**Автопланирование исправлений из диагностированных пробелов:**
 
-Display:
+Отобразите:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► PLANNING FIXES
+ GSD ► ПЛАНИРОВАНИЕ ИСПРАВЛЕНИЙ
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning planner for gap closure...
+◆ Запуск планировщика для закрытия пробелов...
 ```
 
-Spawn gsd-planner in --gaps mode:
+Запустите gsd-planner в режиме --gaps:
 
 ```
 Task(
@@ -365,48 +365,48 @@ Task(
 **Phase:** {phase_number}
 **Mode:** gap_closure
 
-**UAT with diagnoses:**
+**UAT с диагнозами:**
 @.planning/phases/{phase_dir}/{phase}-UAT.md
 
-**Project State:**
+**Состояние проекта:**
 @.planning/STATE.md
 
-**Roadmap:**
+**Дорожная карта:**
 @.planning/ROADMAP.md
 
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase
-Plans must be executable prompts.
+Результат используется /gsd:execute-phase
+Планы должны быть исполняемыми промптами.
 </downstream_consumer>
 """,
   subagent_type="gsd-planner",
   model="{planner_model}",
-  description="Plan gap fixes for Phase {phase}"
+  description="Планирование исправлений пробелов для Фазы {phase}"
 )
 ```
 
-On return:
-- **PLANNING COMPLETE:** Proceed to `verify_gap_plans`
-- **PLANNING INCONCLUSIVE:** Report and offer manual intervention
+По возвращении:
+- **PLANNING COMPLETE:** Перейти к `verify_gap_plans`
+- **PLANNING INCONCLUSIVE:** Сообщить и предложить ручное вмешательство
 </step>
 
 <step name="verify_gap_plans">
-**Verify fix plans with checker:**
+**Верификация планов исправления с проверщиком:**
 
-Display:
+Отобразите:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► VERIFYING FIX PLANS
+ GSD ► ВЕРИФИКАЦИЯ ПЛАНОВ ИСПРАВЛЕНИЯ
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning plan checker...
+◆ Запуск проверщика планов...
 ```
 
-Initialize: `iteration_count = 1`
+Инициализация: `iteration_count = 1`
 
-Spawn gsd-plan-checker:
+Запуск gsd-plan-checker:
 
 ```
 Task(
@@ -414,38 +414,38 @@ Task(
 <verification_context>
 
 **Phase:** {phase_number}
-**Phase Goal:** Close diagnosed gaps from UAT
+**Phase Goal:** Закрыть диагностированные пробелы из UAT
 
-**Plans to verify:**
+**Планы для верификации:**
 @.planning/phases/{phase_dir}/*-PLAN.md
 
 </verification_context>
 
 <expected_output>
-Return one of:
-- ## VERIFICATION PASSED — all checks pass
-- ## ISSUES FOUND — structured issue list
+Верните одно из:
+- ## VERIFICATION PASSED — все проверки пройдены
+- ## ISSUES FOUND — структурированный список проблем
 </expected_output>
 """,
   subagent_type="gsd-plan-checker",
   model="{checker_model}",
-  description="Verify Phase {phase} fix plans"
+  description="Верификация планов исправления Фазы {phase}"
 )
 ```
 
-On return:
-- **VERIFICATION PASSED:** Proceed to `present_ready`
-- **ISSUES FOUND:** Proceed to `revision_loop`
+По возвращении:
+- **VERIFICATION PASSED:** Перейти к `present_ready`
+- **ISSUES FOUND:** Перейти к `revision_loop`
 </step>
 
 <step name="revision_loop">
-**Iterate planner ↔ checker until plans pass (max 3):**
+**Итерация планировщик ↔ проверщик до прохождения планов (макс. 3):**
 
-**If iteration_count < 3:**
+**Если iteration_count < 3:**
 
-Display: `Sending back to planner for revision... (iteration {N}/3)`
+Отобразите: `Отправка обратно планировщику для ревизии... (итерация {N}/3)`
 
-Spawn gsd-planner with revision context:
+Запуск gsd-planner с контекстом ревизии:
 
 ```
 Task(
@@ -455,64 +455,64 @@ Task(
 **Phase:** {phase_number}
 **Mode:** revision
 
-**Existing plans:**
+**Существующие планы:**
 @.planning/phases/{phase_dir}/*-PLAN.md
 
-**Checker issues:**
+**Проблемы проверщика:**
 {structured_issues_from_checker}
 
 </revision_context>
 
 <instructions>
-Read existing PLAN.md files. Make targeted updates to address checker issues.
-Do NOT replan from scratch unless issues are fundamental.
+Прочитайте существующие файлы PLAN.md. Внесите целевые обновления для устранения проблем проверщика.
+НЕ перепланируйте с нуля, если проблемы не фундаментальны.
 </instructions>
 """,
   subagent_type="gsd-planner",
   model="{planner_model}",
-  description="Revise Phase {phase} plans"
+  description="Ревизия планов Фазы {phase}"
 )
 ```
 
-After planner returns → spawn checker again (verify_gap_plans logic)
-Increment iteration_count
+После возврата планировщика → запуск проверщика снова (логика verify_gap_plans)
+Инкремент iteration_count
 
-**If iteration_count >= 3:**
+**Если iteration_count >= 3:**
 
-Display: `Max iterations reached. {N} issues remain.`
+Отобразите: `Достигнут максимум итераций. {N} проблем остаётся.`
 
-Offer options:
-1. Force proceed (execute despite issues)
-2. Provide guidance (user gives direction, retry)
-3. Abandon (exit, user runs /gsd:plan-phase manually)
+Предложите опции:
+1. Продолжить принудительно (выполнить несмотря на проблемы)
+2. Дать указания (пользователь направляет, повтор)
+3. Отказаться (выход, пользователь запускает /gsd:plan-phase вручную)
 
-Wait for user response.
+Ожидайте ответа пользователя.
 </step>
 
 <step name="present_ready">
-**Present completion and next steps:**
+**Представление завершения и следующих шагов:**
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► FIXES READY ✓
+ GSD ► ИСПРАВЛЕНИЯ ГОТОВЫ ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Phase {X}: {Name}** — {N} gap(s) diagnosed, {M} fix plan(s) created
+**Фаза {X}: {Название}** — {N} пробел(ов) диагностировано, {M} план(ов) исправления создано
 
-| Gap | Root Cause | Fix Plan |
-|-----|------------|----------|
+| Пробел | Корневая причина | План исправления |
+|--------|-----------------|------------------|
 | {truth 1} | {root_cause} | {phase}-04 |
 | {truth 2} | {root_cause} | {phase}-04 |
 
-Plans verified and ready for execution.
+Планы верифицированы и готовы к выполнению.
 
 ───────────────────────────────────────────────────────────────
 
-## ▶ Next Up
+## ▶ Далее
 
-**Execute fixes** — run fix plans
+**Выполнить исправления** — запустить планы исправления
 
-`/clear` then `/gsd:execute-phase {phase} --gaps-only`
+`/clear` затем `/gsd:execute-phase {phase} --gaps-only`
 
 ───────────────────────────────────────────────────────────────
 ```
@@ -521,50 +521,50 @@ Plans verified and ready for execution.
 </process>
 
 <update_rules>
-**Batched writes for efficiency:**
+**Пакетная запись для эффективности:**
 
-Keep results in memory. Write to file only when:
-1. **Issue found** — Preserve the problem immediately
-2. **Session complete** — Final write before commit
-3. **Checkpoint** — Every 5 passed tests (safety net)
+Держите результаты в памяти. Записывайте в файл только когда:
+1. **Найдена проблема** — Сохранить проблему немедленно
+2. **Сессия завершена** — Финальная запись перед коммитом
+3. **Контрольная точка** — Каждые 5 пройденных тестов (страховочная сеть)
 
-| Section | Rule | When Written |
-|---------|------|--------------|
-| Frontmatter.status | OVERWRITE | Start, complete |
-| Frontmatter.updated | OVERWRITE | On any file write |
-| Current Test | OVERWRITE | On any file write |
-| Tests.{N}.result | OVERWRITE | On any file write |
-| Summary | OVERWRITE | On any file write |
-| Gaps | APPEND | When issue found |
+| Секция | Правило | Когда записывается |
+|--------|---------|-------------------|
+| Frontmatter.status | ПЕРЕЗАПИСАТЬ | Старт, завершение |
+| Frontmatter.updated | ПЕРЕЗАПИСАТЬ | При любой записи в файл |
+| Current Test | ПЕРЕЗАПИСАТЬ | При любой записи в файл |
+| Tests.{N}.result | ПЕРЕЗАПИСАТЬ | При любой записи в файл |
+| Summary | ПЕРЕЗАПИСАТЬ | При любой записи в файл |
+| Gaps | ДОБАВИТЬ | При нахождении проблемы |
 
-On context reset: File shows last checkpoint. Resume from there.
+При сбросе контекста: Файл показывает последнюю контрольную точку. Возобновление оттуда.
 </update_rules>
 
 <severity_inference>
-**Infer severity from user's natural language:**
+**Определение серьёзности из естественного языка пользователя:**
 
-| User says | Infer |
-|-----------|-------|
-| "crashes", "error", "exception", "fails completely" | blocker |
-| "doesn't work", "nothing happens", "wrong behavior" | major |
-| "works but...", "slow", "weird", "minor issue" | minor |
-| "color", "spacing", "alignment", "looks off" | cosmetic |
+| Пользователь говорит | Определяется |
+|---------------------|-------------|
+| "крашится", "ошибка", "исключение", "падает полностью" | blocker |
+| "не работает", "ничего не происходит", "неправильное поведение" | major |
+| "работает, но...", "медленно", "странно", "мелкая проблема" | minor |
+| "цвет", "отступы", "выравнивание", "выглядит криво" | cosmetic |
 
-Default to **major** if unclear. User can correct if needed.
+По умолчанию **major** если неясно. Пользователь может исправить при необходимости.
 
-**Never ask "how severe is this?"** - just infer and move on.
+**Никогда не спрашивайте "насколько это серьёзно?"** — просто определите и двигайтесь дальше.
 </severity_inference>
 
 <success_criteria>
-- [ ] UAT file created with all tests from SUMMARY.md
-- [ ] Tests presented one at a time with expected behavior
-- [ ] User responses processed as pass/issue/skip
-- [ ] Severity inferred from description (never asked)
-- [ ] Batched writes: on issue, every 5 passes, or completion
-- [ ] Committed on completion
-- [ ] If issues: parallel debug agents diagnose root causes
-- [ ] If issues: gsd-planner creates fix plans (gap_closure mode)
-- [ ] If issues: gsd-plan-checker verifies fix plans
-- [ ] If issues: revision loop until plans pass (max 3 iterations)
-- [ ] Ready for `/gsd:execute-phase --gaps-only` when complete
+- [ ] UAT-файл создан со всеми тестами из SUMMARY.md
+- [ ] Тесты представлены по одному с ожидаемым поведением
+- [ ] Ответы пользователя обработаны как pass/issue/skip
+- [ ] Серьёзность определена из описания (никогда не спрашивается)
+- [ ] Пакетная запись: при проблеме, каждые 5 прохождений, или при завершении
+- [ ] Закоммичено при завершении
+- [ ] Если проблемы: параллельные агенты отладки диагностируют корневые причины
+- [ ] Если проблемы: gsd-planner создаёт планы исправления (режим gap_closure)
+- [ ] Если проблемы: gsd-plan-checker верифицирует планы исправления
+- [ ] Если проблемы: цикл ревизии до прохождения планов (макс. 3 итерации)
+- [ ] Готово для `/gsd:execute-phase --gaps-only` по завершении
 </success_criteria>

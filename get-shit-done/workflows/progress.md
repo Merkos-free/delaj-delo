@@ -1,144 +1,144 @@
 <purpose>
-Check project progress, summarize recent work and what's ahead, then intelligently route to the next action — either executing an existing plan or creating the next one. Provides situational awareness before continuing work.
+Проверить прогресс проекта, обобщить недавнюю работу и что впереди, затем интеллектуально направить к следующему действию — либо выполнение существующего плана, либо создание следующего. Обеспечивает ситуационную осведомлённость перед продолжением работы.
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+Прочитайте все файлы, указанные в execution_context вызывающего промпта, перед началом работы.
 </required_reading>
 
 <process>
 
 <step name="init_context">
-**Load progress context (with file contents to avoid redundant reads):**
+**Загрузка контекста прогресса (с содержимым файлов для избежания повторных чтений):**
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init progress --include state,roadmap,project,config)
 ```
 
-Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`.
+Извлеките из JSON инициализации: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`.
 
-**File contents (from --include):** `state_content`, `roadmap_content`, `project_content`, `config_content`. These are null if files don't exist.
+**Содержимое файлов (из --include):** `state_content`, `roadmap_content`, `project_content`, `config_content`. Значения null если файлы не существуют.
 
-If `project_exists` is false (no `.planning/` directory):
+Если `project_exists` равно false (нет каталога `.planning/`):
 
 ```
-No planning structure found.
+Структура планирования не найдена.
 
-Run /gsd:new-project to start a new project.
+Запустите /gsd:new-project для начала нового проекта.
 ```
 
-Exit.
+Выход.
 
-If missing STATE.md: suggest `/gsd:new-project`.
+Если отсутствует STATE.md: предложите `/gsd:new-project`.
 
-**If ROADMAP.md missing but PROJECT.md exists:**
+**Если ROADMAP.md отсутствует, но PROJECT.md существует:**
 
-This means a milestone was completed and archived. Go to **Route F** (between milestones).
+Это означает, что этап был завершён и архивирован. Перейдите к **Маршруту F** (между этапами).
 
-If missing both ROADMAP.md and PROJECT.md: suggest `/gsd:new-project`.
+Если отсутствуют оба ROADMAP.md и PROJECT.md: предложите `/gsd:new-project`.
 </step>
 
 <step name="load">
-**Use project context from INIT:**
+**Использование контекста проекта из INIT:**
 
-All file contents are already loaded via `--include` in init_context step:
-- `state_content` — living memory (position, decisions, issues)
-- `roadmap_content` — phase structure and objectives
-- `project_content` — current state (What This Is, Core Value, Requirements)
-- `config_content` — settings (model_profile, workflow toggles)
+Всё содержимое файлов уже загружено через `--include` на шаге init_context:
+- `state_content` — живая память (позиция, решения, проблемы)
+- `roadmap_content` — структура фаз и цели
+- `project_content` — текущее состояние (Что это, Ключевая ценность, Требования)
+- `config_content` — настройки (model_profile, переключатели рабочих процессов)
 
-No additional file reads needed.
+Дополнительные чтения файлов не требуются.
 </step>
 
 <step name="analyze_roadmap">
-**Get comprehensive roadmap analysis (replaces manual parsing):**
+**Получение комплексного анализа дорожной карты (заменяет ручной парсинг):**
 
 ```bash
 ROADMAP=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap analyze)
 ```
 
-This returns structured JSON with:
-- All phases with disk status (complete/partial/planned/empty/no_directory)
-- Goal and dependencies per phase
-- Plan and summary counts per phase
-- Aggregated stats: total plans, summaries, progress percent
-- Current and next phase identification
+Возвращает структурированный JSON с:
+- Всеми фазами со статусом на диске (complete/partial/planned/empty/no_directory)
+- Целью и зависимостями для каждой фазы
+- Количеством планов и отчётов для каждой фазы
+- Агрегированной статистикой: всего планов, отчётов, процент прогресса
+- Идентификацией текущей и следующей фазы
 
-Use this instead of manually reading/parsing ROADMAP.md.
+Используйте это вместо ручного чтения/парсинга ROADMAP.md.
 </step>
 
 <step name="recent">
-**Gather recent work context:**
+**Сбор контекста недавней работы:**
 
-- Find the 2-3 most recent SUMMARY.md files
-- Use `summary-extract` for efficient parsing:
+- Найдите 2-3 самых свежих файла SUMMARY.md
+- Используйте `summary-extract` для эффективного парсинга:
   ```bash
   node ~/.claude/get-shit-done/bin/gsd-tools.js summary-extract <path> --fields one_liner
   ```
-- This shows "what we've been working on"
+- Это показывает "над чем мы работали"
   </step>
 
 <step name="position">
-**Parse current position from init context and roadmap analysis:**
+**Определение текущей позиции из контекста init и анализа дорожной карты:**
 
-- Use `current_phase` and `next_phase` from roadmap analyze
-- Use phase-level `has_context` and `has_research` flags from analyze
-- Note `paused_at` if work was paused (from init context)
-- Count pending todos: use `init todos` or `list-todos`
-- Check for active debug sessions: `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
+- Используйте `current_phase` и `next_phase` из анализа дорожной карты
+- Используйте флаги `has_context` и `has_research` на уровне фазы из анализа
+- Учитывайте `paused_at` если работа была приостановлена (из контекста init)
+- Подсчитайте ожидающие задачи: используйте `init todos` или `list-todos`
+- Проверьте активные сессии отладки: `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
   </step>
 
 <step name="report">
-**Generate progress bar from gsd-tools, then present rich status report:**
+**Генерация прогресс-бара из gsd-tools, затем представление расширенного отчёта о статусе:**
 
 ```bash
-# Get formatted progress bar
+# Получение форматированного прогресс-бара
 PROGRESS_BAR=$(node ~/.claude/get-shit-done/bin/gsd-tools.js progress bar --raw)
 ```
 
-Present:
+Представьте:
 
 ```
-# [Project Name]
+# [Название проекта]
 
-**Progress:** {PROGRESS_BAR}
-**Profile:** [quality/balanced/budget]
+**Прогресс:** {PROGRESS_BAR}
+**Профиль:** [quality/balanced/budget]
 
-## Recent Work
-- [Phase X, Plan Y]: [what was accomplished - 1 line from summary-extract]
-- [Phase X, Plan Z]: [what was accomplished - 1 line from summary-extract]
+## Недавняя работа
+- [Фаза X, План Y]: [что было сделано - 1 строка из summary-extract]
+- [Фаза X, План Z]: [что было сделано - 1 строка из summary-extract]
 
-## Current Position
-Phase [N] of [total]: [phase-name]
-Plan [M] of [phase-total]: [status]
-CONTEXT: [✓ if has_context | - if not]
+## Текущая позиция
+Фаза [N] из [всего]: [название-фазы]
+План [M] из [всего-в-фазе]: [статус]
+КОНТЕКСТ: [✓ если has_context | - если нет]
 
-## Key Decisions Made
-- [decision 1 from STATE.md]
-- [decision 2]
+## Принятые ключевые решения
+- [решение 1 из STATE.md]
+- [решение 2]
 
-## Blockers/Concerns
-- [any blockers or concerns from STATE.md]
+## Блокеры/Проблемы
+- [блокеры или проблемы из STATE.md]
 
-## Pending Todos
-- [count] pending — /gsd:check-todos to review
+## Ожидающие задачи
+- [количество] ожидающих — /gsd:check-todos для просмотра
 
-## Active Debug Sessions
-- [count] active — /gsd:debug to continue
-(Only show this section if count > 0)
+## Активные сессии отладки
+- [количество] активных — /gsd:debug для продолжения
+(Показывать эту секцию только если количество > 0)
 
-## What's Next
-[Next phase/plan objective from roadmap analyze]
+## Что дальше
+[Цель следующей фазы/плана из анализа дорожной карты]
 ```
 
 </step>
 
 <step name="route">
-**Determine next action based on verified counts.**
+**Определение следующего действия на основе проверенных подсчётов.**
 
-**Step 1: Count plans, summaries, and issues in current phase**
+**Шаг 1: Подсчёт планов, отчётов и проблем в текущей фазе**
 
-List files in the current phase directory:
+Список файлов в каталоге текущей фазы:
 
 ```bash
 ls -1 .planning/phases/[current-phase-dir]/*-PLAN.md 2>/dev/null | wc -l
@@ -146,217 +146,217 @@ ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
 ls -1 .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev/null | wc -l
 ```
 
-State: "This phase has {X} plans, {Y} summaries."
+Утверждение: "В этой фазе {X} планов, {Y} отчётов."
 
-**Step 1.5: Check for unaddressed UAT gaps**
+**Шаг 1.5: Проверка неустранённых пробелов UAT**
 
-Check for UAT.md files with status "diagnosed" (has gaps needing fixes).
+Проверка файлов UAT.md со статусом "diagnosed" (имеются пробелы, требующие исправления).
 
 ```bash
-# Check for diagnosed UAT with gaps
+# Проверка диагностированных UAT с пробелами
 grep -l "status: diagnosed" .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev/null
 ```
 
-Track:
-- `uat_with_gaps`: UAT.md files with status "diagnosed" (gaps need fixing)
+Отслеживание:
+- `uat_with_gaps`: файлы UAT.md со статусом "diagnosed" (пробелы требуют исправления)
 
-**Step 2: Route based on counts**
+**Шаг 2: Маршрутизация на основе подсчётов**
 
-| Condition | Meaning | Action |
-|-----------|---------|--------|
-| uat_with_gaps > 0 | UAT gaps need fix plans | Go to **Route E** |
-| summaries < plans | Unexecuted plans exist | Go to **Route A** |
-| summaries = plans AND plans > 0 | Phase complete | Go to Step 3 |
-| plans = 0 | Phase not yet planned | Go to **Route B** |
+| Условие | Значение | Действие |
+|---------|---------|----------|
+| uat_with_gaps > 0 | Пробелы UAT нуждаются в планах исправления | Перейти к **Маршруту E** |
+| summaries < plans | Существуют невыполненные планы | Перейти к **Маршруту A** |
+| summaries = plans И plans > 0 | Фаза завершена | Перейти к Шагу 3 |
+| plans = 0 | Фаза ещё не спланирована | Перейти к **Маршруту B** |
 
 ---
 
-**Route A: Unexecuted plan exists**
+**Маршрут A: Существует невыполненный план**
 
-Find the first PLAN.md without matching SUMMARY.md.
-Read its `<objective>` section.
+Найдите первый PLAN.md без соответствующего SUMMARY.md.
+Прочитайте его секцию `<objective>`.
 
 ```
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**{phase}-{plan}: [Plan Name]** — [objective summary from PLAN.md]
+**{phase}-{plan}: [Название плана]** — [краткое описание цели из PLAN.md]
 
 `/gsd:execute-phase {phase}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 ```
 
 ---
 
-**Route B: Phase needs planning**
+**Маршрут B: Фаза нуждается в планировании**
 
-Check if `{phase}-CONTEXT.md` exists in phase directory.
+Проверьте, существует ли `{phase}-CONTEXT.md` в каталоге фазы.
 
-**If CONTEXT.md exists:**
-
-```
----
-
-## ▶ Next Up
-
-**Phase {N}: {Name}** — {Goal from ROADMAP.md}
-<sub>✓ Context gathered, ready to plan</sub>
-
-`/gsd:plan-phase {phase-number}`
-
-<sub>`/clear` first → fresh context window</sub>
-
----
-```
-
-**If CONTEXT.md does NOT exist:**
+**Если CONTEXT.md существует:**
 
 ```
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Phase {N}: {Name}** — {Goal from ROADMAP.md}
+**Фаза {N}: {Название}** — {Цель из ROADMAP.md}
+<sub>✓ Контекст собран, готово к планированию</sub>
 
-`/gsd:discuss-phase {phase}` — gather context and clarify approach
+`/gsd:plan-phase {номер-фазы}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
+
+---
+```
+
+**Если CONTEXT.md НЕ существует:**
+
+```
+---
+
+## ▶ Далее
+
+**Фаза {N}: {Название}** — {Цель из ROADMAP.md}
+
+`/gsd:discuss-phase {phase}` — собрать контекст и уточнить подход
+
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:plan-phase {phase}` — skip discussion, plan directly
-- `/gsd:list-phase-assumptions {phase}` — see Claude's assumptions
+**Также доступно:**
+- `/gsd:plan-phase {phase}` — пропустить обсуждение, планировать напрямую
+- `/gsd:list-phase-assumptions {phase}` — увидеть предположения Claude
 
 ---
 ```
 
 ---
 
-**Route E: UAT gaps need fix plans**
+**Маршрут E: Пробелы UAT нуждаются в планах исправления**
 
-UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
+UAT.md существует с пробелами (диагностированные проблемы). Пользователю нужно спланировать исправления.
 
 ```
 ---
 
-## ⚠ UAT Gaps Found
+## ⚠ Обнаружены пробелы UAT
 
-**{phase}-UAT.md** has {N} gaps requiring fixes.
+**{phase}-UAT.md** имеет {N} пробелов, требующих исправления.
 
 `/gsd:plan-phase {phase} --gaps`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:execute-phase {phase}` — execute phase plans
-- `/gsd:verify-work {phase}` — run more UAT testing
-
----
-```
-
----
-
-**Step 3: Check milestone status (only when phase complete)**
-
-Read ROADMAP.md and identify:
-1. Current phase number
-2. All phase numbers in the current milestone section
-
-Count total phases and identify the highest phase number.
-
-State: "Current phase is {X}. Milestone has {N} phases (highest: {Y})."
-
-**Route based on milestone status:**
-
-| Condition | Meaning | Action |
-|-----------|---------|--------|
-| current phase < highest phase | More phases remain | Go to **Route C** |
-| current phase = highest phase | Milestone complete | Go to **Route D** |
-
----
-
-**Route C: Phase complete, more phases remain**
-
-Read ROADMAP.md to get the next phase's name and goal.
-
-```
----
-
-## ✓ Phase {Z} Complete
-
-## ▶ Next Up
-
-**Phase {Z+1}: {Name}** — {Goal from ROADMAP.md}
-
-`/gsd:discuss-phase {Z+1}` — gather context and clarify approach
-
-<sub>`/clear` first → fresh context window</sub>
-
----
-
-**Also available:**
-- `/gsd:plan-phase {Z+1}` — skip discussion, plan directly
-- `/gsd:verify-work {Z}` — user acceptance test before continuing
+**Также доступно:**
+- `/gsd:execute-phase {phase}` — выполнить планы фазы
+- `/gsd:verify-work {phase}` — запустить дополнительное тестирование UAT
 
 ---
 ```
 
 ---
 
-**Route D: Milestone complete**
+**Шаг 3: Проверка статуса этапа (только когда фаза завершена)**
+
+Прочитайте ROADMAP.md и определите:
+1. Номер текущей фазы
+2. Все номера фаз в секции текущего этапа
+
+Подсчитайте общее количество фаз и определите наибольший номер фазы.
+
+Утверждение: "Текущая фаза — {X}. В этапе {N} фаз (наибольшая: {Y})."
+
+**Маршрутизация на основе статуса этапа:**
+
+| Условие | Значение | Действие |
+|---------|---------|----------|
+| текущая фаза < наибольшая фаза | Остаются ещё фазы | Перейти к **Маршруту C** |
+| текущая фаза = наибольшая фаза | Этап завершён | Перейти к **Маршруту D** |
+
+---
+
+**Маршрут C: Фаза завершена, остаются ещё фазы**
+
+Прочитайте ROADMAP.md для получения названия и цели следующей фазы.
 
 ```
 ---
 
-## 🎉 Milestone Complete
+## ✓ Фаза {Z} завершена
 
-All {N} phases finished!
+## ▶ Далее
 
-## ▶ Next Up
+**Фаза {Z+1}: {Название}** — {Цель из ROADMAP.md}
 
-**Complete Milestone** — archive and prepare for next
+`/gsd:discuss-phase {Z+1}` — собрать контекст и уточнить подход
+
+<sub>`/clear` сначала → чистое контекстное окно</sub>
+
+---
+
+**Также доступно:**
+- `/gsd:plan-phase {Z+1}` — пропустить обсуждение, планировать напрямую
+- `/gsd:verify-work {Z}` — пользовательское приёмочное тестирование перед продолжением
+
+---
+```
+
+---
+
+**Маршрут D: Этап завершён**
+
+```
+---
+
+## 🎉 Этап завершён
+
+Все {N} фаз выполнены!
+
+## ▶ Далее
+
+**Завершить этап** — архивировать и подготовиться к следующему
 
 `/gsd:complete-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:verify-work` — user acceptance test before completing milestone
+**Также доступно:**
+- `/gsd:verify-work` — пользовательское приёмочное тестирование перед завершением этапа
 
 ---
 ```
 
 ---
 
-**Route F: Between milestones (ROADMAP.md missing, PROJECT.md exists)**
+**Маршрут F: Между этапами (ROADMAP.md отсутствует, PROJECT.md существует)**
 
-A milestone was completed and archived. Ready to start the next milestone cycle.
+Этап был завершён и архивирован. Готово к началу следующего цикла этапа.
 
-Read MILESTONES.md to find the last completed milestone version.
+Прочитайте MILESTONES.md для определения версии последнего завершённого этапа.
 
 ```
 ---
 
-## ✓ Milestone v{X.Y} Complete
+## ✓ Этап v{X.Y} завершён
 
-Ready to plan the next milestone.
+Готово к планированию следующего этапа.
 
-## ▶ Next Up
+## ▶ Далее
 
-**Start Next Milestone** — questioning → research → requirements → roadmap
+**Начать следующий этап** — опрос → исследование → требования → дорожная карта
 
 `/gsd:new-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 ```
@@ -364,22 +364,22 @@ Ready to plan the next milestone.
 </step>
 
 <step name="edge_cases">
-**Handle edge cases:**
+**Обработка граничных случаев:**
 
-- Phase complete but next phase not planned → offer `/gsd:plan-phase [next]`
-- All work complete → offer milestone completion
-- Blockers present → highlight before offering to continue
-- Handoff file exists → mention it, offer `/gsd:resume-work`
+- Фаза завершена, но следующая не спланирована → предложить `/gsd:plan-phase [next]`
+- Вся работа завершена → предложить завершение этапа
+- Присутствуют блокеры → выделить перед предложением продолжения
+- Файл передачи существует → упомянуть, предложить `/gsd:resume-work`
   </step>
 
 </process>
 
 <success_criteria>
 
-- [ ] Rich context provided (recent work, decisions, issues)
-- [ ] Current position clear with visual progress
-- [ ] What's next clearly explained
-- [ ] Smart routing: /gsd:execute-phase if plans exist, /gsd:plan-phase if not
-- [ ] User confirms before any action
-- [ ] Seamless handoff to appropriate gsd command
+- [ ] Предоставлен богатый контекст (недавняя работа, решения, проблемы)
+- [ ] Текущая позиция ясна с визуальным прогрессом
+- [ ] Что дальше — чётко объяснено
+- [ ] Умная маршрутизация: /gsd:execute-phase если планы есть, /gsd:plan-phase если нет
+- [ ] Пользователь подтверждает перед любым действием
+- [ ] Бесшовная передача соответствующей команде gsd
       </success_criteria>

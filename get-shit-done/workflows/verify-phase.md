@@ -1,20 +1,20 @@
 <purpose>
-Verify phase goal achievement through goal-backward analysis. Check that the codebase delivers what the phase promised, not just that tasks completed.
+Верификация достижения цели фазы через анализ "от цели назад". Проверяет, что кодовая база обеспечивает то, что фаза обещала, а не просто что задачи завершены.
 
-Executed by a verification subagent spawned from execute-phase.md.
+Выполняется субагентом верификации, запущенным из execute-phase.md.
 </purpose>
 
 <core_principle>
-**Task completion ≠ Goal achievement**
+**Завершение задачи ≠ Достижение цели**
 
-A task "create chat component" can be marked complete when the component is a placeholder. The task was done — but the goal "working chat interface" was not achieved.
+Задача "создать компонент чата" может быть помечена как завершённая, когда компонент является заглушкой. Задача выполнена — но цель "работающий интерфейс чата" не достигнута.
 
-Goal-backward verification:
-1. What must be TRUE for the goal to be achieved?
-2. What must EXIST for those truths to hold?
-3. What must be WIRED for those artifacts to function?
+Верификация "от цели назад":
+1. Что должно быть ИСТИННЫМ для достижения цели?
+2. Что должно СУЩЕСТВОВАТЬ, чтобы эти истины выполнялись?
+3. Что должно быть СВЯЗАНО, чтобы эти артефакты функционировали?
 
-Then verify each level against the actual codebase.
+Затем проверяем каждый уровень относительно реальной кодовой базы.
 </core_principle>
 
 <required_reading>
@@ -25,28 +25,28 @@ Then verify each level against the actual codebase.
 <process>
 
 <step name="load_context" priority="first">
-Load phase operation context:
+Загрузите контекст операции фазы:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init phase-op "${PHASE_ARG}")
 ```
 
-Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`, `has_plans`, `plan_count`.
+Извлеките из JSON инициализации: `phase_dir`, `phase_number`, `phase_name`, `has_plans`, `plan_count`.
 
-Then load phase details and list plans/summaries:
+Затем загрузите детали фазы и список планов/отчётов:
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap get-phase "${phase_number}"
 grep -E "^| ${phase_number}" .planning/REQUIREMENTS.md 2>/dev/null
 ls "$phase_dir"/*-SUMMARY.md "$phase_dir"/*-PLAN.md 2>/dev/null
 ```
 
-Extract **phase goal** from ROADMAP.md (the outcome to verify, not tasks) and **requirements** from REQUIREMENTS.md if it exists.
+Извлеките **цель фазы** из ROADMAP.md (результат для верификации, не задачи) и **требования** из REQUIREMENTS.md, если он существует.
 </step>
 
 <step name="establish_must_haves">
-**Option A: Must-haves in PLAN frontmatter**
+**Вариант A: Must-haves во frontmatter PLAN**
 
-Use gsd-tools to extract must_haves from each PLAN:
+Используйте gsd-tools для извлечения must_haves из каждого PLAN:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
@@ -55,32 +55,32 @@ for plan in "$PHASE_DIR"/*-PLAN.md; do
 done
 ```
 
-Returns JSON: `{ truths: [...], artifacts: [...], key_links: [...] }`
+Возвращает JSON: `{ truths: [...], artifacts: [...], key_links: [...] }`
 
-Aggregate all must_haves across plans for phase-level verification.
+Агрегируйте все must_haves по планам для верификации на уровне фазы.
 
-**Option B: Derive from phase goal**
+**Вариант B: Вывод из цели фазы**
 
-If no must_haves in frontmatter (MUST_HAVES returns error or empty):
-1. State the goal from ROADMAP.md
-2. Derive **truths** (3-7 observable behaviors, each testable)
-3. Derive **artifacts** (concrete file paths for each truth)
-4. Derive **key links** (critical wiring where stubs hide)
-5. Document derived must-haves before proceeding
+Если must_haves отсутствуют во frontmatter (MUST_HAVES возвращает ошибку или пусто):
+1. Укажите цель из ROADMAP.md
+2. Выведите **истины** (3-7 наблюдаемых поведений, каждое тестируемое)
+3. Выведите **артефакты** (конкретные пути к файлам для каждой истины)
+4. Выведите **ключевые связи** (критическое связывание, где скрываются заглушки)
+5. Задокументируйте выведенные must-haves перед продолжением
 </step>
 
 <step name="verify_truths">
-For each observable truth, determine if the codebase enables it.
+Для каждой наблюдаемой истины определите, обеспечивает ли кодовая база её.
 
-**Status:** ✓ VERIFIED (all supporting artifacts pass) | ✗ FAILED (artifact missing/stub/unwired) | ? UNCERTAIN (needs human)
+**Статус:** ✓ ВЕРИФИЦИРОВАНО (все поддерживающие артефакты прошли) | ✗ ПРОВАЛ (артефакт отсутствует/заглушка/не связан) | ? НЕОПРЕДЕЛЁННО (нужен человек)
 
-For each truth: identify supporting artifacts → check artifact status → check wiring → determine truth status.
+Для каждой истины: определите поддерживающие артефакты → проверьте статус артефакта → проверьте связывание → определите статус истины.
 
-**Example:** Truth "User can see existing messages" depends on Chat.tsx (renders), /api/chat GET (provides), Message model (schema). If Chat.tsx is a stub or API returns hardcoded [] → FAILED. If all exist, are substantive, and connected → VERIFIED.
+**Пример:** Истина "Пользователь может видеть существующие сообщения" зависит от Chat.tsx (рендерит), /api/chat GET (предоставляет), модель Message (схема). Если Chat.tsx — заглушка или API возвращает жёстко закодированный [] → ПРОВАЛ. Если всё существует, содержательно и связано → ВЕРИФИЦИРОВАНО.
 </step>
 
 <step name="verify_artifacts">
-Use gsd-tools for artifact verification against must_haves in each PLAN:
+Используйте gsd-tools для верификации артефактов по must_haves в каждом PLAN:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
@@ -89,30 +89,30 @@ for plan in "$PHASE_DIR"/*-PLAN.md; do
 done
 ```
 
-Parse JSON result: `{ all_passed, passed, total, artifacts: [{path, exists, issues, passed}] }`
+Разберите JSON результат: `{ all_passed, passed, total, artifacts: [{path, exists, issues, passed}] }`
 
-**Artifact status from result:**
-- `exists=false` → MISSING
-- `issues` not empty → STUB (check issues for "Only N lines" or "Missing pattern")
-- `passed=true` → VERIFIED (Levels 1-2 pass)
+**Статус артефакта из результата:**
+- `exists=false` → ОТСУТСТВУЕТ
+- `issues` не пуст → ЗАГЛУШКА (проверьте issues на "Only N lines" или "Missing pattern")
+- `passed=true` → ВЕРИФИЦИРОВАНО (Уровни 1-2 пройдены)
 
-**Level 3 — Wired (manual check for artifacts that pass Levels 1-2):**
+**Уровень 3 — Связано (ручная проверка для артефактов, прошедших Уровни 1-2):**
 ```bash
-grep -r "import.*$artifact_name" src/ --include="*.ts" --include="*.tsx"  # IMPORTED
-grep -r "$artifact_name" src/ --include="*.ts" --include="*.tsx" | grep -v "import"  # USED
+grep -r "import.*$artifact_name" src/ --include="*.ts" --include="*.tsx"  # ИМПОРТИРОВАНО
+grep -r "$artifact_name" src/ --include="*.ts" --include="*.tsx" | grep -v "import"  # ИСПОЛЬЗУЕТСЯ
 ```
-WIRED = imported AND used. ORPHANED = exists but not imported/used.
+СВЯЗАНО = импортировано И используется. ОСИРОТЕВШЕЕ = существует, но не импортировано/не используется.
 
-| Exists | Substantive | Wired | Status |
-|--------|-------------|-------|--------|
-| ✓ | ✓ | ✓ | ✓ VERIFIED |
-| ✓ | ✓ | ✗ | ⚠️ ORPHANED |
-| ✓ | ✗ | - | ✗ STUB |
-| ✗ | - | - | ✗ MISSING |
+| Существует | Содержательно | Связано | Статус |
+|------------|---------------|---------|--------|
+| ✓ | ✓ | ✓ | ✓ ВЕРИФИЦИРОВАНО |
+| ✓ | ✓ | ✗ | ⚠️ ОСИРОТЕВШЕЕ |
+| ✓ | ✗ | - | ✗ ЗАГЛУШКА |
+| ✗ | - | - | ✗ ОТСУТСТВУЕТ |
 </step>
 
 <step name="verify_wiring">
-Use gsd-tools for key link verification against must_haves in each PLAN:
+Используйте gsd-tools для верификации ключевых связей по must_haves в каждом PLAN:
 
 ```bash
 for plan in "$PHASE_DIR"/*-PLAN.md; do
@@ -121,73 +121,73 @@ for plan in "$PHASE_DIR"/*-PLAN.md; do
 done
 ```
 
-Parse JSON result: `{ all_verified, verified, total, links: [{from, to, via, verified, detail}] }`
+Разберите JSON результат: `{ all_verified, verified, total, links: [{from, to, via, verified, detail}] }`
 
-**Link status from result:**
-- `verified=true` → WIRED
-- `verified=false` with "not found" → NOT_WIRED
-- `verified=false` with "Pattern not found" → PARTIAL
+**Статус связи из результата:**
+- `verified=true` → СВЯЗАНО
+- `verified=false` с "not found" → НЕ_СВЯЗАНО
+- `verified=false` с "Pattern not found" → ЧАСТИЧНО
 
-**Fallback patterns (if key_links not in must_haves):**
+**Запасные паттерны (если key_links отсутствуют в must_haves):**
 
-| Pattern | Check | Status |
-|---------|-------|--------|
-| Component → API | fetch/axios call to API path, response used (await/.then/setState) | WIRED / PARTIAL (call but unused response) / NOT_WIRED |
-| API → Database | Prisma/DB query on model, result returned via res.json() | WIRED / PARTIAL (query but not returned) / NOT_WIRED |
-| Form → Handler | onSubmit with real implementation (fetch/axios/mutate/dispatch), not console.log/empty | WIRED / STUB (log-only/empty) / NOT_WIRED |
-| State → Render | useState variable appears in JSX (`{stateVar}` or `{stateVar.property}`) | WIRED / NOT_WIRED |
+| Паттерн | Проверка | Статус |
+|---------|----------|--------|
+| Компонент → API | fetch/axios вызов к API-пути, ответ используется (await/.then/setState) | СВЯЗАНО / ЧАСТИЧНО (вызов, но ответ не используется) / НЕ_СВЯЗАНО |
+| API → База данных | Prisma/DB запрос к модели, результат возвращается через res.json() | СВЯЗАНО / ЧАСТИЧНО (запрос, но не возвращается) / НЕ_СВЯЗАНО |
+| Форма → Обработчик | onSubmit с реальной реализацией (fetch/axios/mutate/dispatch), не console.log/пустой | СВЯЗАНО / ЗАГЛУШКА (только лог/пустой) / НЕ_СВЯЗАНО |
+| Состояние → Рендер | useState переменная появляется в JSX (`{stateVar}` или `{stateVar.property}`) | СВЯЗАНО / НЕ_СВЯЗАНО |
 
-Record status and evidence for each key link.
+Запишите статус и доказательства для каждой ключевой связи.
 </step>
 
 <step name="verify_requirements">
-If REQUIREMENTS.md exists:
+Если REQUIREMENTS.md существует:
 ```bash
 grep -E "Phase ${PHASE_NUM}" .planning/REQUIREMENTS.md 2>/dev/null
 ```
 
-For each requirement: parse description → identify supporting truths/artifacts → status: ✓ SATISFIED / ✗ BLOCKED / ? NEEDS HUMAN.
+Для каждого требования: разберите описание → определите поддерживающие истины/артефакты → статус: ✓ УДОВЛЕТВОРЕНО / ✗ ЗАБЛОКИРОВАНО / ? НУЖЕН ЧЕЛОВЕК.
 </step>
 
 <step name="scan_antipatterns">
-Extract files modified in this phase from SUMMARY.md, scan each:
+Извлеките файлы, изменённые в этой фазе, из SUMMARY.md, просканируйте каждый:
 
-| Pattern | Search | Severity |
-|---------|--------|----------|
-| TODO/FIXME/XXX/HACK | `grep -n -E "TODO\|FIXME\|XXX\|HACK"` | ⚠️ Warning |
-| Placeholder content | `grep -n -iE "placeholder\|coming soon\|will be here"` | 🛑 Blocker |
-| Empty returns | `grep -n -E "return null\|return \{\}\|return \[\]\|=> \{\}"` | ⚠️ Warning |
-| Log-only functions | Functions containing only console.log | ⚠️ Warning |
+| Паттерн | Поиск | Серьёзность |
+|---------|-------|-------------|
+| TODO/FIXME/XXX/HACK | `grep -n -E "TODO\|FIXME\|XXX\|HACK"` | ⚠️ Предупреждение |
+| Заглушки | `grep -n -iE "placeholder\|coming soon\|will be here"` | 🛑 Блокер |
+| Пустые возвраты | `grep -n -E "return null\|return \{\}\|return \[\]\|=> \{\}"` | ⚠️ Предупреждение |
+| Функции только с логированием | Функции, содержащие только console.log | ⚠️ Предупреждение |
 
-Categorize: 🛑 Blocker (prevents goal) | ⚠️ Warning (incomplete) | ℹ️ Info (notable).
+Категоризация: 🛑 Блокер (препятствует цели) | ⚠️ Предупреждение (незавершено) | ℹ️ Инфо (примечательно).
 </step>
 
 <step name="identify_human_verification">
-**Always needs human:** Visual appearance, user flow completion, real-time behavior (WebSocket/SSE), external service integration, performance feel, error message clarity.
+**Всегда нуждается в человеке:** Визуальное оформление, завершение пользовательского потока, поведение в реальном времени (WebSocket/SSE), интеграция с внешними сервисами, ощущение производительности, ясность сообщений об ошибках.
 
-**Needs human if uncertain:** Complex wiring grep can't trace, dynamic state-dependent behavior, edge cases.
+**Нуждается в человеке при неопределённости:** Сложное связывание, которое grep не может отследить, динамическое поведение, зависящее от состояния, граничные случаи.
 
-Format each as: Test Name → What to do → Expected result → Why can't verify programmatically.
+Формат каждого: Название теста → Что делать → Ожидаемый результат → Почему нельзя проверить программно.
 </step>
 
 <step name="determine_status">
-**passed:** All truths VERIFIED, all artifacts pass levels 1-3, all key links WIRED, no blocker anti-patterns.
+**passed:** Все истины ВЕРИФИЦИРОВАНЫ, все артефакты прошли уровни 1-3, все ключевые связи СВЯЗАНЫ, нет блокеров среди анти-паттернов.
 
-**gaps_found:** Any truth FAILED, artifact MISSING/STUB, key link NOT_WIRED, or blocker found.
+**gaps_found:** Любая истина ПРОВАЛЕНА, артефакт ОТСУТСТВУЕТ/ЗАГЛУШКА, ключевая связь НЕ_СВЯЗАНА, или найден блокер.
 
-**human_needed:** All automated checks pass but human verification items remain.
+**human_needed:** Все автоматические проверки прошли, но остаются пункты для проверки человеком.
 
-**Score:** `verified_truths / total_truths`
+**Оценка:** `verified_truths / total_truths`
 </step>
 
 <step name="generate_fix_plans">
-If gaps_found:
+Если gaps_found:
 
-1. **Cluster related gaps:** API stub + component unwired → "Wire frontend to backend". Multiple missing → "Complete core implementation". Wiring only → "Connect existing components".
+1. **Кластеризация связанных пробелов:** Заглушка API + компонент не связан → "Подключить фронтенд к бэкенду". Несколько отсутствующих → "Завершить основную реализацию". Только связывание → "Соединить существующие компоненты".
 
-2. **Generate plan per cluster:** Objective, 2-3 tasks (files/action/verify each), re-verify step. Keep focused: single concern per plan.
+2. **Генерация плана на кластер:** Цель, 2-3 задачи (файлы/действие/проверка каждого), шаг повторной верификации. Фокусированность: одна забота на план.
 
-3. **Order by dependency:** Fix missing → fix stubs → fix wiring → verify.
+3. **Порядок по зависимости:** Исправить отсутствующее → исправить заглушки → исправить связывание → верифицировать.
 </step>
 
 <step name="create_report">
@@ -195,32 +195,32 @@ If gaps_found:
 REPORT_PATH="$PHASE_DIR/${PHASE_NUM}-VERIFICATION.md"
 ```
 
-Fill template sections: frontmatter (phase/timestamp/status/score), goal achievement, artifact table, wiring table, requirements coverage, anti-patterns, human verification, gaps summary, fix plans (if gaps_found), metadata.
+Заполните секции шаблона: frontmatter (фаза/метка времени/статус/оценка), достижение цели, таблица артефактов, таблица связей, покрытие требований, анти-паттерны, проверка человеком, сводка пробелов, планы исправления (если gaps_found), метаданные.
 
-See ~/.claude/get-shit-done/templates/verification-report.md for complete template.
+См. ~/.claude/get-shit-done/templates/verification-report.md для полного шаблона.
 </step>
 
 <step name="return_to_orchestrator">
-Return status (`passed` | `gaps_found` | `human_needed`), score (N/M must-haves), report path.
+Верните статус (`passed` | `gaps_found` | `human_needed`), оценку (N/M must-haves), путь к отчёту.
 
-If gaps_found: list gaps + recommended fix plan names.
-If human_needed: list items requiring human testing.
+Если gaps_found: перечислите пробелы + рекомендуемые названия планов исправления.
+Если human_needed: перечислите пункты, требующие тестирования человеком.
 
-Orchestrator routes: `passed` → update_roadmap | `gaps_found` → create/execute fixes, re-verify | `human_needed` → present to user.
+Оркестратор направляет: `passed` → update_roadmap | `gaps_found` → создание/выполнение исправлений, повторная верификация | `human_needed` → представить пользователю.
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Must-haves established (from frontmatter or derived)
-- [ ] All truths verified with status and evidence
-- [ ] All artifacts checked at all three levels
-- [ ] All key links verified
-- [ ] Requirements coverage assessed (if applicable)
-- [ ] Anti-patterns scanned and categorized
-- [ ] Human verification items identified
-- [ ] Overall status determined
-- [ ] Fix plans generated (if gaps_found)
-- [ ] VERIFICATION.md created with complete report
-- [ ] Results returned to orchestrator
+- [ ] Must-haves установлены (из frontmatter или выведены)
+- [ ] Все истины верифицированы со статусом и доказательствами
+- [ ] Все артефакты проверены на всех трёх уровнях
+- [ ] Все ключевые связи верифицированы
+- [ ] Покрытие требований оценено (если применимо)
+- [ ] Анти-паттерны просканированы и категоризированы
+- [ ] Пункты проверки человеком определены
+- [ ] Общий статус определён
+- [ ] Планы исправления сгенерированы (если gaps_found)
+- [ ] VERIFICATION.md создан с полным отчётом
+- [ ] Результаты возвращены оркестратору
 </success_criteria>
