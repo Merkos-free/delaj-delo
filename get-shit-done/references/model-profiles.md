@@ -1,10 +1,10 @@
-# Model Profiles
+# Профили моделей
 
-Model profiles control which Claude model each GSD agent uses. This allows balancing quality vs token spend.
+Профили моделей управляют тем, какую модель Claude использует каждый агент GSD. Это позволяет балансировать качество и расход токенов.
 
-## Profile Definitions
+## Определения профилей
 
-| Agent | `quality` | `balanced` | `budget` |
+| Агент | `quality` | `balanced` | `budget` |
 |-------|-----------|------------|----------|
 | gsd-planner | opus | opus | sonnet |
 | gsd-roadmapper | opus | sonnet | sonnet |
@@ -18,56 +18,56 @@ Model profiles control which Claude model each GSD agent uses. This allows balan
 | gsd-plan-checker | sonnet | sonnet | haiku |
 | gsd-integration-checker | sonnet | sonnet | haiku |
 
-## Profile Philosophy
+## Философия профилей
 
-**quality** - Maximum reasoning power
-- Opus for all decision-making agents
-- Sonnet for read-only verification
-- Use when: quota available, critical architecture work
+**quality** — Максимальная мощность рассуждений
+- Opus для всех агентов, принимающих решения
+- Sonnet для верификации только на чтение
+- Использовать когда: квота доступна, критическая архитектурная работа
 
-**balanced** (default) - Smart allocation
-- Opus only for planning (where architecture decisions happen)
-- Sonnet for execution and research (follows explicit instructions)
-- Sonnet for verification (needs reasoning, not just pattern matching)
-- Use when: normal development, good balance of quality and cost
+**balanced** (по умолчанию) — Умное распределение
+- Opus только для планирования (где принимаются архитектурные решения)
+- Sonnet для выполнения и исследования (следует явным инструкциям)
+- Sonnet для верификации (нужно рассуждение, не просто сопоставление паттернов)
+- Использовать когда: обычная разработка, хороший баланс качества и стоимости
 
-**budget** - Minimal Opus usage
-- Sonnet for anything that writes code
-- Haiku for research and verification
-- Use when: conserving quota, high-volume work, less critical phases
+**budget** — Минимальное использование Opus
+- Sonnet для всего что пишет код
+- Haiku для исследования и верификации
+- Использовать когда: экономия квоты, массовая работа, менее критичные фазы
 
-## Resolution Logic
+## Логика разрешения
 
-Orchestrators resolve model before spawning:
+Оркестраторы разрешают модель перед запуском:
 
 ```
-1. Read .planning/config.json
-2. Get model_profile (default: "balanced")
-3. Look up agent in table above
-4. Pass model parameter to Task call
+1. Прочитать .planning/config.json
+2. Получить model_profile (по умолчанию: "balanced")
+3. Найти агента в таблице выше
+4. Передать параметр model в вызов Task
 ```
 
-## Switching Profiles
+## Переключение профилей
 
-Runtime: `/gsd:set-profile <profile>`
+В рантайме: `/gsd:set-profile <profile>`
 
-Per-project default: Set in `.planning/config.json`:
+По умолчанию для проекта: Задать в `.planning/config.json`:
 ```json
 {
   "model_profile": "balanced"
 }
 ```
 
-## Design Rationale
+## Обоснование дизайна
 
-**Why Opus for gsd-planner?**
-Planning involves architecture decisions, goal decomposition, and task design. This is where model quality has the highest impact.
+**Почему Opus для gsd-planner?**
+Планирование включает архитектурные решения, декомпозицию целей и проектирование задач. Именно здесь качество модели даёт наибольший эффект.
 
-**Why Sonnet for gsd-executor?**
-Executors follow explicit PLAN.md instructions. The plan already contains the reasoning; execution is implementation.
+**Почему Sonnet для gsd-executor?**
+Исполнители следуют явным инструкциям PLAN.md. План уже содержит рассуждения; выполнение — это реализация.
 
-**Why Sonnet (not Haiku) for verifiers in balanced?**
-Verification requires goal-backward reasoning - checking if code *delivers* what the phase promised, not just pattern matching. Sonnet handles this well; Haiku may miss subtle gaps.
+**Почему Sonnet (не Haiku) для верификаторов в balanced?**
+Верификация требует обратного рассуждения от цели — проверки, *обеспечивает* ли код то, что обещала фаза, а не просто сопоставления паттернов. Sonnet справляется хорошо; Haiku может пропустить тонкие пробелы.
 
-**Why Haiku for gsd-codebase-mapper?**
-Read-only exploration and pattern extraction. No reasoning required, just structured output from file contents.
+**Почему Haiku для gsd-codebase-mapper?**
+Исследование только на чтение и извлечение паттернов. Рассуждение не требуется, только структурированный вывод из содержимого файлов.

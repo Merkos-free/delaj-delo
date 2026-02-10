@@ -1,15 +1,15 @@
-# Decimal Phase Calculation
+# Вычисление десятичной фазы
 
-Calculate the next decimal phase number for urgent insertions.
+Вычисление следующего десятичного номера фазы для срочных вставок.
 
-## Using gsd-tools
+## Использование gsd-tools
 
 ```bash
-# Get next decimal phase after phase 6
+# Получить следующую десятичную фазу после фазы 6
 node ~/.claude/get-shit-done/bin/gsd-tools.js phase next-decimal 6
 ```
 
-Output:
+Вывод:
 ```json
 {
   "found": true,
@@ -19,7 +19,7 @@ Output:
 }
 ```
 
-With existing decimals:
+С существующими десятичными:
 ```json
 {
   "found": true,
@@ -29,7 +29,7 @@ With existing decimals:
 }
 ```
 
-## Extract Values
+## Извлечение значений
 
 ```bash
 DECIMAL_INFO=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phase next-decimal "${AFTER_PHASE}")
@@ -37,24 +37,24 @@ DECIMAL_PHASE=$(echo "$DECIMAL_INFO" | jq -r '.next')
 BASE_PHASE=$(echo "$DECIMAL_INFO" | jq -r '.base_phase')
 ```
 
-Or with --raw flag:
+Или с флагом --raw:
 ```bash
 DECIMAL_PHASE=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phase next-decimal "${AFTER_PHASE}" --raw)
-# Returns just: 06.1
+# Возвращает просто: 06.1
 ```
 
-## Examples
+## Примеры
 
-| Existing Phases | Next Phase |
-|-----------------|------------|
-| 06 only | 06.1 |
+| Существующие фазы | Следующая фаза |
+|-------------------|----------------|
+| только 06 | 06.1 |
 | 06, 06.1 | 06.2 |
 | 06, 06.1, 06.2 | 06.3 |
-| 06, 06.1, 06.3 (gap) | 06.4 |
+| 06, 06.1, 06.3 (пробел) | 06.4 |
 
-## Directory Naming
+## Именование каталогов
 
-Decimal phase directories use the full decimal number:
+Каталоги десятичных фаз используют полный десятичный номер:
 
 ```bash
 SLUG=$(node ~/.claude/get-shit-done/bin/gsd-tools.js generate-slug "$DESCRIPTION" --raw)
@@ -62,4 +62,4 @@ PHASE_DIR=".planning/phases/${DECIMAL_PHASE}-${SLUG}"
 mkdir -p "$PHASE_DIR"
 ```
 
-Example: `.planning/phases/06.1-fix-critical-auth-bug/`
+Пример: `.planning/phases/06.1-fix-critical-auth-bug/`

@@ -1,32 +1,32 @@
-# Model Profile Resolution
+# Разрешение профиля модели
 
-Resolve model profile once at the start of orchestration, then use it for all Task spawns.
+Разрешите профиль модели один раз в начале оркестрации, затем используйте его для всех запусков Task.
 
-## Resolution Pattern
+## Паттерн разрешения
 
 ```bash
 MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
 ```
 
-Default: `balanced` if not set or config missing.
+По умолчанию: `balanced`, если не задан или конфигурация отсутствует.
 
-## Lookup Table
+## Таблица соответствия
 
 @~/.claude/get-shit-done/references/model-profiles.md
 
-Look up the agent in the table for the resolved profile. Pass the model parameter to Task calls:
+Найдите агента в таблице для разрешённого профиля. Передайте параметр model в вызовы Task:
 
 ```
 Task(
   prompt="...",
   subagent_type="gsd-planner",
-  model="{resolved_model}"  # e.g., "opus" for quality profile
+  model="{resolved_model}"  # напр., "opus" для профиля quality
 )
 ```
 
-## Usage
+## Использование
 
-1. Resolve once at orchestration start
-2. Store the profile value
-3. Look up each agent's model from the table when spawning
-4. Pass model parameter to each Task call
+1. Разрешите один раз в начале оркестрации
+2. Сохраните значение профиля
+3. При запуске каждого агента найдите его модель в таблице
+4. Передайте параметр model каждому вызову Task

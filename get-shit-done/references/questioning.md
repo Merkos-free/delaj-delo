@@ -1,140 +1,140 @@
 <questioning_guide>
 
-Project initialization is dream extraction, not requirements gathering. You're helping the user discover and articulate what they want to build. This isn't a contract negotiation — it's collaborative thinking.
+Инициализация проекта — это извлечение мечты, а не сбор требований. Вы помогаете пользователю обнаружить и сформулировать то, что он хочет построить. Это не переговоры по контракту — это совместное мышление.
 
 <philosophy>
 
-**You are a thinking partner, not an interviewer.**
+**Вы — партнёр по мышлению, а не интервьюер.**
 
-The user often has a fuzzy idea. Your job is to help them sharpen it. Ask questions that make them think "oh, I hadn't considered that" or "yes, that's exactly what I mean."
+У пользователя часто размытая идея. Ваша задача — помочь её заострить. Задавайте вопросы, от которых они думают «о, я об этом не задумывался» или «да, это именно то, что я имею в виду».
 
-Don't interrogate. Collaborate. Don't follow a script. Follow the thread.
+Не допрашивайте. Сотрудничайте. Не следуйте сценарию. Следуйте за нитью.
 
 </philosophy>
 
 <the_goal>
 
-By the end of questioning, you need enough clarity to write a PROJECT.md that downstream phases can act on:
+К концу опроса вам нужно достаточно ясности, чтобы написать PROJECT.md, с которым смогут работать последующие этапы:
 
-- **Research** needs: what domain to research, what the user already knows, what unknowns exist
-- **Requirements** needs: clear enough vision to scope v1 features
-- **Roadmap** needs: clear enough vision to decompose into phases, what "done" looks like
-- **plan-phase** needs: specific requirements to break into tasks, context for implementation choices
-- **execute-phase** needs: success criteria to verify against, the "why" behind requirements
+- **Исследованию** нужно: какой домен исследовать, что пользователь уже знает, какие неизвестные есть
+- **Требованиям** нужно: достаточно чёткое видение для определения функций v1
+- **Дорожной карте** нужно: достаточно чёткое видение для декомпозиции на фазы, как выглядит «готово»
+- **plan-phase** нужно: конкретные требования для разбиения на задачи, контекст для выбора реализации
+- **execute-phase** нужно: критерии успеха для проверки, «зачем» за требованиями
 
-A vague PROJECT.md forces every downstream phase to guess. The cost compounds.
+Размытый PROJECT.md заставляет каждый последующий этап гадать. Стоимость накапливается.
 
 </the_goal>
 
 <how_to_question>
 
-**Start open.** Let them dump their mental model. Don't interrupt with structure.
+**Начните открыто.** Дайте им выгрузить свою ментальную модель. Не прерывайте структурой.
 
-**Follow energy.** Whatever they emphasized, dig into that. What excited them? What problem sparked this?
+**Следуйте за энергией.** То, на чём они сделали акцент — копайте туда. Что их вдохновило? Какая проблема это вызвала?
 
-**Challenge vagueness.** Never accept fuzzy answers. "Good" means what? "Users" means who? "Simple" means how?
+**Бросайте вызов расплывчатости.** Никогда не принимайте размытых ответов. «Хорошо» значит что? «Пользователи» — это кто? «Просто» — это как?
 
-**Make the abstract concrete.** "Walk me through using this." "What does that actually look like?"
+**Делайте абстрактное конкретным.** «Покажите мне, как вы это используете.» «Как это на самом деле выглядит?»
 
-**Clarify ambiguity.** "When you say Z, do you mean A or B?" "You mentioned X — tell me more."
+**Уточняйте неоднозначность.** «Когда вы говорите Z, вы имеете в виду A или B?» «Вы упомянули X — расскажите подробнее.»
 
-**Know when to stop.** When you understand what they want, why they want it, who it's for, and what done looks like — offer to proceed.
+**Знайте когда остановиться.** Когда вы понимаете что они хотят, зачем, для кого и как выглядит «готово» — предложите продолжить.
 
 </how_to_question>
 
 <question_types>
 
-Use these as inspiration, not a checklist. Pick what's relevant to the thread.
+Используйте как вдохновение, не как чеклист. Выбирайте что релевантно нити.
 
-**Motivation — why this exists:**
-- "What prompted this?"
-- "What are you doing today that this replaces?"
-- "What would you do if this existed?"
+**Мотивация — зачем это существует:**
+- «Что подтолкнуло к этому?»
+- «Что вы делаете сегодня, что это заменит?»
+- «Что бы вы делали, если бы это существовало?»
 
-**Concreteness — what it actually is:**
-- "Walk me through using this"
-- "You said X — what does that actually look like?"
-- "Give me an example"
+**Конкретность — что это на самом деле:**
+- «Покажите, как вы это используете»
+- «Вы сказали X — как это на самом деле выглядит?»
+- «Приведите пример»
 
-**Clarification — what they mean:**
-- "When you say Z, do you mean A or B?"
-- "You mentioned X — tell me more about that"
+**Уточнение — что они имеют в виду:**
+- «Когда вы говорите Z, вы имеете в виду A или B?»
+- «Вы упомянули X — расскажите подробнее»
 
-**Success — how you'll know it's working:**
-- "How will you know this is working?"
-- "What does done look like?"
+**Успех — как понять, что работает:**
+- «Как вы поймёте, что это работает?»
+- «Как выглядит «готово»?»
 
 </question_types>
 
 <using_askuserquestion>
 
-Use AskUserQuestion to help users think by presenting concrete options to react to.
+Используйте AskUserQuestion, чтобы помочь пользователям думать через конкретные варианты для реакции.
 
-**Good options:**
-- Interpretations of what they might mean
-- Specific examples to confirm or deny
-- Concrete choices that reveal priorities
+**Хорошие варианты:**
+- Интерпретации того, что они могут иметь в виду
+- Конкретные примеры для подтверждения или опровержения
+- Конкретные выборы, раскрывающие приоритеты
 
-**Bad options:**
-- Generic categories ("Technical", "Business", "Other")
-- Leading options that presume an answer
-- Too many options (2-4 is ideal)
+**Плохие варианты:**
+- Обобщённые категории («Техническое», «Бизнес», «Другое»)
+- Наводящие варианты, предполагающие ответ
+- Слишком много вариантов (2-4 — идеально)
 
-**Example — vague answer:**
-User says "it should be fast"
+**Пример — размытый ответ:**
+Пользователь говорит «это должно быть быстро»
 
-- header: "Fast"
-- question: "Fast how?"
-- options: ["Sub-second response", "Handles large datasets", "Quick to build", "Let me explain"]
+- header: "Быстро"
+- question: "Быстро в каком смысле?"
+- options: ["Ответ менее секунды", "Работа с большими данными", "Быстро построить", "Дайте объясню"]
 
-**Example — following a thread:**
-User mentions "frustrated with current tools"
+**Пример — следование за нитью:**
+Пользователь упоминает «раздражают текущие инструменты»
 
-- header: "Frustration"
-- question: "What specifically frustrates you?"
-- options: ["Too many clicks", "Missing features", "Unreliable", "Let me explain"]
+- header: "Раздражение"
+- question: "Что конкретно раздражает?"
+- options: ["Слишком много кликов", "Нет нужных функций", "Ненадёжно", "Дайте объясню"]
 
 </using_askuserquestion>
 
 <context_checklist>
 
-Use this as a **background checklist**, not a conversation structure. Check these mentally as you go. If gaps remain, weave questions naturally.
+Используйте как **фоновый чеклист**, а не как структуру разговора. Мысленно отмечайте по ходу. Если остаются пробелы, вплетайте вопросы естественно.
 
-- [ ] What they're building (concrete enough to explain to a stranger)
-- [ ] Why it needs to exist (the problem or desire driving it)
-- [ ] Who it's for (even if just themselves)
-- [ ] What "done" looks like (observable outcomes)
+- [ ] Что они строят (достаточно конкретно, чтобы объяснить незнакомцу)
+- [ ] Зачем это нужно (проблема или желание, которое движет)
+- [ ] Для кого (даже если только для себя)
+- [ ] Как выглядит «готово» (наблюдаемые результаты)
 
-Four things. If they volunteer more, capture it.
+Четыре вещи. Если они добровольно дают больше — фиксируйте.
 
 </context_checklist>
 
 <decision_gate>
 
-When you could write a clear PROJECT.md, offer to proceed:
+Когда вы можете написать чёткий PROJECT.md, предложите продолжить:
 
-- header: "Ready?"
-- question: "I think I understand what you're after. Ready to create PROJECT.md?"
+- header: "Готово?"
+- question: "Кажется, я понимаю что вам нужно. Готовы создать PROJECT.md?"
 - options:
-  - "Create PROJECT.md" — Let's move forward
-  - "Keep exploring" — I want to share more / ask me more
+  - "Создать PROJECT.md" — Двигаемся дальше
+  - "Продолжить обсуждение" — Хочу рассказать больше / спроси ещё
 
-If "Keep exploring" — ask what they want to add or identify gaps and probe naturally.
+Если «Продолжить обсуждение» — спросите, что хотят добавить, или найдите пробелы и исследуйте естественно.
 
-Loop until "Create PROJECT.md" selected.
+Цикл пока не выбрано «Создать PROJECT.md».
 
 </decision_gate>
 
 <anti_patterns>
 
-- **Checklist walking** — Going through domains regardless of what they said
-- **Canned questions** — "What's your core value?" "What's out of scope?" regardless of context
-- **Corporate speak** — "What are your success criteria?" "Who are your stakeholders?"
-- **Interrogation** — Firing questions without building on answers
-- **Rushing** — Minimizing questions to get to "the work"
-- **Shallow acceptance** — Taking vague answers without probing
-- **Premature constraints** — Asking about tech stack before understanding the idea
-- **User skills** — NEVER ask about user's technical experience. Claude builds.
+- **Ходьба по чеклисту** — Прохождение доменов независимо от сказанного
+- **Шаблонные вопросы** — «Какова ваша основная ценность?» «Что за пределами?» независимо от контекста
+- **Корпоративный язык** — «Каковы ваши критерии успеха?» «Кто ваши стейкхолдеры?»
+- **Допрос** — Стрельба вопросами без развития ответов
+- **Спешка** — Минимизация вопросов ради перехода к «работе»
+- **Поверхностное принятие** — Принятие размытых ответов без углубления
+- **Преждевременные ограничения** — Вопросы о технологическом стеке до понимания идеи
+- **Навыки пользователя** — НИКОГДА не спрашивайте о техническом опыте пользователя. Строит Claude.
 
 </anti_patterns>
 

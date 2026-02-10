@@ -1,38 +1,38 @@
-# Git Planning Commit
+# Git-коммит планирования
 
-Commit planning artifacts using the gsd-tools CLI, which automatically checks `commit_docs` config and gitignore status.
+Коммит артефактов планирования через CLI gsd-tools, который автоматически проверяет конфигурацию `commit_docs` и статус gitignore.
 
-## Commit via CLI
+## Коммит через CLI
 
-Always use `gsd-tools.js commit` for `.planning/` files — it handles `commit_docs` and gitignore checks automatically:
+Всегда используйте `gsd-tools.js commit` для файлов `.planning/` — он автоматически обрабатывает `commit_docs` и проверки gitignore:
 
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs({scope}): {description}" --files .planning/STATE.md .planning/ROADMAP.md
+node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs({scope}): {описание}" --files .planning/STATE.md .planning/ROADMAP.md
 ```
 
-The CLI will return `skipped` (with reason) if `commit_docs` is `false` or `.planning/` is gitignored. No manual conditional checks needed.
+CLI вернёт `skipped` (с причиной), если `commit_docs` равно `false` или `.planning/` в gitignore. Ручные условные проверки не нужны.
 
-## Amend previous commit
+## Дополнение предыдущего коммита
 
-To fold `.planning/` file changes into the previous commit:
+Чтобы добавить изменения файлов `.planning/` в предыдущий коммит:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "" --files .planning/codebase/*.md --amend
 ```
 
-## Commit Message Patterns
+## Паттерны сообщений коммитов
 
-| Command | Scope | Example |
-|---------|-------|---------|
-| plan-phase | phase | `docs(phase-03): create authentication plans` |
-| execute-phase | phase | `docs(phase-03): complete authentication phase` |
-| new-milestone | milestone | `docs: start milestone v1.1` |
-| remove-phase | chore | `chore: remove phase 17 (dashboard)` |
-| insert-phase | phase | `docs: insert phase 16.1 (critical fix)` |
-| add-phase | phase | `docs: add phase 07 (settings page)` |
+| Команда | Область | Пример |
+|---------|---------|--------|
+| plan-phase | фаза | `docs(phase-03): создать планы аутентификации` |
+| execute-phase | фаза | `docs(phase-03): завершить фазу аутентификации` |
+| new-milestone | веха | `docs: начать веху v1.1` |
+| remove-phase | chore | `chore: удалить фазу 17 (панель)` |
+| insert-phase | фаза | `docs: вставить фазу 16.1 (критическое исправление)` |
+| add-phase | фаза | `docs: добавить фазу 07 (страница настроек)` |
 
-## When to Skip
+## Когда пропускать
 
-- `commit_docs: false` in config
-- `.planning/` is gitignored
-- No changes to commit (check with `git status --porcelain .planning/`)
+- `commit_docs: false` в конфигурации
+- `.planning/` в gitignore
+- Нет изменений для коммита (проверить через `git status --porcelain .planning/`)

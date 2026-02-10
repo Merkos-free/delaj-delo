@@ -1,244 +1,244 @@
-# Continuation Format
+# Формат продолжения
 
-Standard format for presenting next steps after completing a command or workflow.
+Стандартный формат представления следующих шагов после завершения команды или рабочего процесса.
 
-## Core Structure
-
-```
----
-
-## ▶ Next Up
-
-**{identifier}: {name}** — {one-line description}
-
-`{command to copy-paste}`
-
-<sub>`/clear` first → fresh context window</sub>
-
----
-
-**Also available:**
-- `{alternative option 1}` — description
-- `{alternative option 2}` — description
-
----
-```
-
-## Format Rules
-
-1. **Always show what it is** — name + description, never just a command path
-2. **Pull context from source** — ROADMAP.md for phases, PLAN.md `<objective>` for plans
-3. **Command in inline code** — backticks, easy to copy-paste, renders as clickable link
-4. **`/clear` explanation** — always include, keeps it concise but explains why
-5. **"Also available" not "Other options"** — sounds more app-like
-6. **Visual separators** — `---` above and below to make it stand out
-
-## Variants
-
-### Execute Next Plan
+## Базовая структура
 
 ```
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry
+**{идентификатор}: {название}** — {однострочное описание}
+
+`{команда для копирования}`
+
+<sub>`/clear` сначала → чистое контекстное окно</sub>
+
+---
+
+**Также доступно:**
+- `{альтернативный вариант 1}` — описание
+- `{альтернативный вариант 2}` — описание
+
+---
+```
+
+## Правила формата
+
+1. **Всегда показывайте что это** — название + описание, никогда просто путь к команде
+2. **Берите контекст из источника** — ROADMAP.md для фаз, PLAN.md `<objective>` для планов
+3. **Команда в инлайн-коде** — обратные кавычки, легко копировать, рендерится как кликабельная ссылка
+4. **Пояснение `/clear`** — всегда включайте, кратко но объясняет зачем
+5. **"Также доступно" а не "Другие варианты"** — звучит более как приложение
+6. **Визуальные разделители** — `---` сверху и снизу для выделения
+
+## Варианты
+
+### Выполнить следующий план
+
+```
+---
+
+## ▶ Далее
+
+**02-03: Ротация Refresh-токенов** — Добавить /api/auth/refresh со скользящим сроком
 
 `/gsd:execute-phase 2`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- Review plan before executing
-- `/gsd:list-phase-assumptions 2` — check assumptions
+**Также доступно:**
+- Просмотреть план перед выполнением
+- `/gsd:list-phase-assumptions 2` — проверить допущения
 
 ---
 ```
 
-### Execute Final Plan in Phase
+### Выполнить последний план фазы
 
-Add note that this is the last plan and what comes after:
+Добавьте заметку что это последний план и что будет дальше:
 
 ```
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry
-<sub>Final plan in Phase 2</sub>
+**02-03: Ротация Refresh-токенов** — Добавить /api/auth/refresh со скользящим сроком
+<sub>Последний план в Фазе 2</sub>
 
 `/gsd:execute-phase 2`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**After this completes:**
-- Phase 2 → Phase 3 transition
-- Next: **Phase 3: Core Features** — User dashboard and settings
+**После завершения:**
+- Переход Фаза 2 → Фаза 3
+- Далее: **Фаза 3: Основные функции** — Панель пользователя и настройки
 
 ---
 ```
 
-### Plan a Phase
+### Планирование фазы
 
 ```
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Phase 2: Authentication** — JWT login flow with refresh tokens
+**Фаза 2: Аутентификация** — JWT-авторизация с refresh-токенами
 
 `/gsd:plan-phase 2`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:discuss-phase 2` — gather context first
-- `/gsd:research-phase 2` — investigate unknowns
-- Review roadmap
+**Также доступно:**
+- `/gsd:discuss-phase 2` — собрать контекст сначала
+- `/gsd:research-phase 2` — исследовать неизвестные
+- Просмотреть дорожную карту
 
 ---
 ```
 
-### Phase Complete, Ready for Next
+### Фаза завершена, готов к следующей
 
-Show completion status before next action:
+Покажите статус завершения перед следующим действием:
 
 ```
 ---
 
-## ✓ Phase 2 Complete
+## ✓ Фаза 2 завершена
 
-3/3 plans executed
+3/3 плана выполнено
 
-## ▶ Next Up
+## ▶ Далее
 
-**Phase 3: Core Features** — User dashboard, settings, and data export
+**Фаза 3: Основные функции** — Панель пользователя, настройки и экспорт данных
 
 `/gsd:plan-phase 3`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:discuss-phase 3` — gather context first
-- `/gsd:research-phase 3` — investigate unknowns
-- Review what Phase 2 built
-
----
-```
-
-### Multiple Equal Options
-
-When there's no clear primary action:
-
-```
----
-
-## ▶ Next Up
-
-**Phase 3: Core Features** — User dashboard, settings, and data export
-
-**To plan directly:** `/gsd:plan-phase 3`
-
-**To discuss context first:** `/gsd:discuss-phase 3`
-
-**To research unknowns:** `/gsd:research-phase 3`
-
-<sub>`/clear` first → fresh context window</sub>
+**Также доступно:**
+- `/gsd:discuss-phase 3` — собрать контекст сначала
+- `/gsd:research-phase 3` — исследовать неизвестные
+- Просмотреть что Фаза 2 построила
 
 ---
 ```
 
-### Milestone Complete
+### Несколько равнозначных вариантов
+
+Когда нет чёткого основного действия:
 
 ```
 ---
 
-## 🎉 Milestone v1.0 Complete
+## ▶ Далее
 
-All 4 phases shipped
+**Фаза 3: Основные функции** — Панель пользователя, настройки и экспорт данных
 
-## ▶ Next Up
+**Планировать напрямую:** `/gsd:plan-phase 3`
 
-**Start v1.1** — questioning → research → requirements → roadmap
+**Обсудить контекст сначала:** `/gsd:discuss-phase 3`
+
+**Исследовать неизвестные:** `/gsd:research-phase 3`
+
+<sub>`/clear` сначала → чистое контекстное окно</sub>
+
+---
+```
+
+### Веха завершена
+
+```
+---
+
+## 🎉 Веха v1.0 завершена
+
+Все 4 фазы отправлены
+
+## ▶ Далее
+
+**Начать v1.1** — опрос → исследование → требования → дорожная карта
 
 `/gsd:new-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → чистое контекстное окно</sub>
 
 ---
 ```
 
-## Pulling Context
+## Извлечение контекста
 
-### For phases (from ROADMAP.md):
-
-```markdown
-### Phase 2: Authentication
-**Goal**: JWT login flow with refresh tokens
-```
-
-Extract: `**Phase 2: Authentication** — JWT login flow with refresh tokens`
-
-### For plans (from ROADMAP.md):
+### Для фаз (из ROADMAP.md):
 
 ```markdown
-Plans:
-- [ ] 02-03: Add refresh token rotation
+### Фаза 2: Аутентификация
+**Цель**: JWT-авторизация с refresh-токенами
 ```
 
-Or from PLAN.md `<objective>`:
+Извлечь: `**Фаза 2: Аутентификация** — JWT-авторизация с refresh-токенами`
+
+### Для планов (из ROADMAP.md):
+
+```markdown
+Планы:
+- [ ] 02-03: Добавить ротацию refresh-токенов
+```
+
+Или из PLAN.md `<objective>`:
 
 ```xml
 <objective>
-Add refresh token rotation with sliding expiry window.
+Добавить ротацию refresh-токенов со скользящим окном истечения.
 
-Purpose: Extend session lifetime without compromising security.
+Назначение: Продлить время жизни сессии без ущерба безопасности.
 </objective>
 ```
 
-Extract: `**02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry`
+Извлечь: `**02-03: Ротация Refresh-токенов** — Добавить /api/auth/refresh со скользящим сроком`
 
-## Anti-Patterns
+## Анти-паттерны
 
-### Don't: Command-only (no context)
+### Нельзя: Только команда (без контекста)
 
 ```
-## To Continue
+## Для продолжения
 
-Run `/clear`, then paste:
+Запустите `/clear`, затем вставьте:
 /gsd:execute-phase 2
 ```
 
-User has no idea what 02-03 is about.
+Пользователь не знает о чём 02-03.
 
-### Don't: Missing /clear explanation
+### Нельзя: Без пояснения /clear
 
 ```
 `/gsd:plan-phase 3`
 
-Run /clear first.
+Сначала запустите /clear.
 ```
 
-Doesn't explain why. User might skip it.
+Не объясняет зачем. Пользователь может пропустить.
 
-### Don't: "Other options" language
+### Нельзя: Формулировка «Другие варианты»
 
 ```
-Other options:
-- Review roadmap
+Другие варианты:
+- Просмотреть дорожную карту
 ```
 
-Sounds like an afterthought. Use "Also available:" instead.
+Звучит как запоздалая мысль. Используйте «Также доступно:» вместо этого.
 
-### Don't: Fenced code blocks for commands
+### Нельзя: Блоки кода для команд
 
 ```
 ```
@@ -246,4 +246,4 @@ Sounds like an afterthought. Use "Also available:" instead.
 ```
 ```
 
-Fenced blocks inside templates create nesting ambiguity. Use inline backticks instead.
+Блоки кода внутри шаблонов создают неоднозначность вложенности. Используйте инлайн-бэктики.
