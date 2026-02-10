@@ -1,6 +1,6 @@
 <purpose>
 
-Mark a shipped version (v1.0, v1.1, v2.0) as complete. Creates historical record in MILESTONES.md, performs full PROJECT.md evolution review, reorganizes ROADMAP.md with milestone groupings, and tags the release in git.
+Отметить выпущенную версию (v1.0, v1.1, v2.0) как завершённую. Создаёт историческую запись в MILESTONES.md, выполняет полный обзор эволюции PROJECT.md, реорганизует ROADMAP.md с группировкой по вехам и создаёт тег релиза в git.
 
 </purpose>
 
@@ -16,20 +16,20 @@ Mark a shipped version (v1.0, v1.1, v2.0) as complete. Creates historical record
 
 <archival_behavior>
 
-When a milestone completes:
+При завершении вехи:
 
-1. Extract full milestone details to `.planning/milestones/v[X.Y]-ROADMAP.md`
-2. Archive requirements to `.planning/milestones/v[X.Y]-REQUIREMENTS.md`
-3. Update ROADMAP.md — replace milestone details with one-line summary
-4. Delete REQUIREMENTS.md (fresh one for next milestone)
-5. Perform full PROJECT.md evolution review
-6. Offer to create next milestone inline
+1. Извлечь полные данные вехи в `.planning/milestones/v[X.Y]-ROADMAP.md`
+2. Архивировать требования в `.planning/milestones/v[X.Y]-REQUIREMENTS.md`
+3. Обновить ROADMAP.md — заменить детали вехи однострочным резюме
+4. Удалить REQUIREMENTS.md (свежий для следующей вехи)
+5. Выполнить полный обзор эволюции PROJECT.md
+6. Предложить создать следующую веху
 
-**Context Efficiency:** Archives keep ROADMAP.md constant-size and REQUIREMENTS.md milestone-scoped.
+**Эффективность контекста:** Архивы поддерживают ROADMAP.md постоянного размера и REQUIREMENTS.md привязанным к вехе.
 
-**ROADMAP archive** uses `templates/milestone-archive.md` — includes milestone header (status, phases, date), full phase details, milestone summary (decisions, issues, tech debt).
+**Архив ROADMAP** использует `templates/milestone-archive.md` — включает заголовок вехи (статус, фазы, дата), полные детали фаз, резюме вехи (решения, проблемы, техдолг).
 
-**REQUIREMENTS archive** contains all requirements marked complete with outcomes, traceability table with final status, notes on changed requirements.
+**Архив REQUIREMENTS** содержит все требования, помеченные как выполненные с результатами, таблицу прослеживаемости с финальным статусом, заметки об изменённых требованиях.
 
 </archival_behavior>
 
@@ -37,29 +37,29 @@ When a milestone completes:
 
 <step name="verify_readiness">
 
-**Use `roadmap analyze` for comprehensive readiness check:**
+**Используйте `roadmap analyze` для комплексной проверки готовности:**
 
 ```bash
 ROADMAP=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap analyze)
 ```
 
-This returns all phases with plan/summary counts and disk status. Use this to verify:
-- Which phases belong to this milestone?
-- All phases complete (all plans have summaries)? Check `disk_status === 'complete'` for each.
-- `progress_percent` should be 100%.
+Возвращает все фазы с количеством планов/отчётов и статусом на диске. Используйте для проверки:
+- Какие фазы принадлежат этой вехе?
+- Все фазы завершены (все планы имеют отчёты)? Проверьте `disk_status === 'complete'` для каждой.
+- `progress_percent` должен быть 100%.
 
-Present:
+Представьте:
 
 ```
-Milestone: [Name, e.g., "v1.0 MVP"]
+Веха: [Название, напр., "v1.0 MVP"]
 
-Includes:
-- Phase 1: Foundation (2/2 plans complete)
-- Phase 2: Authentication (2/2 plans complete)
-- Phase 3: Core Features (3/3 plans complete)
-- Phase 4: Polish (1/1 plan complete)
+Включает:
+- Фаза 1: Фундамент (2/2 плана завершено)
+- Фаза 2: Аутентификация (2/2 плана завершено)
+- Фаза 3: Основные функции (3/3 плана завершено)
+- Фаза 4: Полировка (1/1 план завершён)
 
-Total: {phase_count} phases, {total_plans} plans, all complete
+Итого: {phase_count} фаз, {total_plans} планов, все завершены
 ```
 
 <config-check>
@@ -73,25 +73,25 @@ cat .planning/config.json 2>/dev/null
 <if mode="yolo">
 
 ```
-⚡ Auto-approved: Milestone scope verification
-[Show breakdown summary without prompting]
-Proceeding to stats gathering...
+⚡ Автоутверждено: Проверка объёма вехи
+[Показать краткое резюме без запроса]
+Переход к сбору статистики...
 ```
 
-Proceed to gather_stats.
+Перейти к gather_stats.
 
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_milestone_scope true">
 
 ```
-Ready to mark this milestone as shipped?
-(yes / wait / adjust scope)
+Готовы отметить эту веху как выпущенную?
+(да / подождать / скорректировать объём)
 ```
 
-Wait for confirmation.
-- "adjust scope": Ask which phases to include.
-- "wait": Stop, user returns when ready.
+Дождитесь подтверждения.
+- "скорректировать объём": Спросить какие фазы включить.
+- "подождать": Остановиться, пользователь вернётся когда будет готов.
 
 </if>
 
@@ -99,7 +99,7 @@ Wait for confirmation.
 
 <step name="gather_stats">
 
-Calculate milestone statistics:
+Вычислить статистику вехи:
 
 ```bash
 git log --oneline --grep="feat(" | head -20
@@ -109,292 +109,292 @@ git log --format="%ai" FIRST_COMMIT | tail -1
 git log --format="%ai" LAST_COMMIT | head -1
 ```
 
-Present:
+Представить:
 
 ```
-Milestone Stats:
-- Phases: [X-Y]
-- Plans: [Z] total
-- Tasks: [N] total (from phase summaries)
-- Files modified: [M]
-- Lines of code: [LOC] [language]
-- Timeline: [Days] days ([Start] → [End])
-- Git range: feat(XX-XX) → feat(YY-YY)
+Статистика вехи:
+- Фазы: [X-Y]
+- Планы: [Z] всего
+- Задачи: [N] всего (из отчётов фаз)
+- Изменённые файлы: [M]
+- Строки кода: [LOC] [язык]
+- Сроки: [Дней] дней ([Начало] → [Конец])
+- Диапазон Git: feat(XX-XX) → feat(YY-YY)
 ```
 
 </step>
 
 <step name="extract_accomplishments">
 
-Extract one-liners from SUMMARY.md files using summary-extract:
+Извлечь однострочники из файлов SUMMARY.md с помощью summary-extract:
 
 ```bash
-# For each phase in milestone, extract one-liner
+# Для каждой фазы вехи извлечь однострочник
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
   node ~/.claude/get-shit-done/bin/gsd-tools.js summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
 done
 ```
 
-Extract 4-6 key accomplishments. Present:
+Извлечь 4-6 ключевых достижений. Представить:
 
 ```
-Key accomplishments for this milestone:
-1. [Achievement from phase 1]
-2. [Achievement from phase 2]
-3. [Achievement from phase 3]
-4. [Achievement from phase 4]
-5. [Achievement from phase 5]
+Ключевые достижения этой вехи:
+1. [Достижение из фазы 1]
+2. [Достижение из фазы 2]
+3. [Достижение из фазы 3]
+4. [Достижение из фазы 4]
+5. [Достижение из фазы 5]
 ```
 
 </step>
 
 <step name="create_milestone_entry">
 
-**Note:** MILESTONES.md entry is now created automatically by `gsd-tools milestone complete` in the archive_milestone step. The entry includes version, date, phase/plan/task counts, and accomplishments extracted from SUMMARY.md files.
+**Примечание:** Запись в MILESTONES.md теперь создаётся автоматически через `gsd-tools milestone complete` на шаге archive_milestone. Запись включает версию, дату, количество фаз/планов/задач и достижения из файлов SUMMARY.md.
 
-If additional details are needed (e.g., user-provided "Delivered" summary, git range, LOC stats), add them manually after the CLI creates the base entry.
+Если нужны дополнительные данные (напр., пользовательское резюме "Выпущено", диапазон git, статистика LOC), добавьте их вручную после создания базовой записи CLI.
 
 </step>
 
 <step name="evolve_project_full_review">
 
-Full PROJECT.md evolution review at milestone completion.
+Полный обзор эволюции PROJECT.md при завершении вехи.
 
-Read all phase summaries:
+Прочитать все отчёты фаз:
 
 ```bash
 cat .planning/phases/*-*/*-SUMMARY.md
 ```
 
-**Full review checklist:**
+**Полный чеклист обзора:**
 
-1. **"What This Is" accuracy:**
-   - Compare current description to what was built
-   - Update if product has meaningfully changed
+1. **Точность "Что это такое":**
+   - Сравнить текущее описание с тем, что было построено
+   - Обновить, если продукт существенно изменился
 
-2. **Core Value check:**
-   - Still the right priority? Did shipping reveal a different core value?
-   - Update if the ONE thing has shifted
+2. **Проверка основной ценности:**
+   - Всё ещё правильный приоритет? Выявил ли выпуск другую основную ценность?
+   - Обновить, если ТА ЕДИНСТВЕННАЯ вещь сместилась
 
-3. **Requirements audit:**
+3. **Аудит требований:**
 
-   **Validated section:**
-   - All Active requirements shipped this milestone → Move to Validated
-   - Format: `- ✓ [Requirement] — v[X.Y]`
+   **Секция "Подтверждённые":**
+   - Все активные требования, выпущенные в этой вехе → Переместить в Подтверждённые
+   - Формат: `- ✓ [Требование] — v[X.Y]`
 
-   **Active section:**
-   - Remove requirements moved to Validated
-   - Add new requirements for next milestone
-   - Keep unaddressed requirements
+   **Секция "Активные":**
+   - Удалить требования, перемещённые в Подтверждённые
+   - Добавить новые требования для следующей вехи
+   - Оставить нерассмотренные требования
 
-   **Out of Scope audit:**
-   - Review each item — reasoning still valid?
-   - Remove irrelevant items
-   - Add requirements invalidated during milestone
+   **Аудит секции "За пределами":**
+   - Пересмотреть каждый пункт — обоснование всё ещё актуально?
+   - Удалить неактуальные пункты
+   - Добавить требования, признанные недействительными во время вехи
 
-4. **Context update:**
-   - Current codebase state (LOC, tech stack)
-   - User feedback themes (if any)
-   - Known issues or technical debt
+4. **Обновление контекста:**
+   - Текущее состояние кодовой базы (LOC, техстек)
+   - Темы обратной связи пользователей (если есть)
+   - Известные проблемы или техдолг
 
-5. **Key Decisions audit:**
-   - Extract all decisions from milestone phase summaries
-   - Add to Key Decisions table with outcomes
-   - Mark ✓ Good, ⚠️ Revisit, or — Pending
+5. **Аудит ключевых решений:**
+   - Извлечь все решения из отчётов фаз вехи
+   - Добавить в таблицу ключевых решений с результатами
+   - Отметить ✓ Хорошо, ⚠️ Пересмотреть или — В ожидании
 
-6. **Constraints check:**
-   - Any constraints changed during development? Update as needed
+6. **Проверка ограничений:**
+   - Изменились ли ограничения во время разработки? Обновить при необходимости
 
-Update PROJECT.md inline. Update "Last updated" footer:
+Обновить PROJECT.md на месте. Обновить подвал "Последнее обновление":
 
 ```markdown
 ---
-*Last updated: [date] after v[X.Y] milestone*
+*Последнее обновление: [дата] после вехи v[X.Y]*
 ```
 
-**Example full evolution (v1.0 → v1.1 prep):**
+**Пример полной эволюции (v1.0 → подготовка v1.1):**
 
-Before:
+До:
 
 ```markdown
-## What This Is
+## Что это такое
 
-A real-time collaborative whiteboard for remote teams.
+Совместная доска для удалённых команд в реальном времени.
 
-## Core Value
+## Основная ценность
 
-Real-time sync that feels instant.
+Синхронизация в реальном времени, которая ощущается мгновенной.
 
-## Requirements
+## Требования
 
-### Validated
+### Подтверждённые
 
-(None yet — ship to validate)
+(Пока нет — выпускайте для подтверждения)
 
-### Active
+### Активные
 
-- [ ] Canvas drawing tools
-- [ ] Real-time sync < 500ms
-- [ ] User authentication
-- [ ] Export to PNG
+- [ ] Инструменты рисования на холсте
+- [ ] Синхронизация в реальном времени < 500мс
+- [ ] Аутентификация пользователей
+- [ ] Экспорт в PNG
 
-### Out of Scope
+### За пределами
 
-- Mobile app — web-first approach
-- Video chat — use external tools
+- Мобильное приложение — подход web-first
+- Видеочат — использовать внешние инструменты
 ```
 
-After v1.0:
+После v1.0:
 
 ```markdown
-## What This Is
+## Что это такое
 
-A real-time collaborative whiteboard for remote teams with instant sync and drawing tools.
+Совместная доска для удалённых команд в реальном времени с мгновенной синхронизацией и инструментами рисования.
 
-## Core Value
+## Основная ценность
 
-Real-time sync that feels instant.
+Синхронизация в реальном времени, которая ощущается мгновенной.
 
-## Requirements
+## Требования
 
-### Validated
+### Подтверждённые
 
-- ✓ Canvas drawing tools — v1.0
-- ✓ Real-time sync < 500ms — v1.0 (achieved 200ms avg)
-- ✓ User authentication — v1.0
+- ✓ Инструменты рисования на холсте — v1.0
+- ✓ Синхронизация в реальном времени < 500мс — v1.0 (достигнуто 200мс в среднем)
+- ✓ Аутентификация пользователей — v1.0
 
-### Active
+### Активные
 
-- [ ] Export to PNG
-- [ ] Undo/redo history
-- [ ] Shape tools (rectangles, circles)
+- [ ] Экспорт в PNG
+- [ ] История отмены/возврата
+- [ ] Инструменты фигур (прямоугольники, круги)
 
-### Out of Scope
+### За пределами
 
-- Mobile app — web-first approach, PWA works well
-- Video chat — use external tools
-- Offline mode — real-time is core value
+- Мобильное приложение — подход web-first, PWA работает хорошо
+- Видеочат — использовать внешние инструменты
+- Офлайн-режим — реальное время — основная ценность
 
-## Context
+## Контекст
 
-Shipped v1.0 with 2,400 LOC TypeScript.
-Tech stack: Next.js, Supabase, Canvas API.
-Initial user testing showed demand for shape tools.
+Выпущен v1.0 с 2400 строк TypeScript.
+Техстек: Next.js, Supabase, Canvas API.
+Первичное тестирование показало спрос на инструменты фигур.
 ```
 
-**Step complete when:**
+**Шаг завершён когда:**
 
-- [ ] "What This Is" reviewed and updated if needed
-- [ ] Core Value verified as still correct
-- [ ] All shipped requirements moved to Validated
-- [ ] New requirements added to Active for next milestone
-- [ ] Out of Scope reasoning audited
-- [ ] Context updated with current state
-- [ ] All milestone decisions added to Key Decisions
-- [ ] "Last updated" footer reflects milestone completion
+- [ ] "Что это такое" пересмотрено и обновлено при необходимости
+- [ ] Основная ценность подтверждена как всё ещё верная
+- [ ] Все выпущенные требования перемещены в Подтверждённые
+- [ ] Новые требования добавлены в Активные для следующей вехи
+- [ ] Обоснование секции "За пределами" проверено
+- [ ] Контекст обновлён текущим состоянием
+- [ ] Все решения вехи добавлены в Ключевые решения
+- [ ] Подвал "Последнее обновление" отражает завершение вехи
 
 </step>
 
 <step name="reorganize_roadmap">
 
-Update `.planning/ROADMAP.md` — group completed milestone phases:
+Обновить `.planning/ROADMAP.md` — сгруппировать завершённые фазы вехи:
 
 ```markdown
-# Roadmap: [Project Name]
+# Дорожная карта: [Название проекта]
 
-## Milestones
+## Вехи
 
-- ✅ **v1.0 MVP** — Phases 1-4 (shipped YYYY-MM-DD)
-- 🚧 **v1.1 Security** — Phases 5-6 (in progress)
-- 📋 **v2.0 Redesign** — Phases 7-10 (planned)
+- ✅ **v1.0 MVP** — Фазы 1-4 (выпущено ГГГГ-ММ-ДД)
+- 🚧 **v1.1 Безопасность** — Фазы 5-6 (в процессе)
+- 📋 **v2.0 Редизайн** — Фазы 7-10 (запланировано)
 
-## Phases
+## Фазы
 
 <details>
-<summary>✅ v1.0 MVP (Phases 1-4) — SHIPPED YYYY-MM-DD</summary>
+<summary>✅ v1.0 MVP (Фазы 1-4) — ВЫПУЩЕНО ГГГГ-ММ-ДД</summary>
 
-- [x] Phase 1: Foundation (2/2 plans) — completed YYYY-MM-DD
-- [x] Phase 2: Authentication (2/2 plans) — completed YYYY-MM-DD
-- [x] Phase 3: Core Features (3/3 plans) — completed YYYY-MM-DD
-- [x] Phase 4: Polish (1/1 plan) — completed YYYY-MM-DD
+- [x] Фаза 1: Фундамент (2/2 плана) — завершена ГГГГ-ММ-ДД
+- [x] Фаза 2: Аутентификация (2/2 плана) — завершена ГГГГ-ММ-ДД
+- [x] Фаза 3: Основные функции (3/3 плана) — завершена ГГГГ-ММ-ДД
+- [x] Фаза 4: Полировка (1/1 план) — завершена ГГГГ-ММ-ДД
 
 </details>
 
-### 🚧 v[Next] [Name] (In Progress / Planned)
+### 🚧 v[Следующая] [Название] (В процессе / Запланировано)
 
-- [ ] Phase 5: [Name] ([N] plans)
-- [ ] Phase 6: [Name] ([N] plans)
+- [ ] Фаза 5: [Название] ([N] планов)
+- [ ] Фаза 6: [Название] ([N] планов)
 
-## Progress
+## Прогресс
 
-| Phase             | Milestone | Plans Complete | Status      | Completed  |
-| ----------------- | --------- | -------------- | ----------- | ---------- |
-| 1. Foundation     | v1.0      | 2/2            | Complete    | YYYY-MM-DD |
-| 2. Authentication | v1.0      | 2/2            | Complete    | YYYY-MM-DD |
-| 3. Core Features  | v1.0      | 3/3            | Complete    | YYYY-MM-DD |
-| 4. Polish         | v1.0      | 1/1            | Complete    | YYYY-MM-DD |
-| 5. Security Audit | v1.1      | 0/1            | Not started | -          |
-| 6. Hardening      | v1.1      | 0/2            | Not started | -          |
+| Фаза              | Веха | Планы завершены | Статус      | Завершена  |
+| ------------------ | ---- | --------------- | ----------- | ---------- |
+| 1. Фундамент       | v1.0 | 2/2            | Завершена   | ГГГГ-ММ-ДД |
+| 2. Аутентификация   | v1.0 | 2/2            | Завершена   | ГГГГ-ММ-ДД |
+| 3. Основные функции | v1.0 | 3/3            | Завершена   | ГГГГ-ММ-ДД |
+| 4. Полировка        | v1.0 | 1/1            | Завершена   | ГГГГ-ММ-ДД |
+| 5. Аудит безопасности | v1.1 | 0/1          | Не начата   | -          |
+| 6. Укрепление       | v1.1 | 0/2            | Не начата   | -          |
 ```
 
 </step>
 
 <step name="archive_milestone">
 
-**Delegate archival to gsd-tools:**
+**Делегировать архивацию в gsd-tools:**
 
 ```bash
-ARCHIVE=$(node ~/.claude/get-shit-done/bin/gsd-tools.js milestone complete "v[X.Y]" --name "[Milestone Name]")
+ARCHIVE=$(node ~/.claude/get-shit-done/bin/gsd-tools.js milestone complete "v[X.Y]" --name "[Название вехи]")
 ```
 
-The CLI handles:
-- Creating `.planning/milestones/` directory
-- Archiving ROADMAP.md to `milestones/v[X.Y]-ROADMAP.md`
-- Archiving REQUIREMENTS.md to `milestones/v[X.Y]-REQUIREMENTS.md` with archive header
-- Moving audit file to milestones if it exists
-- Creating/appending MILESTONES.md entry with accomplishments from SUMMARY.md files
-- Updating STATE.md (status, last activity)
+CLI выполняет:
+- Создание каталога `.planning/milestones/`
+- Архивацию ROADMAP.md в `milestones/v[X.Y]-ROADMAP.md`
+- Архивацию REQUIREMENTS.md в `milestones/v[X.Y]-REQUIREMENTS.md` с заголовком архива
+- Перемещение файла аудита в milestones при наличии
+- Создание/дополнение записи в MILESTONES.md с достижениями из файлов SUMMARY.md
+- Обновление STATE.md (статус, последняя активность)
 
-Extract from result: `version`, `date`, `phases`, `plans`, `tasks`, `accomplishments`, `archived`.
+Извлечь из результата: `version`, `date`, `phases`, `plans`, `tasks`, `accomplishments`, `archived`.
 
-Verify: `✅ Milestone archived to .planning/milestones/`
+Проверить: `✅ Веха архивирована в .planning/milestones/`
 
-**Note:** Phase directories (`.planning/phases/`) are NOT deleted — they accumulate across milestones as raw execution history. Phase numbering continues (v1.0 phases 1-4, v1.1 phases 5-8, etc.).
+**Примечание:** Каталоги фаз (`.planning/phases/`) НЕ удаляются — они накапливаются между вехами как сырая история выполнения. Нумерация фаз продолжается (фазы 1-4 в v1.0, фазы 5-8 в v1.1 и т.д.).
 
-After archival, the AI still handles:
-- Reorganizing ROADMAP.md with milestone grouping (requires judgment)
-- Full PROJECT.md evolution review (requires understanding)
-- Deleting original ROADMAP.md and REQUIREMENTS.md
-- These are NOT fully delegated because they require AI interpretation of content
+После архивации AI по-прежнему выполняет:
+- Реорганизацию ROADMAP.md с группировкой по вехам (требует суждения)
+- Полный обзор эволюции PROJECT.md (требует понимания)
+- Удаление оригинальных ROADMAP.md и REQUIREMENTS.md
+- Это НЕ полностью делегировано, поскольку требует AI-интерпретации содержимого
 
 </step>
 
 <step name="reorganize_roadmap_and_delete_originals">
 
-After `milestone complete` has archived, reorganize ROADMAP.md with milestone groupings, then delete originals:
+После завершения `milestone complete` и архивации, реорганизуйте ROADMAP.md с группировкой по вехам, затем удалите оригиналы:
 
-**Reorganize ROADMAP.md** — group completed milestone phases:
+**Реорганизуйте ROADMAP.md** — сгруппируйте завершённые фазы вехи:
 
 ```markdown
-# Roadmap: [Project Name]
+# Дорожная карта: [Название проекта]
 
-## Milestones
+## Вехи
 
-- ✅ **v1.0 MVP** — Phases 1-4 (shipped YYYY-MM-DD)
-- 🚧 **v1.1 Security** — Phases 5-6 (in progress)
+- ✅ **v1.0 MVP** — Фазы 1-4 (выпущено ГГГГ-ММ-ДД)
+- 🚧 **v1.1 Безопасность** — Фазы 5-6 (в процессе)
 
-## Phases
+## Фазы
 
 <details>
-<summary>✅ v1.0 MVP (Phases 1-4) — SHIPPED YYYY-MM-DD</summary>
+<summary>✅ v1.0 MVP (Фазы 1-4) — ВЫПУЩЕНО ГГГГ-ММ-ДД</summary>
 
-- [x] Phase 1: Foundation (2/2 plans) — completed YYYY-MM-DD
-- [x] Phase 2: Authentication (2/2 plans) — completed YYYY-MM-DD
+- [x] Фаза 1: Фундамент (2/2 плана) — завершена ГГГГ-ММ-ДД
+- [x] Фаза 2: Аутентификация (2/2 плана) — завершена ГГГГ-ММ-ДД
 
 </details>
 ```
 
-**Then delete originals:**
+**Затем удалите оригиналы:**
 
 ```bash
 rm .planning/ROADMAP.md
@@ -405,71 +405,71 @@ rm .planning/REQUIREMENTS.md
 
 <step name="update_state">
 
-Most STATE.md updates were handled by `milestone complete`, but verify and update remaining fields:
+Большинство обновлений STATE.md были выполнены через `milestone complete`, но проверьте и обновите оставшиеся поля:
 
-**Project Reference:**
+**Справка о проекте:**
 
 ```markdown
-## Project Reference
+## Справка о проекте
 
-See: .planning/PROJECT.md (updated [today])
+См.: .planning/PROJECT.md (обновлён [сегодня])
 
-**Core value:** [Current core value from PROJECT.md]
-**Current focus:** [Next milestone or "Planning next milestone"]
+**Основная ценность:** [Текущая основная ценность из PROJECT.md]
+**Текущий фокус:** [Следующая веха или "Планирование следующей вехи"]
 ```
 
-**Accumulated Context:**
-- Clear decisions summary (full log in PROJECT.md)
-- Clear resolved blockers
-- Keep open blockers for next milestone
+**Накопленный контекст:**
+- Очистить резюме решений (полный лог в PROJECT.md)
+- Очистить решённые блокеры
+- Оставить открытые блокеры для следующей вехи
 
 </step>
 
 <step name="handle_branches">
 
-Check branching strategy and offer merge options.
+Проверить стратегию ветвления и предложить варианты слияния.
 
-Use `init milestone-op` for context, or load config directly:
+Использовать `init milestone-op` для контекста или загрузить конфиг напрямую:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init execute-phase "1")
 ```
 
-Extract `branching_strategy`, `phase_branch_template`, `milestone_branch_template` from init JSON.
+Извлечь `branching_strategy`, `phase_branch_template`, `milestone_branch_template` из JSON инициализации.
 
-**If "none":** Skip to git_tag.
+**Если "none":** Перейти к git_tag.
 
-**For "phase" strategy:**
+**Для стратегии "phase":**
 
 ```bash
 BRANCH_PREFIX=$(echo "$PHASE_BRANCH_TEMPLATE" | sed 's/{.*//')
 PHASE_BRANCHES=$(git branch --list "${BRANCH_PREFIX}*" 2>/dev/null | sed 's/^\*//' | tr -d ' ')
 ```
 
-**For "milestone" strategy:**
+**Для стратегии "milestone":**
 
 ```bash
 BRANCH_PREFIX=$(echo "$MILESTONE_BRANCH_TEMPLATE" | sed 's/{.*//')
 MILESTONE_BRANCH=$(git branch --list "${BRANCH_PREFIX}*" 2>/dev/null | sed 's/^\*//' | tr -d ' ' | head -1)
 ```
 
-**If no branches found:** Skip to git_tag.
+**Если ветки не найдены:** Перейти к git_tag.
 
-**If branches exist:**
+**Если ветки существуют:**
 
 ```
-## Git Branches Detected
+## Обнаружены Git-ветки
 
-Branching strategy: {phase/milestone}
-Branches: {list}
+Стратегия ветвления: {phase/milestone}
+Ветки: {список}
 
-Options:
-1. **Merge to main** — Merge branch(es) to main
-2. **Delete without merging** — Already merged or not needed
-3. **Keep branches** — Leave for manual handling
+Варианты:
+1. **Слить в main** — Слить ветку(и) в main
+2. **Удалить без слияния** — Уже слито или не нужно
+3. **Оставить ветки** — Оставить для ручной обработки
 ```
 
-AskUserQuestion with options: Squash merge (Recommended), Merge with history, Delete without merging, Keep branches.
+AskUserQuestion с вариантами: Squash merge (Рекомендуется), Слить с историей, Удалить без слияния, Оставить ветки.
 
 **Squash merge:**
 
@@ -492,7 +492,7 @@ fi
 git checkout "$CURRENT_BRANCH"
 ```
 
-**Merge with history:**
+**Слить с историей:**
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
@@ -511,7 +511,7 @@ fi
 git checkout "$CURRENT_BRANCH"
 ```
 
-**Delete without merging:**
+**Удалить без слияния:**
 
 ```bash
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
@@ -525,32 +525,32 @@ if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
 fi
 ```
 
-**Keep branches:** Report "Branches preserved for manual handling"
+**Оставить ветки:** Сообщить "Ветки сохранены для ручной обработки"
 
 </step>
 
 <step name="git_tag">
 
-Create git tag:
+Создать git-тег:
 
 ```bash
-git tag -a v[X.Y] -m "v[X.Y] [Name]
+git tag -a v[X.Y] -m "v[X.Y] [Название]
 
-Delivered: [One sentence]
+Выпущено: [Одно предложение]
 
-Key accomplishments:
-- [Item 1]
-- [Item 2]
-- [Item 3]
+Ключевые достижения:
+- [Пункт 1]
+- [Пункт 2]
+- [Пункт 3]
 
-See .planning/MILESTONES.md for full details."
+См. .planning/MILESTONES.md для полных деталей."
 ```
 
-Confirm: "Tagged: v[X.Y]"
+Подтвердить: "Тег создан: v[X.Y]"
 
-Ask: "Push tag to remote? (y/n)"
+Спросить: "Запушить тег на удалённый сервер? (д/н)"
 
-If yes:
+Если да:
 ```bash
 git push origin v[X.Y]
 ```
@@ -559,42 +559,41 @@ git push origin v[X.Y]
 
 <step name="git_commit_milestone">
 
-Commit milestone completion.
+Закоммитить завершение вехи.
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
 ```
-```
 
-Confirm: "Committed: chore: complete v[X.Y] milestone"
+Подтвердить: "Закоммичено: chore: complete v[X.Y] milestone"
 
 </step>
 
 <step name="offer_next">
 
 ```
-✅ Milestone v[X.Y] [Name] complete
+✅ Веха v[X.Y] [Название] завершена
 
-Shipped:
-- [N] phases ([M] plans, [P] tasks)
-- [One sentence of what shipped]
+Выпущено:
+- [N] фаз ([M] планов, [P] задач)
+- [Одно предложение о том, что выпущено]
 
-Archived:
+Архивировано:
 - milestones/v[X.Y]-ROADMAP.md
 - milestones/v[X.Y]-REQUIREMENTS.md
 
-Summary: .planning/MILESTONES.md
-Tag: v[X.Y]
+Резюме: .planning/MILESTONES.md
+Тег: v[X.Y]
 
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Start Next Milestone** — questioning → research → requirements → roadmap
+**Начать следующую веху** — опрос → исследование → требования → дорожная карта
 
 `/gsd:new-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → свежее контекстное окно</sub>
 
 ---
 ```
@@ -605,40 +604,40 @@ Tag: v[X.Y]
 
 <milestone_naming>
 
-**Version conventions:**
-- **v1.0** — Initial MVP
-- **v1.1, v1.2** — Minor updates, new features, fixes
-- **v2.0, v3.0** — Major rewrites, breaking changes, new direction
+**Соглашения по версиям:**
+- **v1.0** — Начальный MVP
+- **v1.1, v1.2** — Минорные обновления, новые функции, исправления
+- **v2.0, v3.0** — Мажорные переработки, ломающие изменения, новое направление
 
-**Names:** Short 1-2 words (v1.0 MVP, v1.1 Security, v1.2 Performance, v2.0 Redesign).
+**Названия:** Короткие 1-2 слова (v1.0 MVP, v1.1 Безопасность, v1.2 Производительность, v2.0 Редизайн).
 
 </milestone_naming>
 
 <what_qualifies>
 
-**Create milestones for:** Initial release, public releases, major feature sets shipped, before archiving planning.
+**Создавайте вехи для:** Начального релиза, публичных релизов, крупных наборов функций, перед архивацией планирования.
 
-**Don't create milestones for:** Every phase completion (too granular), work in progress, internal dev iterations (unless truly shipped).
+**Не создавайте вехи для:** Каждого завершения фазы (слишком детально), незавершённой работы, внутренних итераций разработки (если не реально выпущено).
 
-Heuristic: "Is this deployed/usable/shipped?" If yes → milestone. If no → keep working.
+Эвристика: "Это развёрнуто/используемо/выпущено?" Если да → веха. Если нет → продолжайте работу.
 
 </what_qualifies>
 
 <success_criteria>
 
-Milestone completion is successful when:
+Завершение вехи успешно когда:
 
-- [ ] MILESTONES.md entry created with stats and accomplishments
-- [ ] PROJECT.md full evolution review completed
-- [ ] All shipped requirements moved to Validated in PROJECT.md
-- [ ] Key Decisions updated with outcomes
-- [ ] ROADMAP.md reorganized with milestone grouping
-- [ ] Roadmap archive created (milestones/v[X.Y]-ROADMAP.md)
-- [ ] Requirements archive created (milestones/v[X.Y]-REQUIREMENTS.md)
-- [ ] REQUIREMENTS.md deleted (fresh for next milestone)
-- [ ] STATE.md updated with fresh project reference
-- [ ] Git tag created (v[X.Y])
-- [ ] Milestone commit made (includes archive files and deletion)
-- [ ] User knows next step (/gsd:new-milestone)
+- [ ] Запись в MILESTONES.md создана со статистикой и достижениями
+- [ ] Полный обзор эволюции PROJECT.md выполнен
+- [ ] Все выпущенные требования перемещены в Подтверждённые в PROJECT.md
+- [ ] Ключевые решения обновлены с результатами
+- [ ] ROADMAP.md реорганизован с группировкой по вехам
+- [ ] Архив дорожной карты создан (milestones/v[X.Y]-ROADMAP.md)
+- [ ] Архив требований создан (milestones/v[X.Y]-REQUIREMENTS.md)
+- [ ] REQUIREMENTS.md удалён (свежий для следующей вехи)
+- [ ] STATE.md обновлён со свежей справкой о проекте
+- [ ] Git-тег создан (v[X.Y])
+- [ ] Коммит вехи сделан (включает файлы архива и удаления)
+- [ ] Пользователь знает что следующий шаг — `/gsd:new-milestone`
 
 </success_criteria>

@@ -1,103 +1,103 @@
 <purpose>
-Execute all plans in a phase using wave-based parallel execution. Orchestrator stays lean — delegates plan execution to subagents.
+Выполнить все планы фазы используя волновое параллельное выполнение. Оркестратор остаётся лёгким — делегирует выполнение планов субагентам.
 </purpose>
 
 <core_principle>
-Orchestrator coordinates, not executes. Each subagent loads the full execute-plan context. Orchestrator: discover plans → analyze deps → group waves → spawn agents → handle checkpoints → collect results.
+Оркестратор координирует, не выполняет. Каждый субагент загружает полный контекст execute-plan. Оркестратор: обнаружить планы → проанализировать зависимости → сгруппировать волны → запустить агентов → обработать контрольные точки → собрать результаты.
 </core_principle>
 
 <required_reading>
-Read STATE.md before any operation to load project context.
+Прочитайте STATE.md перед любой операцией для загрузки контекста проекта.
 </required_reading>
 
 <process>
 
 <step name="initialize" priority="first">
-Load all context in one call:
+Загрузить весь контекст одним вызовом:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init execute-phase "${PHASE_ARG}")
 ```
 
-Parse JSON for: `executor_model`, `verifier_model`, `commit_docs`, `parallelization`, `branching_strategy`, `branch_name`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `plans`, `incomplete_plans`, `plan_count`, `incomplete_count`, `state_exists`, `roadmap_exists`.
+Распарсить JSON: `executor_model`, `verifier_model`, `commit_docs`, `parallelization`, `branching_strategy`, `branch_name`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `plans`, `incomplete_plans`, `plan_count`, `incomplete_count`, `state_exists`, `roadmap_exists`.
 
-**If `phase_found` is false:** Error — phase directory not found.
-**If `plan_count` is 0:** Error — no plans found in phase.
-**If `state_exists` is false but `.planning/` exists:** Offer reconstruct or continue.
+**Если `phase_found` — false:** Ошибка — каталог фазы не найден.
+**Если `plan_count` — 0:** Ошибка — планы в фазе не найдены.
+**Если `state_exists` — false но `.planning/` существует:** Предложить реконструировать или продолжить.
 
-When `parallelization` is false, plans within a wave execute sequentially.
+Когда `parallelization` — false, планы внутри волны выполняются последовательно.
 </step>
 
 <step name="handle_branching">
-Check `branching_strategy` from init:
+Проверить `branching_strategy` из init:
 
-**"none":** Skip, continue on current branch.
+**"none":** Пропустить, продолжить на текущей ветке.
 
-**"phase" or "milestone":** Use pre-computed `branch_name` from init:
+**"phase" или "milestone":** Использовать предвычисленное `branch_name` из init:
 ```bash
 git checkout -b "$BRANCH_NAME" 2>/dev/null || git checkout "$BRANCH_NAME"
 ```
 
-All subsequent commits go to this branch. User handles merging.
+Все последующие коммиты идут в эту ветку. Пользователь управляет слиянием.
 </step>
 
 <step name="validate_phase">
-From init JSON: `phase_dir`, `plan_count`, `incomplete_count`.
+Из JSON инициализации: `phase_dir`, `plan_count`, `incomplete_count`.
 
-Report: "Found {plan_count} plans in {phase_dir} ({incomplete_count} incomplete)"
+Сообщить: "Найдено {plan_count} планов в {phase_dir} ({incomplete_count} незавершённых)"
 </step>
 
 <step name="discover_and_group_plans">
-Load plan inventory with wave grouping in one call:
+Загрузить инвентарь планов с группировкой по волнам одним вызовом:
 
 ```bash
 PLAN_INDEX=$(node ~/.claude/get-shit-done/bin/gsd-tools.js phase-plan-index "${PHASE_NUMBER}")
 ```
 
-Parse JSON for: `phase`, `plans[]` (each with `id`, `wave`, `autonomous`, `objective`, `files_modified`, `task_count`, `has_summary`), `waves` (map of wave number → plan IDs), `incomplete`, `has_checkpoints`.
+Распарсить JSON: `phase`, `plans[]` (каждый с `id`, `wave`, `autonomous`, `objective`, `files_modified`, `task_count`, `has_summary`), `waves` (карта номер волны → ID планов), `incomplete`, `has_checkpoints`.
 
-**Filtering:** Skip plans where `has_summary: true`. If `--gaps-only`: also skip non-gap_closure plans. If all filtered: "No matching incomplete plans" → exit.
+**Фильтрация:** Пропустить планы где `has_summary: true`. Если `--gaps-only`: также пропустить не-gap_closure планы. Если все отфильтрованы: "Нет подходящих незавершённых планов" → выход.
 
-Report:
+Сообщить:
 ```
-## Execution Plan
+## План выполнения
 
-**Phase {X}: {Name}** — {total_plans} plans across {wave_count} waves
+**Фаза {X}: {Название}** — {total_plans} планов в {wave_count} волнах
 
-| Wave | Plans | What it builds |
-|------|-------|----------------|
-| 1 | 01-01, 01-02 | {from plan objectives, 3-8 words} |
+| Волна | Планы | Что строится |
+|-------|-------|-------------|
+| 1 | 01-01, 01-02 | {из целей планов, 3-8 слов} |
 | 2 | 01-03 | ... |
 ```
 </step>
 
 <step name="execute_waves">
-Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`, sequential if `false`.
+Выполнять каждую волну последовательно. Внутри волны: параллельно если `PARALLELIZATION=true`, последовательно если `false`.
 
-**For each wave:**
+**Для каждой волны:**
 
-1. **Describe what's being built (BEFORE spawning):**
+1. **Описать что строится (ПЕРЕД запуском):**
 
-   Read each plan's `<objective>`. Extract what's being built and why.
+   Прочитать `<objective>` каждого плана. Извлечь что строится и зачем.
 
    ```
    ---
-   ## Wave {N}
+   ## Волна {N}
 
-   **{Plan ID}: {Plan Name}**
-   {2-3 sentences: what this builds, technical approach, why it matters}
+   **{ID плана}: {Название плана}**
+   {2-3 предложения: что строится, технический подход, почему это важно}
 
-   Spawning {count} agent(s)...
+   Запуск {count} агента(ов)...
    ---
    ```
 
-   - Bad: "Executing terrain generation plan"
-   - Good: "Procedural terrain generator using Perlin noise — creates height maps, biome zones, and collision meshes. Required before vehicle physics can interact with ground."
+   - Плохо: "Выполняется план генерации ландшафта"
+   - Хорошо: "Процедурный генератор ландшафта на шуме Перлина — создаёт карты высот, биомные зоны и коллизионные меши. Требуется до того, как физика транспорта сможет взаимодействовать с землёй."
 
-2. **Spawn executor agents:**
+2. **Запустить агентов-исполнителей:**
 
-   Pass paths only — executors read files themselves with their fresh 200k context.
-   This keeps orchestrator context lean (~10-15%).
+   Передать только пути — исполнители читают файлы сами с их свежим контекстом 200k.
+   Это сохраняет контекст оркестратора лёгким (~10-15%).
 
    ```
    Task(
@@ -133,101 +133,101 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
    )
    ```
 
-3. **Wait for all agents in wave to complete.**
+3. **Дождаться завершения всех агентов в волне.**
 
-4. **Report completion — spot-check claims first:**
+4. **Отчитаться о завершении — сначала выборочная проверка:**
 
-   For each SUMMARY.md:
-   - Verify first 2 files from `key-files.created` exist on disk
-   - Check `git log --oneline --all --grep="{phase}-{plan}"` returns ≥1 commit
-   - Check for `## Self-Check: FAILED` marker
+   Для каждого SUMMARY.md:
+   - Проверить что первые 2 файла из `key-files.created` существуют на диске
+   - Проверить что `git log --oneline --all --grep="{phase}-{plan}"` возвращает ≥1 коммит
+   - Проверить наличие маркера `## Self-Check: FAILED`
 
-   If ANY spot-check fails: report which plan failed, route to failure handler — ask "Retry plan?" or "Continue with remaining waves?"
+   Если ЛЮБАЯ выборочная проверка провалилась: сообщить какой план провалился, направить в обработчик ошибок — спросить "Повторить план?" или "Продолжить с оставшимися волнами?"
 
-   If pass:
+   Если проверка пройдена:
    ```
    ---
-   ## Wave {N} Complete
+   ## Волна {N} завершена
 
-   **{Plan ID}: {Plan Name}**
-   {What was built — from SUMMARY.md}
-   {Notable deviations, if any}
+   **{ID плана}: {Название плана}**
+   {Что было построено — из SUMMARY.md}
+   {Заметные отклонения, если есть}
 
-   {If more waves: what this enables for next wave}
+   {Если есть ещё волны: что это даёт для следующей волны}
    ---
    ```
 
-   - Bad: "Wave 2 complete. Proceeding to Wave 3."
-   - Good: "Terrain system complete — 3 biome types, height-based texturing, physics collision meshes. Vehicle physics (Wave 3) can now reference ground surfaces."
+   - Плохо: "Волна 2 завершена. Переход к волне 3."
+   - Хорошо: "Система ландшафта завершена — 3 типа биомов, текстурирование по высоте, коллизионные меши. Физика транспорта (Волна 3) теперь может использовать поверхности земли."
 
-5. **Handle failures:**
+5. **Обработка ошибок:**
 
-   **Known Claude Code bug (classifyHandoffIfNeeded):** If an agent reports "failed" with error containing `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a GSD or agent issue. The error fires in the completion handler AFTER all tool calls finish. In this case: run the same spot-checks as step 4 (SUMMARY.md exists, git commits present, no Self-Check: FAILED). If spot-checks PASS → treat as **successful**. If spot-checks FAIL → treat as real failure below.
+   **Известный баг Claude Code (classifyHandoffIfNeeded):** Если агент сообщает "failed" с ошибкой содержащей `classifyHandoffIfNeeded is not defined`, это баг рантайма Claude Code — не GSD и не агента. Ошибка срабатывает в обработчике завершения ПОСЛЕ выполнения всех вызовов инструментов. В этом случае: выполнить те же выборочные проверки что в шаге 4 (SUMMARY.md существует, коммиты есть, нет Self-Check: FAILED). Если проверки ПРОЙДЕНЫ → считать **успешным**. Если проверки ПРОВАЛЕНЫ → считать реальной ошибкой ниже.
 
-   For real failures: report which plan failed → ask "Continue?" or "Stop?" → if continue, dependent plans may also fail. If stop, partial completion report.
+   Для реальных ошибок: сообщить какой план провалился → спросить "Продолжить?" или "Остановить?" → если продолжить, зависимые планы тоже могут провалиться. Если остановить, частичный отчёт о завершении.
 
-6. **Execute checkpoint plans between waves** — see `<checkpoint_handling>`.
+6. **Выполнить планы контрольных точек между волнами** — см. `<checkpoint_handling>`.
 
-7. **Proceed to next wave.**
+7. **Перейти к следующей волне.**
 </step>
 
 <step name="checkpoint_handling">
-Plans with `autonomous: false` require user interaction.
+Планы с `autonomous: false` требуют взаимодействия с пользователем.
 
-**Flow:**
+**Поток:**
 
-1. Spawn agent for checkpoint plan
-2. Agent runs until checkpoint task or auth gate → returns structured state
-3. Agent return includes: completed tasks table, current task + blocker, checkpoint type/details, what's awaited
-4. **Present to user:**
+1. Запустить агента для плана контрольной точки
+2. Агент работает до задачи контрольной точки или гейта авторизации → возвращает структурированное состояние
+3. Возврат агента включает: таблицу завершённых задач, текущую задачу + блокер, тип/детали контрольной точки, что ожидается
+4. **Представить пользователю:**
    ```
-   ## Checkpoint: [Type]
+   ## Контрольная точка: [Тип]
 
-   **Plan:** 03-03 Dashboard Layout
-   **Progress:** 2/3 tasks complete
+   **План:** 03-03 Макет дашборда
+   **Прогресс:** 2/3 задачи завершены
 
-   [Checkpoint Details from agent return]
-   [Awaiting section from agent return]
+   [Детали контрольной точки из возврата агента]
+   [Секция ожидания из возврата агента]
    ```
-5. User responds: "approved"/"done" | issue description | decision selection
-6. **Spawn continuation agent (NOT resume)** using continuation-prompt.md template:
-   - `{completed_tasks_table}`: From checkpoint return
-   - `{resume_task_number}` + `{resume_task_name}`: Current task
-   - `{user_response}`: What user provided
-   - `{resume_instructions}`: Based on checkpoint type
-7. Continuation agent verifies previous commits, continues from resume point
-8. Repeat until plan completes or user stops
+5. Пользователь отвечает: "утверждено"/"готово" | описание проблемы | выбор решения
+6. **Запустить агента продолжения (НЕ возобновление)** используя шаблон continuation-prompt.md:
+   - `{completed_tasks_table}`: Из возврата контрольной точки
+   - `{resume_task_number}` + `{resume_task_name}`: Текущая задача
+   - `{user_response}`: Что предоставил пользователь
+   - `{resume_instructions}`: На основе типа контрольной точки
+7. Агент продолжения проверяет предыдущие коммиты, продолжает с точки возобновления
+8. Повторять пока план не завершится или пользователь не остановит
 
-**Why fresh agent, not resume:** Resume relies on internal serialization that breaks with parallel tool calls. Fresh agents with explicit state are more reliable.
+**Почему свежий агент, а не возобновление:** Возобновление полагается на внутреннюю сериализацию, которая ломается при параллельных вызовах инструментов. Свежие агенты с явным состоянием надёжнее.
 
-**Checkpoints in parallel waves:** Agent pauses and returns while other parallel agents may complete. Present checkpoint, spawn continuation, wait for all before next wave.
+**Контрольные точки в параллельных волнах:** Агент приостанавливается и возвращается, пока другие параллельные агенты могут завершиться. Представить контрольную точку, запустить продолжение, дождаться всех перед следующей волной.
 </step>
 
 <step name="aggregate_results">
-After all waves:
+После всех волн:
 
 ```markdown
-## Phase {X}: {Name} Execution Complete
+## Фаза {X}: {Название} — Выполнение завершено
 
-**Waves:** {N} | **Plans:** {M}/{total} complete
+**Волны:** {N} | **Планы:** {M}/{total} завершено
 
-| Wave | Plans | Status |
-|------|-------|--------|
-| 1 | plan-01, plan-02 | ✓ Complete |
-| CP | plan-03 | ✓ Verified |
-| 2 | plan-04 | ✓ Complete |
+| Волна | Планы | Статус |
+|-------|-------|--------|
+| 1 | план-01, план-02 | ✓ Завершено |
+| КТ | план-03 | ✓ Проверено |
+| 2 | план-04 | ✓ Завершено |
 
-### Plan Details
-1. **03-01**: [one-liner from SUMMARY.md]
-2. **03-02**: [one-liner from SUMMARY.md]
+### Детали планов
+1. **03-01**: [однострочник из SUMMARY.md]
+2. **03-02**: [однострочник из SUMMARY.md]
 
-### Issues Encountered
-[Aggregate from SUMMARYs, or "None"]
+### Обнаруженные проблемы
+[Агрегация из SUMMARY, или "Нет"]
 ```
 </step>
 
 <step name="verify_phase_goal">
-Verify phase achieved its GOAL, not just completed tasks.
+Проверить что фаза достигла своей ЦЕЛИ, а не просто выполнила задачи.
 
 ```
 Task(
@@ -240,54 +240,54 @@ Check must_haves against actual codebase. Create VERIFICATION.md.",
 )
 ```
 
-Read status:
+Прочитать статус:
 ```bash
 grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 ```
 
-| Status | Action |
-|--------|--------|
+| Статус | Действие |
+|--------|----------|
 | `passed` | → update_roadmap |
-| `human_needed` | Present items for human testing, get approval or feedback |
-| `gaps_found` | Present gap summary, offer `/gsd:plan-phase {phase} --gaps` |
+| `human_needed` | Представить пункты для ручного тестирования, получить утверждение или обратную связь |
+| `gaps_found` | Представить резюме пробелов, предложить `/gsd:plan-phase {phase} --gaps` |
 
-**If human_needed:**
+**Если human_needed:**
 ```
-## ✓ Phase {X}: {Name} — Human Verification Required
+## ✓ Фаза {X}: {Название} — Требуется ручная проверка
 
-All automated checks passed. {N} items need human testing:
+Все автоматические проверки пройдены. {N} пунктов требуют ручного тестирования:
 
-{From VERIFICATION.md human_verification section}
+{Из секции human_verification в VERIFICATION.md}
 
-"approved" → continue | Report issues → gap closure
+"утверждено" → продолжить | Сообщить о проблемах → закрытие пробелов
 ```
 
-**If gaps_found:**
+**Если gaps_found:**
 ```
-## ⚠ Phase {X}: {Name} — Gaps Found
+## ⚠ Фаза {X}: {Название} — Обнаружены пробелы
 
-**Score:** {N}/{M} must-haves verified
-**Report:** {phase_dir}/{phase}-VERIFICATION.md
+**Оценка:** {N}/{M} обязательных элементов проверено
+**Отчёт:** {phase_dir}/{phase}-VERIFICATION.md
 
-### What's Missing
-{Gap summaries from VERIFICATION.md}
+### Что отсутствует
+{Резюме пробелов из VERIFICATION.md}
 
 ---
-## ▶ Next Up
+## ▶ Далее
 
 `/gsd:plan-phase {X} --gaps`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → свежее контекстное окно</sub>
 
-Also: `cat {phase_dir}/{phase}-VERIFICATION.md` — full report
-Also: `/gsd:verify-work {X}` — manual testing first
+Также: `cat {phase_dir}/{phase}-VERIFICATION.md` — полный отчёт
+Также: `/gsd:verify-work {X}` — сначала ручное тестирование
 ```
 
-Gap closure cycle: `/gsd:plan-phase {X} --gaps` reads VERIFICATION.md → creates gap plans with `gap_closure: true` → user runs `/gsd:execute-phase {X} --gaps-only` → verifier re-runs.
+Цикл закрытия пробелов: `/gsd:plan-phase {X} --gaps` читает VERIFICATION.md → создаёт планы закрытия пробелов с `gap_closure: true` → пользователь запускает `/gsd:execute-phase {X} --gaps-only` → верификатор перезапускается.
 </step>
 
 <step name="update_roadmap">
-Mark phase complete in ROADMAP.md (date, status).
+Отметить фазу завершённой в ROADMAP.md (дата, статус).
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/phases/{phase_dir}/*-VERIFICATION.md .planning/REQUIREMENTS.md
@@ -296,22 +296,22 @@ node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(phase-{X}): complete 
 
 <step name="offer_next">
 
-**If more phases:**
+**Если есть ещё фазы:**
 ```
-## Next Up
+## Далее
 
-**Phase {X+1}: {Name}** — {Goal}
+**Фаза {X+1}: {Название}** — {Цель}
 
 `/gsd:plan-phase {X+1}`
 
-<sub>`/clear` first for fresh context</sub>
+<sub>`/clear` сначала для свежего контекста</sub>
 ```
 
-**If milestone complete:**
+**Если веха завершена:**
 ```
-MILESTONE COMPLETE!
+ВЕХА ЗАВЕРШЕНА!
 
-All {N} phases executed.
+Все {N} фаз выполнены.
 
 `/gsd:complete-milestone`
 ```
@@ -320,19 +320,19 @@ All {N} phases executed.
 </process>
 
 <context_efficiency>
-Orchestrator: ~10-15% context. Subagents: fresh 200k each. No polling (Task blocks). No context bleed.
+Оркестратор: ~10-15% контекста. Субагенты: свежие 200k каждый. Без опроса (Task блокирует). Без утечки контекста.
 </context_efficiency>
 
 <failure_handling>
-- **classifyHandoffIfNeeded false failure:** Agent reports "failed" but error is `classifyHandoffIfNeeded is not defined` → Claude Code bug, not GSD. Spot-check (SUMMARY exists, commits present) → if pass, treat as success
-- **Agent fails mid-plan:** Missing SUMMARY.md → report, ask user how to proceed
-- **Dependency chain breaks:** Wave 1 fails → Wave 2 dependents likely fail → user chooses attempt or skip
-- **All agents in wave fail:** Systemic issue → stop, report for investigation
-- **Checkpoint unresolvable:** "Skip this plan?" or "Abort phase execution?" → record partial progress in STATE.md
+- **Ложный сбой classifyHandoffIfNeeded:** Агент сообщает "failed" но ошибка `classifyHandoffIfNeeded is not defined` → баг Claude Code, не GSD. Выборочная проверка (SUMMARY существует, коммиты есть) → если проверка пройдена, считать успехом
+- **Агент падает в середине плана:** Отсутствует SUMMARY.md → сообщить, спросить пользователя
+- **Цепочка зависимостей ломается:** Волна 1 провалена → зависимые в Волне 2 вероятно провалятся → пользователь выбирает попытаться или пропустить
+- **Все агенты в волне провалены:** Системная проблема → остановить, отчитаться для расследования
+- **Контрольная точка неразрешима:** "Пропустить этот план?" или "Прервать выполнение фазы?" → записать частичный прогресс в STATE.md
 </failure_handling>
 
 <resumption>
-Re-run `/gsd:execute-phase {phase}` → discover_plans finds completed SUMMARYs → skips them → resumes from first incomplete plan → continues wave execution.
+Повторный запуск `/gsd:execute-phase {phase}` → discover_plans находит завершённые SUMMARY → пропускает их → возобновляет с первого незавершённого плана → продолжает волновое выполнение.
 
-STATE.md tracks: last completed plan, current wave, pending checkpoints.
+STATE.md отслеживает: последний завершённый план, текущую волну, ожидающие контрольные точки.
 </resumption>

@@ -1,408 +1,408 @@
 <purpose>
-Extract implementation decisions that downstream agents need. Analyze the phase to identify gray areas, let the user choose what to discuss, then deep-dive each selected area until satisfied.
+Извлечь решения по реализации, нужные нижестоящим агентам. Проанализировать фазу для выявления серых зон, позволить пользователю выбрать что обсуждать, затем глубоко погрузиться в каждую выбранную область до удовлетворённости.
 
-You are a thinking partner, not an interviewer. The user is the visionary — you are the builder. Your job is to capture decisions that will guide research and planning, not to figure out implementation yourself.
+Вы — партнёр по мышлению, не интервьюер. Пользователь — визионер, вы — строитель. Ваша задача — фиксировать решения, которые направят исследование и планирование, а не разбираться в реализации самостоятельно.
 </purpose>
 
 <downstream_awareness>
-**CONTEXT.md feeds into:**
+**CONTEXT.md передаётся в:**
 
-1. **gsd-phase-researcher** — Reads CONTEXT.md to know WHAT to research
-   - "User wants card-based layout" → researcher investigates card component patterns
-   - "Infinite scroll decided" → researcher looks into virtualization libraries
+1. **gsd-phase-researcher** — Читает CONTEXT.md чтобы знать ЧТО исследовать
+   - "Пользователь хочет карточный макет" → исследователь изучает паттерны карточных компонентов
+   - "Решён бесконечный скролл" → исследователь ищет библиотеки виртуализации
 
-2. **gsd-planner** — Reads CONTEXT.md to know WHAT decisions are locked
-   - "Pull-to-refresh on mobile" → planner includes that in task specs
-   - "Claude's Discretion: loading skeleton" → planner can decide approach
+2. **gsd-planner** — Читает CONTEXT.md чтобы знать КАКИЕ решения зафиксированы
+   - "Pull-to-refresh на мобильном" → планировщик включает это в спецификации задач
+   - "На усмотрение Claude: скелетон загрузки" → планировщик может решить подход
 
-**Your job:** Capture decisions clearly enough that downstream agents can act on them without asking the user again.
+**Ваша задача:** Фиксировать решения достаточно чётко, чтобы нижестоящие агенты могли действовать без повторных вопросов пользователю.
 
-**Not your job:** Figure out HOW to implement. That's what research and planning do with the decisions you capture.
+**Не ваша задача:** Разбираться КАК реализовать. Это делают исследование и планирование с зафиксированными решениями.
 </downstream_awareness>
 
 <philosophy>
-**User = founder/visionary. Claude = builder.**
+**Пользователь = основатель/визионер. Claude = строитель.**
 
-The user knows:
-- How they imagine it working
-- What it should look/feel like
-- What's essential vs nice-to-have
-- Specific behaviors or references they have in mind
+Пользователь знает:
+- Как он представляет работу
+- Как это должно выглядеть/ощущаться
+- Что существенно vs приятно иметь
+- Конкретные поведения или референсы
 
-The user doesn't know (and shouldn't be asked):
-- Codebase patterns (researcher reads the code)
-- Technical risks (researcher identifies these)
-- Implementation approach (planner figures this out)
-- Success metrics (inferred from the work)
+Пользователя не нужно спрашивать (и не стоит):
+- Паттерны кодовой базы (исследователь читает код)
+- Технические риски (исследователь их выявляет)
+- Подход к реализации (планировщик это определяет)
+- Метрики успеха (выводятся из работы)
 
-Ask about vision and implementation choices. Capture decisions for downstream agents.
+Спрашивайте о видении и выборе реализации. Фиксируйте решения для нижестоящих агентов.
 </philosophy>
 
 <scope_guardrail>
-**CRITICAL: No scope creep.**
+**КРИТИЧЕСКИ: Никакого расширения объёма.**
 
-The phase boundary comes from ROADMAP.md and is FIXED. Discussion clarifies HOW to implement what's scoped, never WHETHER to add new capabilities.
+Граница фазы берётся из ROADMAP.md и ЗАФИКСИРОВАНА. Обсуждение уточняет КАК реализовать то, что в объёме, а не СТОИТ ЛИ добавлять новые возможности.
 
-**Allowed (clarifying ambiguity):**
-- "How should posts be displayed?" (layout, density, info shown)
-- "What happens on empty state?" (within the feature)
-- "Pull to refresh or manual?" (behavior choice)
+**Допустимо (уточнение неясности):**
+- "Как должны отображаться посты?" (макет, плотность, показываемая информация)
+- "Что происходит при пустом состоянии?" (в рамках функции)
+- "Pull to refresh или ручное?" (выбор поведения)
 
-**Not allowed (scope creep):**
-- "Should we also add comments?" (new capability)
-- "What about search/filtering?" (new capability)
-- "Maybe include bookmarking?" (new capability)
+**Недопустимо (расширение объёма):**
+- "Может добавить комментарии?" (новая возможность)
+- "А как насчёт поиска/фильтрации?" (новая возможность)
+- "Может включить закладки?" (новая возможность)
 
-**The heuristic:** Does this clarify how we implement what's already in the phase, or does it add a new capability that could be its own phase?
+**Эвристика:** Это уточняет КАК мы реализуем то, что уже в фазе, или это добавляет новую возможность, которая могла бы быть отдельной фазой?
 
-**When user suggests scope creep:**
+**Когда пользователь предлагает расширение объёма:**
 ```
-"[Feature X] would be a new capability — that's its own phase.
-Want me to note it for the roadmap backlog?
+"[Функция X] — это новая возможность, она заслуживает отдельной фазы.
+Хотите, я запишу её в бэклог дорожной карты?
 
-For now, let's focus on [phase domain]."
+А пока давайте сфокусируемся на [домен фазы]."
 ```
 
-Capture the idea in a "Deferred Ideas" section. Don't lose it, don't act on it.
+Зафиксировать идею в секции "Отложенные идеи". Не терять, не действовать.
 </scope_guardrail>
 
 <gray_area_identification>
-Gray areas are **implementation decisions the user cares about** — things that could go multiple ways and would change the result.
+Серые зоны — это **решения по реализации, которые важны пользователю** — вещи, которые могут пойти несколькими путями и изменили бы результат.
 
-**How to identify gray areas:**
+**Как выявлять серые зоны:**
 
-1. **Read the phase goal** from ROADMAP.md
-2. **Understand the domain** — What kind of thing is being built?
-   - Something users SEE → visual presentation, interactions, states matter
-   - Something users CALL → interface contracts, responses, errors matter
-   - Something users RUN → invocation, output, behavior modes matter
-   - Something users READ → structure, tone, depth, flow matter
-   - Something being ORGANIZED → criteria, grouping, handling exceptions matter
-3. **Generate phase-specific gray areas** — Not generic categories, but concrete decisions for THIS phase
+1. **Прочитать цель фазы** из ROADMAP.md
+2. **Понять домен** — Что именно строится?
+   - То, что пользователи ВИДЯТ → визуальное представление, взаимодействия, состояния важны
+   - То, что пользователи ВЫЗЫВАЮТ → контракты интерфейса, ответы, ошибки важны
+   - То, что пользователи ЗАПУСКАЮТ → вызов, вывод, режимы поведения важны
+   - То, что пользователи ЧИТАЮТ → структура, тон, глубина, поток важны
+   - То, что ОРГАНИЗУЕТСЯ → критерии, группировка, обработка исключений важны
+3. **Сгенерировать серые зоны, специфичные для фазы** — Не общие категории, а конкретные решения для ЭТОЙ фазы
 
-**Don't use generic category labels** (UI, UX, Behavior). Generate specific gray areas:
+**Не используйте общие названия категорий** (UI, UX, Поведение). Генерируйте конкретные серые зоны:
 
 ```
-Phase: "User authentication"
-→ Session handling, Error responses, Multi-device policy, Recovery flow
+Фаза: "Аутентификация пользователей"
+→ Управление сессиями, Ответы на ошибки, Политика нескольких устройств, Поток восстановления
 
-Phase: "Organize photo library"
-→ Grouping criteria, Duplicate handling, Naming convention, Folder structure
+Фаза: "Организация фотобиблиотеки"
+→ Критерии группировки, Обработка дубликатов, Соглашение об именах, Структура папок
 
-Phase: "CLI for database backups"
-→ Output format, Flag design, Progress reporting, Error recovery
+Фаза: "CLI для резервных копий БД"
+→ Формат вывода, Дизайн флагов, Отчёт о прогрессе, Восстановление после ошибок
 
-Phase: "API documentation"
-→ Structure/navigation, Code examples depth, Versioning approach, Interactive elements
+Фаза: "Документация API"
+→ Структура/навигация, Глубина примеров кода, Подход к версионированию, Интерактивные элементы
 ```
 
-**The key question:** What decisions would change the outcome that the user should weigh in on?
+**Ключевой вопрос:** Какие решения изменили бы результат, и пользователь должен высказаться?
 
-**Claude handles these (don't ask):**
-- Technical implementation details
-- Architecture patterns
-- Performance optimization
-- Scope (roadmap defines this)
+**Claude решает сам (не спрашивайте):**
+- Технические детали реализации
+- Паттерны архитектуры
+- Оптимизация производительности
+- Объём (дорожная карта это определяет)
 </gray_area_identification>
 
 <process>
 
 <step name="initialize" priority="first">
-Phase number from argument (required).
+Номер фазы из аргумента (обязательно).
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init phase-op "${PHASE}")
 ```
 
-Parse JSON for: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `has_verification`, `plan_count`, `roadmap_exists`, `planning_exists`.
+Распарсить JSON: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `has_verification`, `plan_count`, `roadmap_exists`, `planning_exists`.
 
-**If `phase_found` is false:**
+**Если `phase_found` — false:**
 ```
-Phase [X] not found in roadmap.
+Фаза [X] не найдена в дорожной карте.
 
-Use /gsd:progress to see available phases.
+Используйте /gsd:progress для просмотра доступных фаз.
 ```
-Exit workflow.
+Выход из рабочего процесса.
 
-**If `phase_found` is true:** Continue to check_existing.
+**Если `phase_found` — true:** Перейти к check_existing.
 </step>
 
 <step name="check_existing">
-Check if CONTEXT.md already exists using `has_context` from init.
+Проверить существование CONTEXT.md используя `has_context` из init.
 
 ```bash
 ls ${phase_dir}/*-CONTEXT.md 2>/dev/null
 ```
 
-**If exists:**
-Use AskUserQuestion:
-- header: "Existing context"
-- question: "Phase [X] already has context. What do you want to do?"
+**Если существует:**
+Использовать AskUserQuestion:
+- header: "Существующий контекст"
+- question: "Фаза [X] уже имеет контекст. Что хотите сделать?"
 - options:
-  - "Update it" — Review and revise existing context
-  - "View it" — Show me what's there
-  - "Skip" — Use existing context as-is
+  - "Обновить" — Пересмотреть и скорректировать существующий контекст
+  - "Просмотреть" — Показать что есть
+  - "Пропустить" — Использовать существующий контекст как есть
 
-If "Update": Load existing, continue to analyze_phase
-If "View": Display CONTEXT.md, then offer update/skip
-If "Skip": Exit workflow
+Если "Обновить": Загрузить существующий, перейти к analyze_phase
+Если "Просмотреть": Показать CONTEXT.md, затем предложить обновить/пропустить
+Если "Пропустить": Выход из рабочего процесса
 
-**If doesn't exist:** Continue to analyze_phase.
+**Если не существует:** Перейти к analyze_phase.
 </step>
 
 <step name="analyze_phase">
-Analyze the phase to identify gray areas worth discussing.
+Проанализировать фазу для выявления серых зон, достойных обсуждения.
 
-**Read the phase description from ROADMAP.md and determine:**
+**Прочитать описание фазы из ROADMAP.md и определить:**
 
-1. **Domain boundary** — What capability is this phase delivering? State it clearly.
+1. **Граница домена** — Какую возможность доставляет эта фаза? Сформулировать чётко.
 
-2. **Gray areas by category** — For each relevant category (UI, UX, Behavior, Empty States, Content), identify 1-2 specific ambiguities that would change implementation.
+2. **Серые зоны по категориям** — Для каждой релевантной категории (UI, UX, Поведение, Пустые состояния, Контент) выявить 1-2 конкретные неясности, которые изменили бы реализацию.
 
-3. **Skip assessment** — If no meaningful gray areas exist (pure infrastructure, clear-cut implementation), the phase may not need discussion.
+3. **Оценка пропуска** — Если значимых серых зон нет (чистая инфраструктура, однозначная реализация), фаза может не требовать обсуждения.
 
-**Output your analysis internally, then present to user.**
+**Сделать анализ внутренне, затем представить пользователю.**
 
-Example analysis for "Post Feed" phase:
+Пример анализа для фазы "Лента постов":
 ```
-Domain: Displaying posts from followed users
-Gray areas:
-- UI: Layout style (cards vs timeline vs grid)
-- UI: Information density (full posts vs previews)
-- Behavior: Loading pattern (infinite scroll vs pagination)
-- Empty State: What shows when no posts exist
-- Content: What metadata displays (time, author, reactions count)
+Домен: Отображение постов от подписок
+Серые зоны:
+- UI: Стиль макета (карточки vs лента vs сетка)
+- UI: Плотность информации (полные посты vs превью)
+- Поведение: Паттерн загрузки (бесконечный скролл vs пагинация)
+- Пустое состояние: Что показывать когда нет постов
+- Контент: Какие метаданные отображать (время, автор, количество реакций)
 ```
 </step>
 
 <step name="present_gray_areas">
-Present the domain boundary and gray areas to user.
+Представить границу домена и серые зоны пользователю.
 
-**First, state the boundary:**
+**Сначала озвучить границу:**
 ```
-Phase [X]: [Name]
-Domain: [What this phase delivers — from your analysis]
+Фаза [X]: [Название]
+Домен: [Что доставляет эта фаза — из вашего анализа]
 
-We'll clarify HOW to implement this.
-(New capabilities belong in other phases.)
-```
-
-**Then use AskUserQuestion (multiSelect: true):**
-- header: "Discuss"
-- question: "Which areas do you want to discuss for [phase name]?"
-- options: Generate 3-4 phase-specific gray areas, each formatted as:
-  - "[Specific area]" (label) — concrete, not generic
-  - [1-2 questions this covers] (description)
-
-**Do NOT include a "skip" or "you decide" option.** User ran this command to discuss — give them real choices.
-
-**Examples by domain:**
-
-For "Post Feed" (visual feature):
-```
-☐ Layout style — Cards vs list vs timeline? Information density?
-☐ Loading behavior — Infinite scroll or pagination? Pull to refresh?
-☐ Content ordering — Chronological, algorithmic, or user choice?
-☐ Post metadata — What info per post? Timestamps, reactions, author?
+Мы уточним КАК это реализовать.
+(Новые возможности принадлежат другим фазам.)
 ```
 
-For "Database backup CLI" (command-line tool):
+**Затем использовать AskUserQuestion (multiSelect: true):**
+- header: "Обсудить"
+- question: "Какие области вы хотите обсудить для [название фазы]?"
+- options: Сгенерировать 3-4 серые зоны, специфичные для фазы, каждая в формате:
+  - "[Конкретная область]" (метка) — конкретно, не обобщённо
+  - [1-2 вопроса, которые она покрывает] (описание)
+
+**НЕ включать вариант "пропустить" или "вы решайте".** Пользователь запустил эту команду для обсуждения — дайте реальный выбор.
+
+**Примеры по доменам:**
+
+Для "Лента постов" (визуальная функция):
 ```
-☐ Output format — JSON, table, or plain text? Verbosity levels?
-☐ Flag design — Short flags, long flags, or both? Required vs optional?
-☐ Progress reporting — Silent, progress bar, or verbose logging?
-☐ Error recovery — Fail fast, retry, or prompt for action?
+☐ Стиль макета — Карточки, список или лента? Плотность информации?
+☐ Поведение загрузки — Бесконечный скролл или пагинация? Pull to refresh?
+☐ Порядок контента — Хронологический, алгоритмический или выбор пользователя?
+☐ Метаданные поста — Какая информация на пост? Время, реакции, автор?
 ```
 
-For "Organize photo library" (organization task):
+Для "CLI резервного копирования БД" (инструмент командной строки):
 ```
-☐ Grouping criteria — By date, location, faces, or events?
-☐ Duplicate handling — Keep best, keep all, or prompt each time?
-☐ Naming convention — Original names, dates, or descriptive?
-☐ Folder structure — Flat, nested by year, or by category?
+☐ Формат вывода — JSON, таблица или текст? Уровни подробности?
+☐ Дизайн флагов — Короткие, длинные или оба? Обязательные vs опциональные?
+☐ Отчёт о прогрессе — Тихий, прогресс-бар или подробный лог?
+☐ Восстановление после ошибок — Падать сразу, повторять или спрашивать?
 ```
 
-Continue to discuss_areas with selected areas.
+Для "Организация фотобиблиотеки" (задача организации):
+```
+☐ Критерии группировки — По дате, локации, лицам или событиям?
+☐ Обработка дубликатов — Оставить лучший, все или спрашивать каждый раз?
+☐ Соглашение об именах — Оригинальные имена, даты или описательные?
+☐ Структура папок — Плоская, вложенная по годам или по категориям?
+```
+
+Перейти к discuss_areas с выбранными областями.
 </step>
 
 <step name="discuss_areas">
-For each selected area, conduct a focused discussion loop.
+Для каждой выбранной области провести сфокусированный цикл обсуждения.
 
-**Philosophy: 4 questions, then check.**
+**Философия: 4 вопроса, затем проверка.**
 
-Ask 4 questions per area before offering to continue or move on. Each answer often reveals the next question.
+Задать 4 вопроса на область перед предложением продолжить или перейти дальше. Каждый ответ часто раскрывает следующий вопрос.
 
-**For each area:**
+**Для каждой области:**
 
-1. **Announce the area:**
+1. **Объявить область:**
    ```
-   Let's talk about [Area].
+   Давайте поговорим о [Область].
    ```
 
-2. **Ask 4 questions using AskUserQuestion:**
-   - header: "[Area]"
-   - question: Specific decision for this area
-   - options: 2-3 concrete choices (AskUserQuestion adds "Other" automatically)
-   - Include "You decide" as an option when reasonable — captures Claude discretion
+2. **Задать 4 вопроса через AskUserQuestion:**
+   - header: "[Область]"
+   - question: Конкретное решение для этой области
+   - options: 2-3 конкретных варианта (AskUserQuestion добавляет "Другое" автоматически)
+   - Включить "Вы решите" как вариант где уместно — фиксирует дискрецию Claude
 
-3. **After 4 questions, check:**
-   - header: "[Area]"
-   - question: "More questions about [area], or move to next?"
-   - options: "More questions" / "Next area"
+3. **После 4 вопросов, проверка:**
+   - header: "[Область]"
+   - question: "Ещё вопросы по [область], или переходим к следующей?"
+   - options: "Ещё вопросы" / "Следующая область"
 
-   If "More questions" → ask 4 more, then check again
-   If "Next area" → proceed to next selected area
+   Если "Ещё вопросы" → задать ещё 4, затем проверка снова
+   Если "Следующая область" → перейти к следующей выбранной области
 
-4. **After all areas complete:**
-   - header: "Done"
-   - question: "That covers [list areas]. Ready to create context?"
-   - options: "Create context" / "Revisit an area"
+4. **После завершения всех областей:**
+   - header: "Готово"
+   - question: "Это покрывает [список областей]. Готовы создать контекст?"
+   - options: "Создать контекст" / "Вернуться к области"
 
-**Question design:**
-- Options should be concrete, not abstract ("Cards" not "Option A")
-- Each answer should inform the next question
-- If user picks "Other", receive their input, reflect it back, confirm
+**Дизайн вопросов:**
+- Варианты должны быть конкретными, не абстрактными ("Карточки" не "Вариант А")
+- Каждый ответ должен информировать следующий вопрос
+- Если пользователь выбирает "Другое", получить ввод, отразить, подтвердить
 
-**Scope creep handling:**
-If user mentions something outside the phase domain:
+**Обработка расширения объёма:**
+Если пользователь упоминает что-то за пределами домена фазы:
 ```
-"[Feature] sounds like a new capability — that belongs in its own phase.
-I'll note it as a deferred idea.
+"[Функция] похожа на новую возможность — она принадлежит отдельной фазе.
+Записываю как отложенную идею.
 
-Back to [current area]: [return to current question]"
+Вернёмся к [текущая область]: [вернуться к текущему вопросу]"
 ```
 
-Track deferred ideas internally.
+Отслеживать отложенные идеи внутренне.
 </step>
 
 <step name="write_context">
-Create CONTEXT.md capturing decisions made.
+Создать CONTEXT.md, фиксирующий принятые решения.
 
-**Find or create phase directory:**
+**Найти или создать каталог фазы:**
 
-Use values from init: `phase_dir`, `phase_slug`, `padded_phase`.
+Использовать значения из init: `phase_dir`, `phase_slug`, `padded_phase`.
 
-If `phase_dir` is null (phase exists in roadmap but no directory):
+Если `phase_dir` — null (фаза есть в дорожной карте, но нет каталога):
 ```bash
 mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ```
 
-**File location:** `${phase_dir}/${padded_phase}-CONTEXT.md`
+**Расположение файла:** `${phase_dir}/${padded_phase}-CONTEXT.md`
 
-**Structure the content by what was discussed:**
+**Структурировать содержимое по обсуждённому:**
 
 ```markdown
-# Phase [X]: [Name] - Context
+# Фаза [X]: [Название] - Контекст
 
-**Gathered:** [date]
-**Status:** Ready for planning
+**Собран:** [дата]
+**Статус:** Готов к планированию
 
 <domain>
-## Phase Boundary
+## Граница фазы
 
-[Clear statement of what this phase delivers — the scope anchor]
+[Чёткая формулировка того, что доставляет эта фаза — якорь объёма]
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## Решения по реализации
 
-### [Category 1 that was discussed]
-- [Decision or preference captured]
-- [Another decision if applicable]
+### [Категория 1, которая обсуждалась]
+- [Решение или предпочтение зафиксировано]
+- [Ещё одно решение, если применимо]
 
-### [Category 2 that was discussed]
-- [Decision or preference captured]
+### [Категория 2, которая обсуждалась]
+- [Решение или предпочтение зафиксировано]
 
-### Claude's Discretion
-[Areas where user said "you decide" — note that Claude has flexibility here]
+### На усмотрение Claude
+[Области, где пользователь сказал "вы решите" — отметить что Claude имеет гибкость]
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## Конкретные идеи
 
-[Any particular references, examples, or "I want it like X" moments from discussion]
+[Конкретные референсы, примеры или моменты "я хочу как X" из обсуждения]
 
-[If none: "No specific requirements — open to standard approaches"]
+[Если нет: "Нет конкретных требований — открыт для стандартных подходов"]
 
 </specifics>
 
 <deferred>
-## Deferred Ideas
+## Отложенные идеи
 
-[Ideas that came up but belong in other phases. Don't lose them.]
+[Идеи, которые возникли, но принадлежат другим фазам. Не терять.]
 
-[If none: "None — discussion stayed within phase scope"]
+[Если нет: "Нет — обсуждение осталось в рамках фазы"]
 
 </deferred>
 
 ---
 
-*Phase: XX-name*
-*Context gathered: [date]*
+*Фаза: XX-название*
+*Контекст собран: [дата]*
 ```
 
-Write file.
+Записать файл.
 </step>
 
 <step name="confirm_creation">
-Present summary and next steps:
+Представить резюме и следующие шаги:
 
 ```
-Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
+Создано: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 
-## Decisions Captured
+## Зафиксированные решения
 
-### [Category]
-- [Key decision]
+### [Категория]
+- [Ключевое решение]
 
-### [Category]
-- [Key decision]
+### [Категория]
+- [Ключевое решение]
 
-[If deferred ideas exist:]
-## Noted for Later
-- [Deferred idea] — future phase
+[Если есть отложенные идеи:]
+## Отмечено на потом
+- [Отложенная идея] — будущая фаза
 
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Phase ${PHASE}: [Name]** — [Goal from ROADMAP.md]
+**Фаза ${PHASE}: [Название]** — [Цель из ROADMAP.md]
 
 `/gsd:plan-phase ${PHASE}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → свежее контекстное окно</sub>
 
 ---
 
-**Also available:**
-- `/gsd:plan-phase ${PHASE} --skip-research` — plan without research
-- Review/edit CONTEXT.md before continuing
+**Также доступно:**
+- `/gsd:plan-phase ${PHASE} --skip-research` — планировать без исследования
+- Просмотреть/отредактировать CONTEXT.md перед продолжением
 
 ---
 ```
 </step>
 
 <step name="git_commit">
-Commit phase context (uses `commit_docs` from init internally):
+Закоммитить контекст фазы (использует `commit_docs` из init внутренне):
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(${padded_phase}): capture phase context" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
 
-Confirm: "Committed: docs(${padded_phase}): capture phase context"
+Подтвердить: "Закоммичено: docs(${padded_phase}): capture phase context"
 </step>
 
 </process>
 
 <success_criteria>
-- Phase validated against roadmap
-- Gray areas identified through intelligent analysis (not generic questions)
-- User selected which areas to discuss
-- Each selected area explored until user satisfied
-- Scope creep redirected to deferred ideas
-- CONTEXT.md captures actual decisions, not vague vision
-- Deferred ideas preserved for future phases
-- User knows next steps
+- Фаза проверена по дорожной карте
+- Серые зоны выявлены через интеллектуальный анализ (не общие вопросы)
+- Пользователь выбрал какие области обсуждать
+- Каждая выбранная область исследована до удовлетворённости пользователя
+- Расширение объёма перенаправлено в отложенные идеи
+- CONTEXT.md фиксирует реальные решения, не расплывчатое видение
+- Отложенные идеи сохранены для будущих фаз
+- Пользователь знает следующие шаги
 </success_criteria>

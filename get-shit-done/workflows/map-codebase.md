@@ -1,104 +1,104 @@
 <purpose>
-Orchestrate parallel codebase mapper agents to analyze codebase and produce structured documents in .planning/codebase/
+Оркестрировать параллельных агентов-картографов кодовой базы для анализа кода и создания структурированных документов в .planning/codebase/
 
-Each agent has fresh context, explores a specific focus area, and **writes documents directly**. The orchestrator only receives confirmation + line counts, then writes a summary.
+Каждый агент имеет свежий контекст, исследует конкретную область фокуса и **записывает документы напрямую**. Оркестратор получает только подтверждение + количество строк, затем пишет резюме.
 
-Output: .planning/codebase/ folder with 7 structured documents about the codebase state.
+Вывод: папка .planning/codebase/ с 7 структурированными документами о состоянии кодовой базы.
 </purpose>
 
 <philosophy>
-**Why dedicated mapper agents:**
-- Fresh context per domain (no token contamination)
-- Agents write documents directly (no context transfer back to orchestrator)
-- Orchestrator only summarizes what was created (minimal context usage)
-- Faster execution (agents run simultaneously)
+**Почему выделенные агенты-картографы:**
+- Свежий контекст на домен (без загрязнения токенами)
+- Агенты пишут документы напрямую (без передачи контекста обратно оркестратору)
+- Оркестратор только резюмирует что было создано (минимальное использование контекста)
+- Быстрее выполнение (агенты работают параллельно)
 
-**Document quality over length:**
-Include enough detail to be useful as reference. Prioritize practical examples (especially code patterns) over arbitrary brevity.
+**Качество документа важнее длины:**
+Включайте достаточно деталей для полезности как справочника. Приоритизируйте практические примеры (особенно паттерны кода) над произвольной краткостью.
 
-**Always include file paths:**
-Documents are reference material for Claude when planning/executing. Always include actual file paths formatted with backticks: `src/services/user.ts`.
+**Всегда включайте пути к файлам:**
+Документы — справочный материал для Claude при планировании/выполнении. Всегда включайте реальные пути файлов в обратных кавычках: `src/services/user.ts`.
 </philosophy>
 
 <process>
 
 <step name="init_context" priority="first">
-Load codebase mapping context:
+Загрузить контекст картирования кодовой базы:
 
 ```bash
 INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init map-codebase)
 ```
 
-Extract from init JSON: `mapper_model`, `commit_docs`, `codebase_dir`, `existing_maps`, `has_maps`, `codebase_dir_exists`.
+Извлечь из JSON инициализации: `mapper_model`, `commit_docs`, `codebase_dir`, `existing_maps`, `has_maps`, `codebase_dir_exists`.
 </step>
 
 <step name="check_existing">
-Check if .planning/codebase/ already exists using `has_maps` from init context.
+Проверить существование .planning/codebase/ используя `has_maps` из контекста init.
 
-If `codebase_dir_exists` is true:
+Если `codebase_dir_exists` — true:
 ```bash
 ls -la .planning/codebase/
 ```
 
-**If exists:**
+**Если существует:**
 
 ```
-.planning/codebase/ already exists with these documents:
-[List files found]
+.planning/codebase/ уже существует с этими документами:
+[Список найденных файлов]
 
-What's next?
-1. Refresh - Delete existing and remap codebase
-2. Update - Keep existing, only update specific documents
-3. Skip - Use existing codebase map as-is
+Что дальше?
+1. Обновить — Удалить существующие и перекартировать кодовую базу
+2. Дополнить — Оставить существующие, обновить только конкретные документы
+3. Пропустить — Использовать существующую карту как есть
 ```
 
-Wait for user response.
+Дождитесь ответа пользователя.
 
-If "Refresh": Delete .planning/codebase/, continue to create_structure
-If "Update": Ask which documents to update, continue to spawn_agents (filtered)
-If "Skip": Exit workflow
+Если "Обновить": Удалить .planning/codebase/, перейти к create_structure
+Если "Дополнить": Спросить какие документы обновить, перейти к spawn_agents (фильтрованно)
+Если "Пропустить": Выход из рабочего процесса
 
-**If doesn't exist:**
-Continue to create_structure.
+**Если не существует:**
+Перейти к create_structure.
 </step>
 
 <step name="create_structure">
-Create .planning/codebase/ directory:
+Создать каталог .planning/codebase/:
 
 ```bash
 mkdir -p .planning/codebase
 ```
 
-**Expected output files:**
-- STACK.md (from tech mapper)
-- INTEGRATIONS.md (from tech mapper)
-- ARCHITECTURE.md (from arch mapper)
-- STRUCTURE.md (from arch mapper)
-- CONVENTIONS.md (from quality mapper)
-- TESTING.md (from quality mapper)
-- CONCERNS.md (from concerns mapper)
+**Ожидаемые выходные файлы:**
+- STACK.md (от техкартографа)
+- INTEGRATIONS.md (от техкартографа)
+- ARCHITECTURE.md (от архкартографа)
+- STRUCTURE.md (от архкартографа)
+- CONVENTIONS.md (от картографа качества)
+- TESTING.md (от картографа качества)
+- CONCERNS.md (от картографа проблем)
 
-Continue to spawn_agents.
+Перейти к spawn_agents.
 </step>
 
 <step name="spawn_agents">
-Spawn 4 parallel gsd-codebase-mapper agents.
+Запустить 4 параллельных агента gsd-codebase-mapper.
 
-Use Task tool with `subagent_type="gsd-codebase-mapper"`, `model="{mapper_model}"`, and `run_in_background=true` for parallel execution.
+Использовать инструмент Task с `subagent_type="gsd-codebase-mapper"`, `model="{mapper_model}"` и `run_in_background=true` для параллельного выполнения.
 
-**CRITICAL:** Use the dedicated `gsd-codebase-mapper` agent, NOT `Explore`. The mapper agent writes documents directly.
+**КРИТИЧЕСКИ:** Используйте выделенного агента `gsd-codebase-mapper`, НЕ `Explore`. Агент-картограф пишет документы напрямую.
 
-**Agent 1: Tech Focus**
+**Агент 1: Фокус на технологиях**
 
-Task tool parameters:
+Параметры инструмента Task:
 ```
 subagent_type: "gsd-codebase-mapper"
 model: "{mapper_model}"
 run_in_background: true
-description: "Map codebase tech stack"
+description: "Картирование техстека кодовой базы"
 ```
 
-Prompt:
+Промпт:
 ```
 Focus: tech
 
@@ -111,17 +111,17 @@ Write these documents to .planning/codebase/:
 Explore thoroughly. Write documents directly using templates. Return confirmation only.
 ```
 
-**Agent 2: Architecture Focus**
+**Агент 2: Фокус на архитектуре**
 
-Task tool parameters:
+Параметры инструмента Task:
 ```
 subagent_type: "gsd-codebase-mapper"
 model: "{mapper_model}"
 run_in_background: true
-description: "Map codebase architecture"
+description: "Картирование архитектуры кодовой базы"
 ```
 
-Prompt:
+Промпт:
 ```
 Focus: arch
 
@@ -134,17 +134,17 @@ Write these documents to .planning/codebase/:
 Explore thoroughly. Write documents directly using templates. Return confirmation only.
 ```
 
-**Agent 3: Quality Focus**
+**Агент 3: Фокус на качестве**
 
-Task tool parameters:
+Параметры инструмента Task:
 ```
 subagent_type: "gsd-codebase-mapper"
 model: "{mapper_model}"
 run_in_background: true
-description: "Map codebase conventions"
+description: "Картирование конвенций кодовой базы"
 ```
 
-Prompt:
+Промпт:
 ```
 Focus: quality
 
@@ -157,17 +157,17 @@ Write these documents to .planning/codebase/:
 Explore thoroughly. Write documents directly using templates. Return confirmation only.
 ```
 
-**Agent 4: Concerns Focus**
+**Агент 4: Фокус на проблемах**
 
-Task tool parameters:
+Параметры инструмента Task:
 ```
 subagent_type: "gsd-codebase-mapper"
 model: "{mapper_model}"
 run_in_background: true
-description: "Map codebase concerns"
+description: "Картирование проблем кодовой базы"
 ```
 
-Prompt:
+Промпт:
 ```
 Focus: concerns
 
@@ -179,149 +179,149 @@ Write this document to .planning/codebase/:
 Explore thoroughly. Write document directly using template. Return confirmation only.
 ```
 
-Continue to collect_confirmations.
+Перейти к collect_confirmations.
 </step>
 
 <step name="collect_confirmations">
-Wait for all 4 agents to complete.
+Дождаться завершения всех 4 агентов.
 
-Read each agent's output file to collect confirmations.
+Прочитать вывод каждого агента для сбора подтверждений.
 
-**Expected confirmation format from each agent:**
+**Ожидаемый формат подтверждения от каждого агента:**
 ```
-## Mapping Complete
+## Картирование завершено
 
-**Focus:** {focus}
-**Documents written:**
-- `.planning/codebase/{DOC1}.md` ({N} lines)
-- `.planning/codebase/{DOC2}.md` ({N} lines)
+**Фокус:** {focus}
+**Записанные документы:**
+- `.planning/codebase/{DOC1}.md` ({N} строк)
+- `.planning/codebase/{DOC2}.md` ({N} строк)
 
-Ready for orchestrator summary.
+Готов для резюме оркестратора.
 ```
 
-**What you receive:** Just file paths and line counts. NOT document contents.
+**Что вы получаете:** Только пути файлов и количество строк. НЕ содержимое документов.
 
-If any agent failed, note the failure and continue with successful documents.
+Если какой-либо агент провалился, отметить ошибку и продолжить с успешными документами.
 
-Continue to verify_output.
+Перейти к verify_output.
 </step>
 
 <step name="verify_output">
-Verify all documents created successfully:
+Проверить что все документы созданы успешно:
 
 ```bash
 ls -la .planning/codebase/
 wc -l .planning/codebase/*.md
 ```
 
-**Verification checklist:**
-- All 7 documents exist
-- No empty documents (each should have >20 lines)
+**Чеклист проверки:**
+- Все 7 документов существуют
+- Нет пустых документов (каждый должен иметь >20 строк)
 
-If any documents missing or empty, note which agents may have failed.
+Если какие-то документы отсутствуют или пусты, отметить какие агенты могли провалиться.
 
-Continue to scan_for_secrets.
+Перейти к scan_for_secrets.
 </step>
 
 <step name="scan_for_secrets">
-**CRITICAL SECURITY CHECK:** Scan output files for accidentally leaked secrets before committing.
+**КРИТИЧЕСКАЯ ПРОВЕРКА БЕЗОПАСНОСТИ:** Просканировать выходные файлы на случайно утечённые секреты перед коммитом.
 
-Run secret pattern detection:
+Запустить обнаружение паттернов секретов:
 
 ```bash
-# Check for common API key patterns in generated docs
+# Проверить паттерны API ключей в сгенерированных документах
 grep -E '(sk-[a-zA-Z0-9]{20,}|sk_live_[a-zA-Z0-9]+|sk_test_[a-zA-Z0-9]+|ghp_[a-zA-Z0-9]{36}|gho_[a-zA-Z0-9]{36}|glpat-[a-zA-Z0-9_-]+|AKIA[A-Z0-9]{16}|xox[baprs]-[a-zA-Z0-9-]+|-----BEGIN.*PRIVATE KEY|eyJ[a-zA-Z0-9_-]+\.eyJ[a-zA-Z0-9_-]+\.)' .planning/codebase/*.md 2>/dev/null && SECRETS_FOUND=true || SECRETS_FOUND=false
 ```
 
-**If SECRETS_FOUND=true:**
+**Если SECRETS_FOUND=true:**
 
 ```
-⚠️  SECURITY ALERT: Potential secrets detected in codebase documents!
+⚠️  ПРЕДУПРЕЖДЕНИЕ БЕЗОПАСНОСТИ: Обнаружены потенциальные секреты в документах кодовой базы!
 
-Found patterns that look like API keys or tokens in:
-[show grep output]
+Найдены паттерны, похожие на API ключи или токены в:
+[показать вывод grep]
 
-This would expose credentials if committed.
+Это раскроет учётные данные при коммите.
 
-**Action required:**
-1. Review the flagged content above
-2. If these are real secrets, they must be removed before committing
-3. Consider adding sensitive files to Claude Code "Deny" permissions
+**Требуется действие:**
+1. Просмотрите отмеченный контент выше
+2. Если это реальные секреты, они должны быть удалены перед коммитом
+3. Рассмотрите добавление чувствительных файлов в разрешения "Запретить" Claude Code
 
-Pausing before commit. Reply "safe to proceed" if the flagged content is not actually sensitive, or edit the files first.
+Пауза перед коммитом. Ответьте "безопасно продолжить" если отмеченный контент не является чувствительным, или отредактируйте файлы сначала.
 ```
 
-Wait for user confirmation before continuing to commit_codebase_map.
+Дождитесь подтверждения пользователя перед переходом к commit_codebase_map.
 
-**If SECRETS_FOUND=false:**
+**Если SECRETS_FOUND=false:**
 
-Continue to commit_codebase_map.
+Перейти к commit_codebase_map.
 </step>
 
 <step name="commit_codebase_map">
-Commit the codebase map:
+Закоммитить карту кодовой базы:
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs: map existing codebase" --files .planning/codebase/*.md
 ```
 
-Continue to offer_next.
+Перейти к offer_next.
 </step>
 
 <step name="offer_next">
-Present completion summary and next steps.
+Представить резюме завершения и следующие шаги.
 
-**Get line counts:**
+**Получить количество строк:**
 ```bash
 wc -l .planning/codebase/*.md
 ```
 
-**Output format:**
+**Формат вывода:**
 
 ```
-Codebase mapping complete.
+Картирование кодовой базы завершено.
 
-Created .planning/codebase/:
-- STACK.md ([N] lines) - Technologies and dependencies
-- ARCHITECTURE.md ([N] lines) - System design and patterns
-- STRUCTURE.md ([N] lines) - Directory layout and organization
-- CONVENTIONS.md ([N] lines) - Code style and patterns
-- TESTING.md ([N] lines) - Test structure and practices
-- INTEGRATIONS.md ([N] lines) - External services and APIs
-- CONCERNS.md ([N] lines) - Technical debt and issues
+Создано .planning/codebase/:
+- STACK.md ([N] строк) - Технологии и зависимости
+- ARCHITECTURE.md ([N] строк) - Дизайн системы и паттерны
+- STRUCTURE.md ([N] строк) - Структура каталогов и организация
+- CONVENTIONS.md ([N] строк) - Стиль кода и паттерны
+- TESTING.md ([N] строк) - Структура тестов и практики
+- INTEGRATIONS.md ([N] строк) - Внешние сервисы и API
+- CONCERNS.md ([N] строк) - Техдолг и проблемы
 
 
 ---
 
-## ▶ Next Up
+## ▶ Далее
 
-**Initialize project** — use codebase context for planning
+**Инициализация проекта** — использовать контекст кодовой базы для планирования
 
 `/gsd:new-project`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` сначала → свежее контекстное окно</sub>
 
 ---
 
-**Also available:**
-- Re-run mapping: `/gsd:map-codebase`
-- Review specific file: `cat .planning/codebase/STACK.md`
-- Edit any document before proceeding
+**Также доступно:**
+- Перезапустить картирование: `/gsd:map-codebase`
+- Просмотреть конкретный файл: `cat .planning/codebase/STACK.md`
+- Отредактировать любой документ перед продолжением
 
 ---
 ```
 
-End workflow.
+Конец рабочего процесса.
 </step>
 
 </process>
 
 <success_criteria>
-- .planning/codebase/ directory created
-- 4 parallel gsd-codebase-mapper agents spawned with run_in_background=true
-- Agents write documents directly (orchestrator doesn't receive document contents)
-- Read agent output files to collect confirmations
-- All 7 codebase documents exist
-- Clear completion summary with line counts
-- User offered clear next steps in GSD style
+- Каталог .planning/codebase/ создан
+- 4 параллельных агента gsd-codebase-mapper запущены с run_in_background=true
+- Агенты пишут документы напрямую (оркестратор не получает содержимое документов)
+- Вывод агентов прочитан для сбора подтверждений
+- Все 7 документов кодовой базы существуют
+- Чёткое резюме завершения с количеством строк
+- Пользователю предложены чёткие следующие шаги в стиле ДД
 </success_criteria>
