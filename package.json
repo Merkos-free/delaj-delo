@@ -1,7 +1,7 @@
 {
-  "name": "get-shit-done-cc",
+  "name": "delaj-delo-cc",
   "version": "1.18.0",
-  "description": "A meta-prompting, context engineering and spec-driven development system for Claude Code, OpenCode and Gemini by TÂCHES.",
+  "description": "Система мета-промптинга, контекстной инженерии и спецификационно-ориентированной разработки для Claude Code, OpenCode и Gemini от TÂCHES. Русская локализация.",
   "bin": {
     "get-shit-done-cc": "bin/install.js"
   },
@@ -21,17 +21,19 @@
     "context-engineering",
     "spec-driven-development",
     "gemini",
-    "gemini-cli"
+    "gemini-cli",
+    "russian",
+    "localization"
   ],
   "author": "TÂCHES",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glittercowboy/get-shit-done.git"
+    "url": "git+https://github.com/Merkos-free/delaj-delo.git"
   },
-  "homepage": "https://github.com/glittercowboy/get-shit-done",
+  "homepage": "https://github.com/Merkos-free/delaj-delo",
   "bugs": {
-    "url": "https://github.com/glittercowboy/get-shit-done/issues"
+    "url": "https://github.com/Merkos-free/delaj-delo/issues"
   },
   "engines": {
     "node": ">=16.7.0"
