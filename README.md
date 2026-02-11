@@ -1,16 +1,15 @@
 <div align="center">
 
-# GET SHIT DONE
+# ДЕЛАЙ ДЕЛО
 
-**A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code, OpenCode, and Gemini CLI.**
+**Легковесная и мощная система мета-промптинга, контекстной инженерии и спецификационно-ориентированной разработки для Claude Code, OpenCode и Gemini CLI.**
 
-**Solves context rot — the quality degradation that happens as Claude fills its context window.**
+**Решает проблему деградации контекста — ухудшения качества по мере заполнения контекстного окна Claude.**
 
 [![npm version](https://img.shields.io/npm/v/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
 [![npm downloads](https://img.shields.io/npm/dm/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
 [![Discord](https://img.shields.io/discord/1463221958777901349?style=for-the-badge&logo=discord&logoColor=white&label=Discord&color=5865F2)](https://discord.gg/5JJgD5svVS)
 [![X (Twitter)](https://img.shields.io/badge/X-@gsd__foundation-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/gsd_foundation)
-[![$GSD Token](https://img.shields.io/badge/$GSD-Dexscreener-1C1C1C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzAwRkYwMCIvPjwvc3ZnPg==&logoColor=00FF00)](https://dexscreener.com/solana/dwudwjvan7bzkw9zwlbyv6kspdlvhwzrqy6ebk8xzxkv)
 [![GitHub stars](https://img.shields.io/github/stars/glittercowboy/get-shit-done?style=for-the-badge&logo=github&color=181717)](https://github.com/glittercowboy/get-shit-done)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
@@ -20,7 +19,7 @@
 npx get-shit-done-cc@latest
 ```
 
-**Works on Mac, Windows, and Linux.**
+**Работает на Mac, Windows и Linux.**
 
 <br>
 
@@ -28,97 +27,97 @@ npx get-shit-done-cc@latest
 
 <br>
 
-*"If you know clearly what you want, this WILL build it for you. No bs."*
+*«Если ты чётко знаешь, что хочешь — это РЕАЛЬНО построит это для тебя. Без лишней ерунды.»*
 
-*"I've done SpecKit, OpenSpec and Taskmaster — this has produced the best results for me."*
+*«Я пробовал SpecKit, OpenSpec и Taskmaster — здесь я получил лучшие результаты.»*
 
-*"By far the most powerful addition to my Claude Code. Nothing over-engineered. Literally just gets shit done."*
+*«Самое мощное дополнение к моему Claude Code. Ничего переусложнённого. Буквально просто делает дело.»*
 
 <br>
 
-**Trusted by engineers at Amazon, Google, Shopify, and Webflow.**
+**Используется инженерами Amazon, Google, Shopify и Webflow.**
 
-[Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Commands](#commands) · [Why It Works](#why-it-works)
+[Зачем я это создал](#зачем-я-это-создал) · [Как это работает](#как-это-работает) · [Команды](#команды) · [Почему это работает](#почему-это-работает)
 
 </div>
 
 ---
 
-## Why I Built This
+## Зачем я это создал
 
-I'm a solo developer. I don't write code — Claude Code does.
+Я — соло-разработчик. Я не пишу код — это делает Claude Code.
 
-Other spec-driven development tools exist; BMAD, Speckit... But they all seem to make things way more complicated than they need to be (sprint ceremonies, story points, stakeholder syncs, retrospectives, Jira workflows) or lack real big picture understanding of what you're building. I'm not a 50-person software company. I don't want to play enterprise theater. I'm just a creative person trying to build great things that work.
+Другие инструменты спецификационно-ориентированной разработки существуют: BMAD, Speckit... Но все они, кажется, усложняют всё больше, чем нужно (церемонии спринтов, story points, синхронизации со стейкхолдерами, ретроспективы, воркфлоу в Jira), или им не хватает реального понимания общей картины того, что ты строишь. Я не софтверная компания на 50 человек. Я не хочу играть в корпоративный театр. Я просто креативный человек, который пытается создавать отличные вещи, которые работают.
 
-So I built GSD. The complexity is in the system, not in your workflow. Behind the scenes: context engineering, XML prompt formatting, subagent orchestration, state management. What you see: a few commands that just work.
+Поэтому я создал GSD. Сложность — в системе, а не в вашем рабочем процессе. За кулисами: контекстная инженерия, XML-форматирование промптов, оркестрация суб-агентов, управление состоянием. Что видите вы: несколько команд, которые просто работают.
 
-The system gives Claude everything it needs to do the work *and* verify it. I trust the workflow. It just does a good job.
+Система даёт Claude всё необходимое для выполнения работы *и* её проверки. Я доверяю этому рабочему процессу. Он просто хорошо работает.
 
-That's what this is. No enterprise roleplay bullshit. Just an incredibly effective system for building cool stuff consistently using Claude Code.
+Вот что это такое. Никакого корпоративного косплея. Просто невероятно эффективная система для последовательного создания крутых вещей с помощью Claude Code.
 
 — **TÂCHES**
 
 ---
 
-Vibecoding has a bad reputation. You describe what you want, AI generates code, and you get inconsistent garbage that falls apart at scale.
+У вайбкодинга плохая репутация. Ты описываешь, что хочешь, ИИ генерирует код, и получаешь непоследовательный мусор, который разваливается при масштабировании.
 
-GSD fixes that. It's the context engineering layer that makes Claude Code reliable. Describe your idea, let the system extract everything it needs to know, and let Claude Code get to work.
-
----
-
-## Who This Is For
-
-People who want to describe what they want and have it built correctly — without pretending they're running a 50-person engineering org.
+ДелайДело это исправляет. Это слой контекстной инженерии, который делает Claude Code надёжным. Опиши свою идею, позволь системе извлечь всё необходимое, и пусть Claude Code приступает к работе.
 
 ---
 
-## Getting Started
+## Для кого это
+
+Для людей, которые хотят описать, что они хотят, и получить это корректно построенным — без притворства, что они управляют инженерной организацией на 50 человек.
+
+---
+
+## Начало работы
 
 ```bash
 npx get-shit-done-cc@latest
 ```
 
-The installer prompts you to choose:
-1. **Runtime** — Claude Code, OpenCode, Gemini, or all
-2. **Location** — Global (all projects) or local (current project only)
+Установщик предложит выбрать:
+1. **Среда выполнения** — Claude Code, OpenCode, Gemini или все
+2. **Расположение** — Глобально (все проекты) или локально (только текущий проект)
 
-Verify with `/gsd:help` inside your chosen runtime.
+Проверьте командой `/gsd:help` внутри выбранной среды выполнения.
 
-### Staying Updated
+### Обновление
 
-GSD evolves fast. Update periodically:
+GSD быстро развивается. Обновляйте периодически:
 
 ```bash
 npx get-shit-done-cc@latest
 ```
 
 <details>
-<summary><strong>Non-interactive Install (Docker, CI, Scripts)</strong></summary>
+<summary><strong>Неинтерактивная установка (Docker, CI, скрипты)</strong></summary>
 
 ```bash
 # Claude Code
-npx get-shit-done-cc --claude --global   # Install to ~/.claude/
-npx get-shit-done-cc --claude --local    # Install to ./.claude/
+npx get-shit-done-cc --claude --global   # Установить в ~/.claude/
+npx get-shit-done-cc --claude --local    # Установить в ./.claude/
 
-# OpenCode (open source, free models)
-npx get-shit-done-cc --opencode --global # Install to ~/.config/opencode/
+# OpenCode (open source, бесплатные модели)
+npx get-shit-done-cc --opencode --global # Установить в ~/.config/opencode/
 
 # Gemini CLI
-npx get-shit-done-cc --gemini --global   # Install to ~/.gemini/
+npx get-shit-done-cc --gemini --global   # Установить в ~/.gemini/
 
-# All runtimes
-npx get-shit-done-cc --all --global      # Install to all directories
+# Все среды выполнения
+npx get-shit-done-cc --all --global      # Установить во все директории
 ```
 
-Use `--global` (`-g`) or `--local` (`-l`) to skip the location prompt.
-Use `--claude`, `--opencode`, `--gemini`, or `--all` to skip the runtime prompt.
+Используйте `--global` (`-g`) или `--local` (`-l`) чтобы пропустить выбор расположения.
+Используйте `--claude`, `--opencode`, `--gemini` или `--all` чтобы пропустить выбор среды выполнения.
 
 </details>
 
 <details>
-<summary><strong>Development Installation</strong></summary>
+<summary><strong>Установка для разработки</strong></summary>
 
-Clone the repository and run the installer locally:
+Клонируйте репозиторий и запустите установщик локально:
 
 ```bash
 git clone https://github.com/glittercowboy/get-shit-done.git
@@ -126,25 +125,25 @@ cd get-shit-done
 node bin/install.js --claude --local
 ```
 
-Installs to `./.claude/` for testing modifications before contributing.
+Устанавливается в `./.claude/` для тестирования модификаций перед контрибьюцией.
 
 </details>
 
-### Recommended: Skip Permissions Mode
+### Рекомендуется: режим пропуска разрешений
 
-GSD is designed for frictionless automation. Run Claude Code with:
+GSD разработан для бесперебойной автоматизации. Запускайте Claude Code с:
 
 ```bash
 claude --dangerously-skip-permissions
 ```
 
 > [!TIP]
-> This is how GSD is intended to be used — stopping to approve `date` and `git commit` 50 times defeats the purpose.
+> Именно так GSD предназначен для использования — останавливаться для подтверждения `date` и `git commit` 50 раз подряд противоречит цели.
 
 <details>
-<summary><strong>Alternative: Granular Permissions</strong></summary>
+<summary><strong>Альтернатива: гранулярные разрешения</strong></summary>
 
-If you prefer not to use that flag, add this to your project's `.claude/settings.json`:
+Если вы предпочитаете не использовать этот флаг, добавьте это в `.claude/settings.json` вашего проекта:
 
 ```json
 {
@@ -176,118 +175,118 @@ If you prefer not to use that flag, add this to your project's `.claude/settings
 
 ---
 
-## How It Works
+## Как это работает
 
-> **Already have code?** Run `/gsd:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/gsd:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
+> **Уже есть код?** Сначала выполните `/gsd:map-codebase`. Эта команда запускает параллельных агентов для анализа вашего стека, архитектуры, соглашений и проблемных мест. Затем `/gsd:new-project` знает вашу кодовую базу — вопросы фокусируются на том, что вы добавляете, а планирование автоматически загружает ваши паттерны.
 
-### 1. Initialize Project
+### 1. Инициализация проекта
 
 ```
 /gsd:new-project
 ```
 
-One command, one flow. The system:
+Одна команда, один поток. Система:
 
-1. **Questions** — Asks until it understands your idea completely (goals, constraints, tech preferences, edge cases)
-2. **Research** — Spawns parallel agents to investigate the domain (optional but recommended)
-3. **Requirements** — Extracts what's v1, v2, and out of scope
-4. **Roadmap** — Creates phases mapped to requirements
+1. **Вопросы** — Спрашивает, пока не поймёт вашу идею полностью (цели, ограничения, технологические предпочтения, граничные случаи)
+2. **Исследование** — Запускает параллельных агентов для изучения предметной области (опционально, но рекомендуется)
+3. **Требования** — Извлекает что входит в v1, v2 и что вне скоупа
+4. **Дорожная карта** — Создаёт фазы, привязанные к требованиям
 
-You approve the roadmap. Now you're ready to build.
+Вы утверждаете дорожную карту. Теперь вы готовы строить.
 
-**Creates:** `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `STATE.md`, `.planning/research/`
+**Создаёт:** `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `STATE.md`, `.planning/research/`
 
 ---
 
-### 2. Discuss Phase
+### 2. Обсуждение фазы
 
 ```
 /gsd:discuss-phase 1
 ```
 
-**This is where you shape the implementation.**
+**Здесь вы формируете реализацию.**
 
-Your roadmap has a sentence or two per phase. That's not enough context to build something the way *you* imagine it. This step captures your preferences before anything gets researched or planned.
+В вашей дорожной карте есть одно-два предложения на фазу. Этого недостаточно контекста, чтобы построить что-то так, как *вы* это себе представляете. Этот шаг фиксирует ваши предпочтения до начала исследования или планирования.
 
-The system analyzes the phase and identifies gray areas based on what's being built:
+Система анализирует фазу и определяет неясные области на основе того, что строится:
 
-- **Visual features** → Layout, density, interactions, empty states
-- **APIs/CLIs** → Response format, flags, error handling, verbosity
-- **Content systems** → Structure, tone, depth, flow
-- **Organization tasks** → Grouping criteria, naming, duplicates, exceptions
+- **Визуальные фичи** → Верстка, плотность, взаимодействия, пустые состояния
+- **API/CLI** → Формат ответа, флаги, обработка ошибок, детальность вывода
+- **Контентные системы** → Структура, тон, глубина, поток
+- **Организационные задачи** → Критерии группировки, именование, дубликаты, исключения
 
-For each area you select, it asks until you're satisfied. The output — `CONTEXT.md` — feeds directly into the next two steps:
+Для каждой выбранной области система спрашивает, пока вы не будете довольны. Результат — `CONTEXT.md` — передаётся напрямую в следующие два шага:
 
-1. **Researcher reads it** — Knows what patterns to investigate ("user wants card layout" → research card component libraries)
-2. **Planner reads it** — Knows what decisions are locked ("infinite scroll decided" → plan includes scroll handling)
+1. **Исследователь читает его** — Знает какие паттерны исследовать («пользователь хочет карточную верстку» → исследовать библиотеки карточных компонентов)
+2. **Планировщик читает его** — Знает какие решения зафиксированы («бесконечная прокрутка решена» → план включает обработку скролла)
 
-The deeper you go here, the more the system builds what you actually want. Skip it and you get reasonable defaults. Use it and you get *your* vision.
+Чем глубже вы погрузитесь здесь, тем точнее система построит то, что вы хотите. Пропустите — получите разумные значения по умолчанию. Используйте — получите *ваше* видение.
 
-**Creates:** `{phase}-CONTEXT.md`
+**Создаёт:** `{phase}-CONTEXT.md`
 
 ---
 
-### 3. Plan Phase
+### 3. Планирование фазы
 
 ```
 /gsd:plan-phase 1
 ```
 
-The system:
+Система:
 
-1. **Researches** — Investigates how to implement this phase, guided by your CONTEXT.md decisions
-2. **Plans** — Creates 2-3 atomic task plans with XML structure
-3. **Verifies** — Checks plans against requirements, loops until they pass
+1. **Исследует** — Изучает как реализовать эту фазу, руководствуясь вашими решениями из CONTEXT.md
+2. **Планирует** — Создаёт 2-3 атомарных плана задач с XML-структурой
+3. **Проверяет** — Сверяет планы с требованиями, итерирует до прохождения
 
-Each plan is small enough to execute in a fresh context window. No degradation, no "I'll be more concise now."
+Каждый план достаточно мал для выполнения в свежем контекстном окне. Никакой деградации, никакого «Я буду более краток».
 
-**Creates:** `{phase}-RESEARCH.md`, `{phase}-{N}-PLAN.md`
+**Создаёт:** `{phase}-RESEARCH.md`, `{phase}-{N}-PLAN.md`
 
 ---
 
-### 4. Execute Phase
+### 4. Выполнение фазы
 
 ```
 /gsd:execute-phase 1
 ```
 
-The system:
+Система:
 
-1. **Runs plans in waves** — Parallel where possible, sequential when dependent
-2. **Fresh context per plan** — 200k tokens purely for implementation, zero accumulated garbage
-3. **Commits per task** — Every task gets its own atomic commit
-4. **Verifies against goals** — Checks the codebase delivers what the phase promised
+1. **Запускает планы волнами** — Параллельно где возможно, последовательно при зависимостях
+2. **Свежий контекст на каждый план** — 200k токенов чисто для реализации, ноль накопленного мусора
+3. **Коммит на каждую задачу** — Каждая задача получает свой атомарный коммит
+4. **Верифицирует по целям** — Проверяет что кодовая база выполняет обещания фазы
 
-Walk away, come back to completed work with clean git history.
+Отойдите, вернитесь к завершённой работе с чистой git-историей.
 
-**Creates:** `{phase}-{N}-SUMMARY.md`, `{phase}-VERIFICATION.md`
+**Создаёт:** `{phase}-{N}-SUMMARY.md`, `{phase}-VERIFICATION.md`
 
 ---
 
-### 5. Verify Work
+### 5. Верификация работы
 
 ```
 /gsd:verify-work 1
 ```
 
-**This is where you confirm it actually works.**
+**Здесь вы подтверждаете, что всё действительно работает.**
 
-Automated verification checks that code exists and tests pass. But does the feature *work* the way you expected? This is your chance to use it.
+Автоматическая верификация проверяет существование кода и прохождение тестов. Но работает ли фича так, как вы ожидали? Это ваш шанс проверить.
 
-The system:
+Система:
 
-1. **Extracts testable deliverables** — What you should be able to do now
-2. **Walks you through one at a time** — "Can you log in with email?" Yes/no, or describe what's wrong
-3. **Diagnoses failures automatically** — Spawns debug agents to find root causes
-4. **Creates verified fix plans** — Ready for immediate re-execution
+1. **Извлекает тестируемые результаты** — Что вы теперь должны уметь делать
+2. **Проводит вас по одному за раз** — «Можете ли вы войти через email?» Да/нет или опишите проблему
+3. **Автоматически диагностирует сбои** — Запускает отладочных агентов для поиска причин
+4. **Создаёт проверенные планы исправлений** — Готовы к немедленному повторному выполнению
 
-If everything passes, you move on. If something's broken, you don't manually debug — you just run `/gsd:execute-phase` again with the fix plans it created.
+Если всё проходит, вы двигаетесь дальше. Если что-то сломано, вы не дебажите вручную — просто запускаете `/gsd:execute-phase` снова с планами исправлений.
 
-**Creates:** `{phase}-UAT.md`, fix plans if issues found
+**Создаёт:** `{phase}-UAT.md`, планы исправлений при обнаружении проблем
 
 ---
 
-### 6. Repeat → Complete → Next Milestone
+### 6. Повторяйте → Завершайте → Следующая веха
 
 ```
 /gsd:discuss-phase 2
@@ -299,262 +298,262 @@ If everything passes, you move on. If something's broken, you don't manually deb
 /gsd:new-milestone
 ```
 
-Loop **discuss → plan → execute → verify** until milestone complete.
+Цикл **обсуждение → планирование → выполнение → верификация** до завершения вехи.
 
-Each phase gets your input (discuss), proper research (plan), clean execution (execute), and human verification (verify). Context stays fresh. Quality stays high.
+Каждая фаза получает ваш ввод (обсуждение), надлежащее исследование (планирование), чистое выполнение (выполнение) и проверку человеком (верификация). Контекст остаётся свежим. Качество остаётся высоким.
 
-When all phases are done, `/gsd:complete-milestone` archives the milestone and tags the release.
+Когда все фазы завершены, `/gsd:complete-milestone` архивирует веху и создаёт тег релиза.
 
-Then `/gsd:new-milestone` starts the next version — same flow as `new-project` but for your existing codebase. You describe what you want to build next, the system researches the domain, you scope requirements, and it creates a fresh roadmap. Each milestone is a clean cycle: define → build → ship.
+Затем `/gsd:new-milestone` запускает следующую версию — тот же поток что и `new-project`, но для существующей кодовой базы. Вы описываете, что хотите построить дальше, система исследует предметную область, вы определяете скоуп требований, и она создаёт свежую дорожную карту. Каждая веха — чистый цикл: определить → построить → выпустить.
 
 ---
 
-### Quick Mode
+### Быстрый режим
 
 ```
 /gsd:quick
 ```
 
-**For ad-hoc tasks that don't need full planning.**
+**Для разовых задач, не требующих полного планирования.**
 
-Quick mode gives you GSD guarantees (atomic commits, state tracking) with a faster path:
+Быстрый режим даёт вам гарантии GSD (атомарные коммиты, отслеживание состояния) с ускоренным путём:
 
-- **Same agents** — Planner + executor, same quality
-- **Skips optional steps** — No research, no plan checker, no verifier
-- **Separate tracking** — Lives in `.planning/quick/`, not phases
+- **Те же агенты** — Планировщик + исполнитель, то же качество
+- **Пропуск опциональных шагов** — Без исследования, без проверки плана, без верификатора
+- **Отдельное отслеживание** — Живёт в `.planning/quick/`, не в фазах
 
-Use for: bug fixes, small features, config changes, one-off tasks.
+Используйте для: исправления багов, небольших фич, изменений конфигурации, разовых задач.
 
 ```
 /gsd:quick
-> What do you want to do? "Add dark mode toggle to settings"
+> Что хотите сделать? «Добавить переключатель тёмной темы в настройки»
 ```
 
-**Creates:** `.planning/quick/001-add-dark-mode-toggle/PLAN.md`, `SUMMARY.md`
+**Создаёт:** `.planning/quick/001-add-dark-mode-toggle/PLAN.md`, `SUMMARY.md`
 
 ---
 
-## Why It Works
+## Почему это работает
 
-### Context Engineering
+### Контекстная инженерия
 
-Claude Code is incredibly powerful *if* you give it the context it needs. Most people don't.
+Claude Code невероятно мощный, *если* дать ему нужный контекст. Большинство людей этого не делают.
 
-GSD handles it for you:
+GSD берёт это на себя:
 
-| File | What it does |
-|------|--------------|
-| `PROJECT.md` | Project vision, always loaded |
-| `research/` | Ecosystem knowledge (stack, features, architecture, pitfalls) |
-| `REQUIREMENTS.md` | Scoped v1/v2 requirements with phase traceability |
-| `ROADMAP.md` | Where you're going, what's done |
-| `STATE.md` | Decisions, blockers, position — memory across sessions |
-| `PLAN.md` | Atomic task with XML structure, verification steps |
-| `SUMMARY.md` | What happened, what changed, committed to history |
-| `todos/` | Captured ideas and tasks for later work |
+| Файл | Что делает |
+|------|-----------|
+| `PROJECT.md` | Видение проекта, всегда загружен |
+| `research/` | Знания об экосистеме (стек, фичи, архитектура, подводные камни) |
+| `REQUIREMENTS.md` | Скоупированные требования v1/v2 с привязкой к фазам |
+| `ROADMAP.md` | Куда идёте, что сделано |
+| `STATE.md` | Решения, блокеры, позиция — память между сессиями |
+| `PLAN.md` | Атомарная задача с XML-структурой и шагами верификации |
+| `SUMMARY.md` | Что произошло, что изменилось, зафиксировано в истории |
+| `todos/` | Захваченные идеи и задачи на потом |
 
-Size limits based on where Claude's quality degrades. Stay under, get consistent excellence.
+Лимиты размеров основаны на том, где качество Claude начинает деградировать. Оставайтесь в пределах — получайте стабильное превосходство.
 
-### XML Prompt Formatting
+### XML-форматирование промптов
 
-Every plan is structured XML optimized for Claude:
+Каждый план — структурированный XML, оптимизированный для Claude:
 
 ```xml
 <task type="auto">
-  <name>Create login endpoint</name>
+  <n>Создать эндпоинт логина</n>
   <files>src/app/api/auth/login/route.ts</files>
   <action>
-    Use jose for JWT (not jsonwebtoken - CommonJS issues).
-    Validate credentials against users table.
-    Return httpOnly cookie on success.
+    Использовать jose для JWT (не jsonwebtoken — проблемы с CommonJS).
+    Валидировать учётные данные по таблице пользователей.
+    Возвращать httpOnly cookie при успехе.
   </action>
-  <verify>curl -X POST localhost:3000/api/auth/login returns 200 + Set-Cookie</verify>
-  <done>Valid credentials return cookie, invalid return 401</done>
+  <verify>curl -X POST localhost:3000/api/auth/login возвращает 200 + Set-Cookie</verify>
+  <done>Корректные учётные данные возвращают cookie, некорректные — 401</done>
 </task>
 ```
 
-Precise instructions. No guessing. Verification built in.
+Точные инструкции. Без гадания. Верификация встроена.
 
-### Multi-Agent Orchestration
+### Мульти-агентная оркестрация
 
-Every stage uses the same pattern: a thin orchestrator spawns specialized agents, collects results, and routes to the next step.
+Каждый этап использует один и тот же паттерн: тонкий оркестратор запускает специализированных агентов, собирает результаты и маршрутизирует к следующему шагу.
 
-| Stage | Orchestrator does | Agents do |
-|-------|------------------|-----------|
-| Research | Coordinates, presents findings | 4 parallel researchers investigate stack, features, architecture, pitfalls |
-| Planning | Validates, manages iteration | Planner creates plans, checker verifies, loop until pass |
-| Execution | Groups into waves, tracks progress | Executors implement in parallel, each with fresh 200k context |
-| Verification | Presents results, routes next | Verifier checks codebase against goals, debuggers diagnose failures |
+| Этап | Оркестратор делает | Агенты делают |
+|------|-------------------|---------------|
+| Исследование | Координирует, представляет находки | 4 параллельных исследователя изучают стек, фичи, архитектуру, подводные камни |
+| Планирование | Валидирует, управляет итерациями | Планировщик создаёт планы, проверяющий верифицирует, цикл до прохождения |
+| Выполнение | Группирует в волны, отслеживает прогресс | Исполнители реализуют параллельно, каждый со свежим контекстом 200k |
+| Верификация | Представляет результаты, маршрутизирует дальше | Верификатор сверяет кодовую базу с целями, отладчики диагностируют сбои |
 
-The orchestrator never does heavy lifting. It spawns agents, waits, integrates results.
+Оркестратор никогда не выполняет тяжёлую работу. Он запускает агентов, ждёт, интегрирует результаты.
 
-**The result:** You can run an entire phase — deep research, multiple plans created and verified, thousands of lines of code written across parallel executors, automated verification against goals — and your main context window stays at 30-40%. The work happens in fresh subagent contexts. Your session stays fast and responsive.
+**Результат:** Вы можете запустить целую фазу — глубокое исследование, создание и проверка нескольких планов, тысячи строк кода, написанных параллельными исполнителями, автоматическая верификация по целям — и ваше основное контекстное окно остаётся на 30-40%. Работа происходит в свежих контекстах суб-агентов. Ваша сессия остаётся быстрой и отзывчивой.
 
-### Atomic Git Commits
+### Атомарные Git-коммиты
 
-Each task gets its own commit immediately after completion:
+Каждая задача получает свой коммит сразу после завершения:
 
 ```bash
-abc123f docs(08-02): complete user registration plan
-def456g feat(08-02): add email confirmation flow
-hij789k feat(08-02): implement password hashing
-lmn012o feat(08-02): create registration endpoint
+abc123f docs(08-02): завершён план регистрации пользователей
+def456g feat(08-02): добавлен поток подтверждения email
+hij789k feat(08-02): реализовано хеширование паролей
+lmn012o feat(08-02): создан эндпоинт регистрации
 ```
 
 > [!NOTE]
-> **Benefits:** Git bisect finds exact failing task. Each task independently revertable. Clear history for Claude in future sessions. Better observability in AI-automated workflow.
+> **Преимущества:** Git bisect находит точную проблемную задачу. Каждая задача независимо откатываема. Чистая история для Claude в будущих сессиях. Лучшая наблюдаемость в автоматизированном ИИ-рабочем процессе.
 
-Every commit is surgical, traceable, and meaningful.
+Каждый коммит точечный, отслеживаемый и значимый.
 
-### Modular by Design
+### Модульность по дизайну
 
-- Add phases to current milestone
-- Insert urgent work between phases
-- Complete milestones and start fresh
-- Adjust plans without rebuilding everything
+- Добавляйте фазы к текущей вехе
+- Вставляйте срочную работу между фазами
+- Завершайте вехи и начинайте заново
+- Корректируйте планы без перестройки всего
 
-You're never locked in. The system adapts.
-
----
-
-## Commands
-
-### Core Workflow
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:new-project [--auto]` | Full initialization: questions → research → requirements → roadmap |
-| `/gsd:discuss-phase [N]` | Capture implementation decisions before planning |
-| `/gsd:plan-phase [N]` | Research + plan + verify for a phase |
-| `/gsd:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
-| `/gsd:verify-work [N]` | Manual user acceptance testing ¹ |
-| `/gsd:audit-milestone` | Verify milestone achieved its definition of done |
-| `/gsd:complete-milestone` | Archive milestone, tag release |
-| `/gsd:new-milestone [name]` | Start next version: questions → research → requirements → roadmap |
-
-### Navigation
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:progress` | Where am I? What's next? |
-| `/gsd:help` | Show all commands and usage guide |
-| `/gsd:update` | Update GSD with changelog preview |
-| `/gsd:join-discord` | Join the GSD Discord community |
-
-### Brownfield
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:map-codebase` | Analyze existing codebase before new-project |
-
-### Phase Management
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:add-phase` | Append phase to roadmap |
-| `/gsd:insert-phase [N]` | Insert urgent work between phases |
-| `/gsd:remove-phase [N]` | Remove future phase, renumber |
-| `/gsd:list-phase-assumptions [N]` | See Claude's intended approach before planning |
-| `/gsd:plan-milestone-gaps` | Create phases to close gaps from audit |
-
-### Session
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:pause-work` | Create handoff when stopping mid-phase |
-| `/gsd:resume-work` | Restore from last session |
-
-### Utilities
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:settings` | Configure model profile and workflow agents |
-| `/gsd:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
-| `/gsd:add-todo [desc]` | Capture idea for later |
-| `/gsd:check-todos` | List pending todos |
-| `/gsd:debug [desc]` | Systematic debugging with persistent state |
-| `/gsd:quick` | Execute ad-hoc task with GSD guarantees |
-
-<sup>¹ Contributed by reddit user OracleGreyBeard</sup>
+Вы никогда не заблокированы. Система адаптируется.
 
 ---
 
-## Configuration
+## Команды
 
-GSD stores project settings in `.planning/config.json`. Configure during `/gsd:new-project` or update later with `/gsd:settings`.
+### Основной рабочий процесс
 
-### Core Settings
+| Команда | Что делает |
+|---------|-----------|
+| `/gsd:new-project [--auto]` | Полная инициализация: вопросы → исследование → требования → дорожная карта |
+| `/gsd:discuss-phase [N]` | Зафиксировать решения по реализации перед планированием |
+| `/gsd:plan-phase [N]` | Исследование + план + проверка для фазы |
+| `/gsd:execute-phase <N>` | Выполнить все планы параллельными волнами, верифицировать по завершении |
+| `/gsd:verify-work [N]` | Ручное пользовательское приёмочное тестирование ¹ |
+| `/gsd:audit-milestone` | Проверить достижение вехой определения готовности |
+| `/gsd:complete-milestone` | Архивировать веху, создать тег релиза |
+| `/gsd:new-milestone [name]` | Начать следующую версию: вопросы → исследование → требования → дорожная карта |
 
-| Setting | Options | Default | What it controls |
-|---------|---------|---------|------------------|
-| `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
-| `depth` | `quick`, `standard`, `comprehensive` | `standard` | Planning thoroughness (phases × plans) |
+### Навигация
 
-### Model Profiles
+| Команда | Что делает |
+|---------|-----------|
+| `/gsd:progress` | Где я? Что дальше? |
+| `/gsd:help` | Показать все команды и руководство по использованию |
+| `/gsd:update` | Обновить GSD с предпросмотром изменений |
+| `/gsd:join-discord` | Присоединиться к Discord-сообществу GSD |
 
-Control which Claude model each agent uses. Balance quality vs token spend.
+### Браунфилд
 
-| Profile | Planning | Execution | Verification |
-|---------|----------|-----------|--------------|
+| Команда | Что делает |
+|---------|-----------|
+| `/gsd:map-codebase` | Анализ существующей кодовой базы перед new-project |
+
+### Управление фазами
+
+| Команда | Что делает |
+|---------|-----------|
+| `/gsd:add-phase` | Добавить фазу в дорожную карту |
+| `/gsd:insert-phase [N]` | Вставить срочную работу между фазами |
+| `/gsd:remove-phase [N]` | Удалить будущую фазу, перенумеровать |
+| `/gsd:list-phase-assumptions [N]` | Посмотреть предполагаемый подход Claude до планирования |
+| `/gsd:plan-milestone-gaps` | Создать фазы для закрытия пробелов из аудита |
+
+### Сессия
+
+| Команда | Что делает |
+|---------|-----------|
+| `/gsd:pause-work` | Создать хэндофф при остановке в середине фазы |
+| `/gsd:resume-work` | Восстановить из последней сессии |
+
+### Утилиты
+
+| Команда | Что делает |
+|---------|-----------|
+| `/gsd:settings` | Настроить профиль модели и агентов рабочего процесса |
+| `/gsd:set-profile <profile>` | Переключить профиль модели (quality/balanced/budget) |
+| `/gsd:add-todo [desc]` | Захватить идею на потом |
+| `/gsd:check-todos` | Показать список ожидающих задач |
+| `/gsd:debug [desc]` | Систематическая отладка с постоянным состоянием |
+| `/gsd:quick` | Выполнить разовую задачу с гарантиями GSD |
+
+<sup>¹ Предложено пользователем reddit OracleGreyBeard</sup>
+
+---
+
+## Конфигурация
+
+GSD хранит настройки проекта в `.planning/config.json`. Настраивайте во время `/gsd:new-project` или обновляйте позже через `/gsd:settings`.
+
+### Основные настройки
+
+| Настройка | Варианты | По умолчанию | Что контролирует |
+|-----------|----------|-------------|-----------------|
+| `mode` | `yolo`, `interactive` | `interactive` | Автоматическое подтверждение vs подтверждение на каждом шаге |
+| `depth` | `quick`, `standard`, `comprehensive` | `standard` | Тщательность планирования (фазы × планы) |
+
+### Профили моделей
+
+Контролируйте какую модель Claude использует каждый агент. Баланс между качеством и расходом токенов.
+
+| Профиль | Планирование | Выполнение | Верификация |
+|---------|-------------|-----------|-------------|
 | `quality` | Opus | Opus | Sonnet |
-| `balanced` (default) | Opus | Sonnet | Sonnet |
+| `balanced` (по умолчанию) | Opus | Sonnet | Sonnet |
 | `budget` | Sonnet | Sonnet | Haiku |
 
-Switch profiles:
+Переключение профилей:
 ```
 /gsd:set-profile budget
 ```
 
-Or configure via `/gsd:settings`.
+Или настройте через `/gsd:settings`.
 
-### Workflow Agents
+### Агенты рабочего процесса
 
-These spawn additional agents during planning/execution. They improve quality but add tokens and time.
+Они запускают дополнительных агентов во время планирования/выполнения. Улучшают качество, но добавляют токены и время.
 
-| Setting | Default | What it does |
-|---------|---------|--------------|
-| `workflow.research` | `true` | Researches domain before planning each phase |
-| `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |
-| `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
+| Настройка | По умолчанию | Что делает |
+|-----------|-------------|-----------|
+| `workflow.research` | `true` | Исследует предметную область перед планированием каждой фазы |
+| `workflow.plan_check` | `true` | Верифицирует что планы достигают целей фазы перед выполнением |
+| `workflow.verifier` | `true` | Подтверждает что обязательные элементы доставлены после выполнения |
 
-Use `/gsd:settings` to toggle these, or override per-invocation:
+Используйте `/gsd:settings` для переключения, или переопределяйте при вызове:
 - `/gsd:plan-phase --skip-research`
 - `/gsd:plan-phase --skip-verify`
 
-### Execution
+### Выполнение
 
-| Setting | Default | What it controls |
-|---------|---------|------------------|
-| `parallelization.enabled` | `true` | Run independent plans simultaneously |
-| `planning.commit_docs` | `true` | Track `.planning/` in git |
+| Настройка | По умолчанию | Что контролирует |
+|-----------|-------------|-----------------|
+| `parallelization.enabled` | `true` | Запускать независимые планы одновременно |
+| `planning.commit_docs` | `true` | Отслеживать `.planning/` в git |
 
-### Git Branching
+### Git-ветвление
 
-Control how GSD handles branches during execution.
+Контролируйте как GSD управляет ветками при выполнении.
 
-| Setting | Options | Default | What it does |
-|---------|---------|---------|--------------|
-| `git.branching_strategy` | `none`, `phase`, `milestone` | `none` | Branch creation strategy |
-| `git.phase_branch_template` | string | `gsd/phase-{phase}-{slug}` | Template for phase branches |
-| `git.milestone_branch_template` | string | `gsd/{milestone}-{slug}` | Template for milestone branches |
+| Настройка | Варианты | По умолчанию | Что делает |
+|-----------|----------|-------------|-----------|
+| `git.branching_strategy` | `none`, `phase`, `milestone` | `none` | Стратегия создания веток |
+| `git.phase_branch_template` | строка | `gsd/phase-{phase}-{slug}` | Шаблон для веток фаз |
+| `git.milestone_branch_template` | строка | `gsd/{milestone}-{slug}` | Шаблон для веток вех |
 
-**Strategies:**
-- **`none`** — Commits to current branch (default GSD behavior)
-- **`phase`** — Creates a branch per phase, merges at phase completion
-- **`milestone`** — Creates one branch for entire milestone, merges at completion
+**Стратегии:**
+- **`none`** — Коммиты в текущую ветку (поведение GSD по умолчанию)
+- **`phase`** — Создаёт ветку на каждую фазу, мержит при завершении фазы
+- **`milestone`** — Создаёт одну ветку на всю веху, мержит при завершении
 
-At milestone completion, GSD offers squash merge (recommended) or merge with history.
+При завершении вехи GSD предлагает squash merge (рекомендуется) или merge с историей.
 
 ---
 
-## Security
+## Безопасность
 
-### Protecting Sensitive Files
+### Защита конфиденциальных файлов
 
-GSD's codebase mapping and analysis commands read files to understand your project. **Protect files containing secrets** by adding them to Claude Code's deny list:
+Команды маппинга и анализа кодовой базы GSD читают файлы для понимания вашего проекта. **Защитите файлы с секретами**, добавив их в deny-список Claude Code:
 
-1. Open Claude Code settings (`.claude/settings.json` or global)
-2. Add sensitive file patterns to the deny list:
+1. Откройте настройки Claude Code (`.claude/settings.json` или глобальные)
+2. Добавьте паттерны конфиденциальных файлов в deny-список:
 
 ```json
 {
@@ -571,68 +570,68 @@ GSD's codebase mapping and analysis commands read files to understand your proje
 }
 ```
 
-This prevents Claude from reading these files entirely, regardless of what commands you run.
+Это полностью предотвращает чтение этих файлов Claude, независимо от выполняемых команд.
 
 > [!IMPORTANT]
-> GSD includes built-in protections against committing secrets, but defense-in-depth is best practice. Deny read access to sensitive files as a first line of defense.
+> GSD включает встроенные защиты от коммита секретов, но эшелонированная защита — лучшая практика. Запретите доступ на чтение к конфиденциальным файлам как первую линию обороны.
 
 ---
 
-## Troubleshooting
+## Устранение неполадок
 
-**Commands not found after install?**
-- Restart Claude Code to reload slash commands
-- Verify files exist in `~/.claude/commands/gsd/` (global) or `./.claude/commands/gsd/` (local)
+**Команды не найдены после установки?**
+- Перезапустите Claude Code для перезагрузки slash-команд
+- Проверьте наличие файлов в `~/.claude/commands/gsd/` (глобально) или `./.claude/commands/gsd/` (локально)
 
-**Commands not working as expected?**
-- Run `/gsd:help` to verify installation
-- Re-run `npx get-shit-done-cc` to reinstall
+**Команды работают не так, как ожидалось?**
+- Выполните `/gsd:help` для проверки установки
+- Повторно запустите `npx get-shit-done-cc` для переустановки
 
-**Updating to the latest version?**
+**Обновление до последней версии?**
 ```bash
 npx get-shit-done-cc@latest
 ```
 
-**Using Docker or containerized environments?**
+**Используете Docker или контейнеризованные среды?**
 
-If file reads fail with tilde paths (`~/.claude/...`), set `CLAUDE_CONFIG_DIR` before installing:
+Если чтение файлов с путями через тильду (`~/.claude/...`) не работает, задайте `CLAUDE_CONFIG_DIR` перед установкой:
 ```bash
 CLAUDE_CONFIG_DIR=/home/youruser/.claude npx get-shit-done-cc --global
 ```
-This ensures absolute paths are used instead of `~` which may not expand correctly in containers.
+Это гарантирует использование абсолютных путей вместо `~`, который может неправильно раскрываться в контейнерах.
 
-### Uninstalling
+### Удаление
 
-To remove GSD completely:
+Для полного удаления GSD:
 
 ```bash
-# Global installs
+# Глобальные установки
 npx get-shit-done-cc --claude --global --uninstall
 npx get-shit-done-cc --opencode --global --uninstall
 
-# Local installs (current project)
+# Локальные установки (текущий проект)
 npx get-shit-done-cc --claude --local --uninstall
 npx get-shit-done-cc --opencode --local --uninstall
 ```
 
-This removes all GSD commands, agents, hooks, and settings while preserving your other configurations.
+Удаляет все команды, агенты, хуки и настройки GSD, сохраняя остальные конфигурации.
 
 ---
 
-## Community Ports
+## Порты от сообщества
 
-OpenCode and Gemini CLI are now natively supported via `npx get-shit-done-cc`.
+OpenCode и Gemini CLI теперь нативно поддерживаются через `npx get-shit-done-cc`.
 
-These community ports pioneered multi-runtime support:
+Эти порты от сообщества стали пионерами мульти-рантайм поддержки:
 
-| Project | Platform | Description |
-|---------|----------|-------------|
-| [gsd-opencode](https://github.com/rokicool/gsd-opencode) | OpenCode | Original OpenCode adaptation |
-| gsd-gemini (archived) | Gemini CLI | Original Gemini adaptation by uberfuzzy |
+| Проект | Платформа | Описание |
+|--------|----------|----------|
+| [gsd-opencode](https://github.com/rokicool/gsd-opencode) | OpenCode | Оригинальная адаптация для OpenCode |
+| gsd-gemini (архивирован) | Gemini CLI | Оригинальная адаптация для Gemini от uberfuzzy |
 
 ---
 
-## Star History
+## История звёзд
 
 <a href="https://star-history.com/#glittercowboy/get-shit-done&Date">
  <picture>
@@ -644,14 +643,14 @@ These community ports pioneered multi-runtime support:
 
 ---
 
-## License
+## Лицензия
 
-MIT License. See [LICENSE](LICENSE) for details.
+Лицензия MIT. Подробности в [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
 
-**Claude Code is powerful. GSD makes it reliable.**
+**Claude Code мощный. ДелайДело делает его надёжным.**
 
 </div>
