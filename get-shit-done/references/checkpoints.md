@@ -1,91 +1,91 @@
 <overview>
-Plans execute autonomously. Checkpoints formalize interaction points where human verification or decisions are needed.
+Планы выполняются автономно. Контрольные точки формализуют моменты взаимодействия, где необходима проверка или решения со стороны человека.
 
-**Core principle:** Claude automates everything with CLI/API. Checkpoints are for verification and decisions, not manual work.
+**Основной принцип:** Claude автоматизирует всё через CLI/API. Контрольные точки предназначены для проверки и принятия решений, а не для ручной работы.
 
-**Golden rules:**
-1. **If Claude can run it, Claude runs it** - Never ask user to execute CLI commands, start servers, or run builds
-2. **Claude sets up the verification environment** - Start dev servers, seed databases, configure env vars
-3. **User only does what requires human judgment** - Visual checks, UX evaluation, "does this feel right?"
-4. **Secrets come from user, automation comes from Claude** - Ask for API keys, then Claude uses them via CLI
+**Золотые правила:**
+1. **Если Claude может выполнить — Claude выполняет** — Никогда не просите пользователя выполнять CLI-команды, запускать серверы или сборку
+2. **Claude настраивает среду проверки** — Запуск dev-серверов, заполнение баз данных, настройка переменных окружения
+3. **Пользователь делает только то, что требует человеческого суждения** — Визуальные проверки, оценка UX, «выглядит ли это правильно?»
+4. **Секреты от пользователя, автоматизация от Claude** — Запросить API-ключи, затем Claude использует их через CLI
 </overview>
 
 <checkpoint_types>
 
 <type name="human-verify">
-## checkpoint:human-verify (Most Common - 90%)
+## checkpoint:human-verify (Самый частый — 90%)
 
-**When:** Claude completed automated work, human confirms it works correctly.
+**Когда:** Claude завершил автоматизированную работу, человек подтверждает корректность.
 
-**Use for:**
-- Visual UI checks (layout, styling, responsiveness)
-- Interactive flows (click through wizard, test user flows)
-- Functional verification (feature works as expected)
-- Audio/video playback quality
-- Animation smoothness
-- Accessibility testing
+**Используется для:**
+- Визуальных проверок UI (верстка, стили, адаптивность)
+- Интерактивных потоков (прокликать визард, протестировать пользовательские сценарии)
+- Функциональной верификации (фича работает как ожидалось)
+- Качества воспроизведения аудио/видео
+- Плавности анимаций
+- Тестирования доступности
 
-**Structure:**
+**Структура:**
 ```xml
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>[What Claude automated and deployed/built]</what-built>
+  <what-built>[Что Claude автоматизировал и развернул/собрал]</what-built>
   <how-to-verify>
-    [Exact steps to test - URLs, commands, expected behavior]
+    [Точные шаги для проверки — URL, команды, ожидаемое поведение]
   </how-to-verify>
-  <resume-signal>[How to continue - "approved", "yes", or describe issues]</resume-signal>
+  <resume-signal>[Как продолжить — «одобрено», «да» или описание проблем]</resume-signal>
 </task>
 ```
 
-**Example: UI Component (shows key pattern: Claude starts server BEFORE checkpoint)**
+**Пример: UI-компонент (показывает ключевой паттерн: Claude запускает сервер ДО контрольной точки)**
 ```xml
 <task type="auto">
-  <name>Build responsive dashboard layout</name>
+  <n>Собрать адаптивный макет дашборда</n>
   <files>src/components/Dashboard.tsx, src/app/dashboard/page.tsx</files>
-  <action>Create dashboard with sidebar, header, and content area. Use Tailwind responsive classes for mobile.</action>
-  <verify>npm run build succeeds, no TypeScript errors</verify>
-  <done>Dashboard component builds without errors</done>
+  <action>Создать дашборд с боковой панелью, шапкой и областью контента. Использовать Tailwind адаптивные классы для мобильных.</action>
+  <verify>npm run build завершается успешно, нет ошибок TypeScript</verify>
+  <done>Компонент дашборда собирается без ошибок</done>
 </task>
 
 <task type="auto">
-  <name>Start dev server for verification</name>
-  <action>Run `npm run dev` in background, wait for "ready" message, capture port</action>
-  <verify>curl http://localhost:3000 returns 200</verify>
-  <done>Dev server running at http://localhost:3000</done>
+  <n>Запустить dev-сервер для верификации</n>
+  <action>Выполнить `npm run dev` в фоне, дождаться сообщения «ready», зафиксировать порт</action>
+  <verify>curl http://localhost:3000 возвращает 200</verify>
+  <done>Dev-сервер запущен на http://localhost:3000</done>
 </task>
 
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>Responsive dashboard layout - dev server running at http://localhost:3000</what-built>
+  <what-built>Адаптивный макет дашборда — dev-сервер запущен на http://localhost:3000</what-built>
   <how-to-verify>
-    Visit http://localhost:3000/dashboard and verify:
-    1. Desktop (>1024px): Sidebar left, content right, header top
-    2. Tablet (768px): Sidebar collapses to hamburger menu
-    3. Mobile (375px): Single column layout, bottom nav appears
-    4. No layout shift or horizontal scroll at any size
+    Откройте http://localhost:3000/dashboard и проверьте:
+    1. Десктоп (>1024px): Боковая панель слева, контент справа, шапка сверху
+    2. Планшет (768px): Боковая панель сворачивается в гамбургер-меню
+    3. Мобильный (375px): Одноколоночная верстка, нижняя навигация появляется
+    4. Нет сдвигов верстки или горизонтальной прокрутки при любом размере
   </how-to-verify>
-  <resume-signal>Type "approved" or describe layout issues</resume-signal>
+  <resume-signal>Напишите «одобрено» или опишите проблемы с версткой</resume-signal>
 </task>
 ```
 
-**Example: Xcode Build**
+**Пример: Сборка Xcode**
 ```xml
 <task type="auto">
-  <name>Build macOS app with Xcode</name>
+  <n>Собрать macOS-приложение через Xcode</n>
   <files>App.xcodeproj, Sources/</files>
-  <action>Run `xcodebuild -project App.xcodeproj -scheme App build`. Check for compilation errors in output.</action>
-  <verify>Build output contains "BUILD SUCCEEDED", no errors</verify>
-  <done>App builds successfully</done>
+  <action>Выполнить `xcodebuild -project App.xcodeproj -scheme App build`. Проверить ошибки компиляции в выводе.</action>
+  <verify>Вывод сборки содержит «BUILD SUCCEEDED», ошибок нет</verify>
+  <done>Приложение успешно собрано</done>
 </task>
 
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>Built macOS app at DerivedData/Build/Products/Debug/App.app</what-built>
+  <what-built>Собрано macOS-приложение в DerivedData/Build/Products/Debug/App.app</what-built>
   <how-to-verify>
-    Open App.app and test:
-    - App launches without crashes
-    - Menu bar icon appears
-    - Preferences window opens correctly
-    - No visual glitches or layout issues
+    Откройте App.app и проверьте:
+    - Приложение запускается без вылетов
+    - Иконка в строке меню появляется
+    - Окно настроек открывается корректно
+    - Нет визуальных глитчей или проблем с версткой
   </how-to-verify>
-  <resume-signal>Type "approved" or describe issues</resume-signal>
+  <resume-signal>Напишите «одобрено» или опишите проблемы</resume-signal>
 </task>
 ```
 </type>
@@ -93,317 +93,317 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 <type name="decision">
 ## checkpoint:decision (9%)
 
-**When:** Human must make choice that affects implementation direction.
+**Когда:** Человек должен сделать выбор, влияющий на направление реализации.
 
-**Use for:**
-- Technology selection (which auth provider, which database)
-- Architecture decisions (monorepo vs separate repos)
-- Design choices (color scheme, layout approach)
-- Feature prioritization (which variant to build)
-- Data model decisions (schema structure)
+**Используется для:**
+- Выбора технологий (какой auth-провайдер, какая база данных)
+- Архитектурных решений (монорепо vs отдельные репозитории)
+- Дизайн-решений (цветовая схема, подход к верстке)
+- Приоритизации функций (какой вариант строить)
+- Решений по модели данных (структура схемы)
 
-**Structure:**
+**Структура:**
 ```xml
 <task type="checkpoint:decision" gate="blocking">
-  <decision>[What's being decided]</decision>
-  <context>[Why this decision matters]</context>
+  <decision>[Что решается]</decision>
+  <context>[Почему это решение важно]</context>
   <options>
     <option id="option-a">
-      <name>[Option name]</name>
-      <pros>[Benefits]</pros>
-      <cons>[Tradeoffs]</cons>
+      <n>[Название варианта]</n>
+      <pros>[Преимущества]</pros>
+      <cons>[Компромиссы]</cons>
     </option>
     <option id="option-b">
-      <name>[Option name]</name>
-      <pros>[Benefits]</pros>
-      <cons>[Tradeoffs]</cons>
+      <n>[Название варианта]</n>
+      <pros>[Преимущества]</pros>
+      <cons>[Компромиссы]</cons>
     </option>
   </options>
-  <resume-signal>[How to indicate choice]</resume-signal>
+  <resume-signal>[Как указать выбор]</resume-signal>
 </task>
 ```
 
-**Example: Auth Provider Selection**
+**Пример: Выбор Auth-провайдера**
 ```xml
 <task type="checkpoint:decision" gate="blocking">
-  <decision>Select authentication provider</decision>
+  <decision>Выбрать провайдер аутентификации</decision>
   <context>
-    Need user authentication for the app. Three solid options with different tradeoffs.
+    Приложению нужна аутентификация пользователей. Три надёжных варианта с разными компромиссами.
   </context>
   <options>
     <option id="supabase">
-      <name>Supabase Auth</name>
-      <pros>Built-in with Supabase DB we're using, generous free tier, row-level security integration</pros>
-      <cons>Less customizable UI, tied to Supabase ecosystem</cons>
+      <n>Supabase Auth</n>
+      <pros>Встроен в используемую Supabase DB, щедрый бесплатный тариф, интеграция с row-level security</pros>
+      <cons>Менее настраиваемый UI, привязка к экосистеме Supabase</cons>
     </option>
     <option id="clerk">
-      <name>Clerk</name>
-      <pros>Beautiful pre-built UI, best developer experience, excellent docs</pros>
-      <cons>Paid after 10k MAU, vendor lock-in</cons>
+      <n>Clerk</n>
+      <pros>Красивый готовый UI, лучший опыт разработчика, отличная документация</pros>
+      <cons>Платный после 10k MAU, зависимость от вендора</cons>
     </option>
     <option id="nextauth">
-      <name>NextAuth.js</name>
-      <pros>Free, self-hosted, maximum control, widely adopted</pros>
-      <cons>More setup work, you manage security updates, UI is DIY</cons>
+      <n>NextAuth.js</n>
+      <pros>Бесплатный, self-hosted, максимальный контроль, широко используемый</pros>
+      <cons>Больше работы по настройке, вы управляете обновлениями безопасности, UI делается самостоятельно</cons>
     </option>
   </options>
-  <resume-signal>Select: supabase, clerk, or nextauth</resume-signal>
+  <resume-signal>Выберите: supabase, clerk или nextauth</resume-signal>
 </task>
 ```
 
-**Example: Database Selection**
+**Пример: Выбор базы данных**
 ```xml
 <task type="checkpoint:decision" gate="blocking">
-  <decision>Select database for user data</decision>
+  <decision>Выбрать базу данных для пользовательских данных</decision>
   <context>
-    App needs persistent storage for users, sessions, and user-generated content.
-    Expected scale: 10k users, 1M records first year.
+    Приложению нужно постоянное хранилище для пользователей, сессий и пользовательского контента.
+    Ожидаемый масштаб: 10k пользователей, 1M записей в первый год.
   </context>
   <options>
     <option id="supabase">
-      <name>Supabase (Postgres)</name>
-      <pros>Full SQL, generous free tier, built-in auth, real-time subscriptions</pros>
-      <cons>Vendor lock-in for real-time features, less flexible than raw Postgres</cons>
+      <n>Supabase (Postgres)</n>
+      <pros>Полный SQL, щедрый бесплатный тариф, встроенная auth, real-time подписки</pros>
+      <cons>Зависимость от вендора для real-time функций, менее гибкий чем чистый Postgres</cons>
     </option>
     <option id="planetscale">
-      <name>PlanetScale (MySQL)</name>
-      <pros>Serverless scaling, branching workflow, excellent DX</pros>
-      <cons>MySQL not Postgres, no foreign keys in free tier</cons>
+      <n>PlanetScale (MySQL)</n>
+      <pros>Serverless масштабирование, workflow с ветвлением, отличный DX</pros>
+      <cons>MySQL а не Postgres, нет foreign keys в бесплатном тарифе</cons>
     </option>
     <option id="convex">
-      <name>Convex</name>
-      <pros>Real-time by default, TypeScript-native, automatic caching</pros>
-      <cons>Newer platform, different mental model, less SQL flexibility</cons>
+      <n>Convex</n>
+      <pros>Real-time по умолчанию, нативный TypeScript, автоматическое кеширование</pros>
+      <cons>Более новая платформа, другая ментальная модель, менее гибкий SQL</cons>
     </option>
   </options>
-  <resume-signal>Select: supabase, planetscale, or convex</resume-signal>
+  <resume-signal>Выберите: supabase, planetscale или convex</resume-signal>
 </task>
 ```
 </type>
 
 <type name="human-action">
-## checkpoint:human-action (1% - Rare)
+## checkpoint:human-action (1% — Редкий)
 
-**When:** Action has NO CLI/API and requires human-only interaction, OR Claude hit an authentication gate during automation.
+**Когда:** Действие НЕ ИМЕЕТ CLI/API и требует исключительно человеческого взаимодействия, ИЛИ Claude столкнулся с барьером аутентификации при автоматизации.
 
-**Use ONLY for:**
-- **Authentication gates** - Claude tried CLI/API but needs credentials (this is NOT a failure)
-- Email verification links (clicking email)
-- SMS 2FA codes (phone verification)
-- Manual account approvals (platform requires human review)
-- Credit card 3D Secure flows (web-based payment authorization)
-- OAuth app approvals (web-based approval)
+**Используется ТОЛЬКО для:**
+- **Барьеров аутентификации** — Claude попробовал CLI/API, но нужны учётные данные (это НЕ сбой)
+- Ссылок подтверждения email (клик по ссылке из письма)
+- SMS 2FA кодов (верификация по телефону)
+- Ручных одобрений аккаунтов (платформа требует человеческую проверку)
+- Потоков 3D Secure для кредитных карт (веб-авторизация платежа)
+- Одобрений OAuth-приложений (веб-одобрение)
 
-**Do NOT use for pre-planned manual work:**
-- Deploying (use CLI - auth gate if needed)
-- Creating webhooks/databases (use API/CLI - auth gate if needed)
-- Running builds/tests (use Bash tool)
-- Creating files (use Write tool)
+**НЕ используется для запланированной ручной работы:**
+- Развертывание (используйте CLI — барьер auth при необходимости)
+- Создание вебхуков/баз данных (используйте API/CLI — барьер auth при необходимости)
+- Запуск сборки/тестов (используйте Bash tool)
+- Создание файлов (используйте Write tool)
 
-**Structure:**
+**Структура:**
 ```xml
 <task type="checkpoint:human-action" gate="blocking">
-  <action>[What human must do - Claude already did everything automatable]</action>
+  <action>[Что должен сделать человек — Claude уже автоматизировал всё возможное]</action>
   <instructions>
-    [What Claude already automated]
-    [The ONE thing requiring human action]
+    [Что Claude уже автоматизировал]
+    [ОДНА вещь, требующая действия человека]
   </instructions>
-  <verification>[What Claude can check afterward]</verification>
-  <resume-signal>[How to continue]</resume-signal>
+  <verification>[Что Claude может проверить после]</verification>
+  <resume-signal>[Как продолжить]</resume-signal>
 </task>
 ```
 
-**Example: Email Verification**
+**Пример: Верификация Email**
 ```xml
 <task type="auto">
-  <name>Create SendGrid account via API</name>
-  <action>Use SendGrid API to create subuser account with provided email. Request verification email.</action>
-  <verify>API returns 201, account created</verify>
-  <done>Account created, verification email sent</done>
+  <n>Создать аккаунт SendGrid через API</n>
+  <action>Использовать SendGrid API для создания субпользовательского аккаунта с предоставленным email. Запросить письмо верификации.</action>
+  <verify>API возвращает 201, аккаунт создан</verify>
+  <done>Аккаунт создан, письмо верификации отправлено</done>
 </task>
 
 <task type="checkpoint:human-action" gate="blocking">
-  <action>Complete email verification for SendGrid account</action>
+  <action>Завершить верификацию email для аккаунта SendGrid</action>
   <instructions>
-    I created the account and requested verification email.
-    Check your inbox for SendGrid verification link and click it.
+    Я создал аккаунт и запросил письмо верификации.
+    Проверьте входящие — найдите ссылку верификации SendGrid и кликните по ней.
   </instructions>
-  <verification>SendGrid API key works: curl test succeeds</verification>
-  <resume-signal>Type "done" when email verified</resume-signal>
+  <verification>API-ключ SendGrid работает: curl тест успешен</verification>
+  <resume-signal>Напишите «готово» когда email подтверждён</resume-signal>
 </task>
 ```
 
-**Example: Authentication Gate (Dynamic Checkpoint)**
+**Пример: Барьер аутентификации (Динамическая контрольная точка)**
 ```xml
 <task type="auto">
-  <name>Deploy to Vercel</name>
+  <n>Развернуть на Vercel</n>
   <files>.vercel/, vercel.json</files>
-  <action>Run `vercel --yes` to deploy</action>
-  <verify>vercel ls shows deployment, curl returns 200</verify>
+  <action>Выполнить `vercel --yes` для развертывания</action>
+  <verify>vercel ls показывает deployment, curl возвращает 200</verify>
 </task>
 
-<!-- If vercel returns "Error: Not authenticated", Claude creates checkpoint on the fly -->
+<!-- Если vercel возвращает «Error: Not authenticated», Claude создаёт контрольную точку на лету -->
 
 <task type="checkpoint:human-action" gate="blocking">
-  <action>Authenticate Vercel CLI so I can continue deployment</action>
+  <action>Аутентифицировать Vercel CLI чтобы я мог продолжить развертывание</action>
   <instructions>
-    I tried to deploy but got authentication error.
-    Run: vercel login
-    This will open your browser - complete the authentication flow.
+    Я попытался развернуть, но получил ошибку аутентификации.
+    Выполните: vercel login
+    Это откроет браузер — завершите поток аутентификации.
   </instructions>
-  <verification>vercel whoami returns your account email</verification>
-  <resume-signal>Type "done" when authenticated</resume-signal>
+  <verification>vercel whoami возвращает email вашего аккаунта</verification>
+  <resume-signal>Напишите «готово» когда аутентифицированы</resume-signal>
 </task>
 
-<!-- After authentication, Claude retries the deployment -->
+<!-- После аутентификации Claude повторяет развертывание -->
 
 <task type="auto">
-  <name>Retry Vercel deployment</name>
-  <action>Run `vercel --yes` (now authenticated)</action>
-  <verify>vercel ls shows deployment, curl returns 200</verify>
+  <n>Повторить развертывание Vercel</n>
+  <action>Выполнить `vercel --yes` (теперь аутентифицирован)</action>
+  <verify>vercel ls показывает deployment, curl возвращает 200</verify>
 </task>
 ```
 
-**Key distinction:** Auth gates are created dynamically when Claude encounters auth errors. NOT pre-planned — Claude automates first, asks for credentials only when blocked.
+**Ключевое отличие:** Барьеры auth создаются динамически, когда Claude сталкивается с ошибками auth. НЕ планируются заранее — Claude автоматизирует сначала, запрашивает учётные данные только при блокировке.
 </type>
 </checkpoint_types>
 
 <execution_protocol>
 
-When Claude encounters `type="checkpoint:*"`:
+Когда Claude встречает `type="checkpoint:*"`:
 
-1. **Stop immediately** - do not proceed to next task
-2. **Display checkpoint clearly** using the format below
-3. **Wait for user response** - do not hallucinate completion
-4. **Verify if possible** - check files, run tests, whatever is specified
-5. **Resume execution** - continue to next task only after confirmation
+1. **Немедленно остановиться** — не переходить к следующей задаче
+2. **Чётко отобразить контрольную точку** используя формат ниже
+3. **Ждать ответа пользователя** — не выдумывать завершение
+4. **Верифицировать если возможно** — проверить файлы, запустить тесты, что указано
+5. **Продолжить выполнение** — перейти к следующей задаче только после подтверждения
 
-**For checkpoint:human-verify:**
+**Для checkpoint:human-verify:**
 ```
 ╔═══════════════════════════════════════════════════════╗
-║  CHECKPOINT: Verification Required                    ║
+║  КОНТРОЛЬНАЯ ТОЧКА: Требуется верификация              ║
 ╚═══════════════════════════════════════════════════════╝
 
-Progress: 5/8 tasks complete
-Task: Responsive dashboard layout
+Прогресс: 5/8 задач выполнено
+Задача: Адаптивный макет дашборда
 
-Built: Responsive dashboard at /dashboard
+Собрано: Адаптивный дашборд на /dashboard
 
-How to verify:
-  1. Visit: http://localhost:3000/dashboard
-  2. Desktop (>1024px): Sidebar visible, content fills remaining space
-  3. Tablet (768px): Sidebar collapses to icons
-  4. Mobile (375px): Sidebar hidden, hamburger menu appears
+Как проверить:
+  1. Откройте: http://localhost:3000/dashboard
+  2. Десктоп (>1024px): Боковая панель видна, контент заполняет оставшееся пространство
+  3. Планшет (768px): Боковая панель сворачивается в иконки
+  4. Мобильный (375px): Боковая панель скрыта, появляется гамбургер-меню
 
 ────────────────────────────────────────────────────────
-→ YOUR ACTION: Type "approved" or describe issues
+→ ВАШЕ ДЕЙСТВИЕ: Напишите «одобрено» или опишите проблемы
 ────────────────────────────────────────────────────────
 ```
 
-**For checkpoint:decision:**
+**Для checkpoint:decision:**
 ```
 ╔═══════════════════════════════════════════════════════╗
-║  CHECKPOINT: Decision Required                        ║
+║  КОНТРОЛЬНАЯ ТОЧКА: Требуется решение                 ║
 ╚═══════════════════════════════════════════════════════╝
 
-Progress: 2/6 tasks complete
-Task: Select authentication provider
+Прогресс: 2/6 задач выполнено
+Задача: Выбрать провайдер аутентификации
 
-Decision: Which auth provider should we use?
+Решение: Какой auth-провайдер использовать?
 
-Context: Need user authentication. Three options with different tradeoffs.
+Контекст: Нужна аутентификация пользователей. Три варианта с разными компромиссами.
 
-Options:
-  1. supabase - Built-in with our DB, free tier
-     Pros: Row-level security integration, generous free tier
-     Cons: Less customizable UI, ecosystem lock-in
+Варианты:
+  1. supabase — Встроен в нашу БД, бесплатный тариф
+     Плюсы: Интеграция с row-level security, щедрый бесплатный тариф
+     Минусы: Менее настраиваемый UI, привязка к экосистеме
 
-  2. clerk - Best DX, paid after 10k users
-     Pros: Beautiful pre-built UI, excellent documentation
-     Cons: Vendor lock-in, pricing at scale
+  2. clerk — Лучший DX, платный после 10k пользователей
+     Плюсы: Красивый готовый UI, отличная документация
+     Минусы: Зависимость от вендора, ценообразование при масштабировании
 
-  3. nextauth - Self-hosted, maximum control
-     Pros: Free, no vendor lock-in, widely adopted
-     Cons: More setup work, DIY security updates
+  3. nextauth — Self-hosted, максимальный контроль
+     Плюсы: Бесплатный, без привязки к вендору, широко используемый
+     Минусы: Больше работы по настройке, самостоятельные обновления безопасности
 
 ────────────────────────────────────────────────────────
-→ YOUR ACTION: Select supabase, clerk, or nextauth
+→ ВАШЕ ДЕЙСТВИЕ: Выберите supabase, clerk или nextauth
 ────────────────────────────────────────────────────────
 ```
 
-**For checkpoint:human-action:**
+**Для checkpoint:human-action:**
 ```
 ╔═══════════════════════════════════════════════════════╗
-║  CHECKPOINT: Action Required                          ║
+║  КОНТРОЛЬНАЯ ТОЧКА: Требуется действие                ║
 ╚═══════════════════════════════════════════════════════╝
 
-Progress: 3/8 tasks complete
-Task: Deploy to Vercel
+Прогресс: 3/8 задач выполнено
+Задача: Развернуть на Vercel
 
-Attempted: vercel --yes
-Error: Not authenticated. Please run 'vercel login'
+Попытка: vercel --yes
+Ошибка: Not authenticated. Please run 'vercel login'
 
-What you need to do:
-  1. Run: vercel login
-  2. Complete browser authentication when it opens
-  3. Return here when done
+Что вам нужно сделать:
+  1. Выполните: vercel login
+  2. Завершите аутентификацию в браузере когда он откроется
+  3. Вернитесь сюда когда закончите
 
-I'll verify: vercel whoami returns your account
+Я проверю: vercel whoami вернёт ваш аккаунт
 
 ────────────────────────────────────────────────────────
-→ YOUR ACTION: Type "done" when authenticated
+→ ВАШЕ ДЕЙСТВИЕ: Напишите «готово» когда аутентифицированы
 ────────────────────────────────────────────────────────
 ```
 </execution_protocol>
 
 <authentication_gates>
 
-**Auth gate = Claude tried CLI/API, got auth error.** Not a failure — a gate requiring human input to unblock.
+**Барьер auth = Claude попробовал CLI/API, получил ошибку auth.** Не сбой — барьер, требующий ввода от человека для разблокировки.
 
-**Pattern:** Claude tries automation → auth error → creates checkpoint:human-action → user authenticates → Claude retries → continues
+**Паттерн:** Claude пробует автоматизацию → ошибка auth → создаёт checkpoint:human-action → пользователь аутентифицируется → Claude повторяет → продолжает
 
-**Gate protocol:**
-1. Recognize it's not a failure - missing auth is expected
-2. Stop current task - don't retry repeatedly
-3. Create checkpoint:human-action dynamically
-4. Provide exact authentication steps
-5. Verify authentication works
-6. Retry the original task
-7. Continue normally
+**Протокол барьера:**
+1. Распознать что это не сбой — отсутствие auth ожидаемо
+2. Остановить текущую задачу — не повторять бесконечно
+3. Создать checkpoint:human-action динамически
+4. Указать точные шаги аутентификации
+5. Проверить что аутентификация работает
+6. Повторить исходную задачу
+7. Продолжить нормально
 
-**Key distinction:**
-- Pre-planned checkpoint: "I need you to do X" (wrong - Claude should automate)
-- Auth gate: "I tried to automate X but need credentials" (correct - unblocks automation)
+**Ключевое отличие:**
+- Заранее спланированная контрольная точка: «Мне нужно чтобы вы сделали X» (неправильно — Claude должен автоматизировать)
+- Барьер auth: «Я пытался автоматизировать X, но нужны учётные данные» (правильно — разблокирует автоматизацию)
 
 </authentication_gates>
 
 <automation_reference>
 
-**The rule:** If it has CLI/API, Claude does it. Never ask human to perform automatable work.
+**Правило:** Если есть CLI/API — Claude делает сам. Никогда не просить человека выполнять автоматизируемую работу.
 
-## Service CLI Reference
+## Справочник CLI сервисов
 
-| Service | CLI/API | Key Commands | Auth Gate |
+| Сервис | CLI/API | Ключевые команды | Барьер Auth |
 |---------|---------|--------------|-----------|
 | Vercel | `vercel` | `--yes`, `env add`, `--prod`, `ls` | `vercel login` |
 | Railway | `railway` | `init`, `up`, `variables set` | `railway login` |
 | Fly | `fly` | `launch`, `deploy`, `secrets set` | `fly auth login` |
-| Stripe | `stripe` + API | `listen`, `trigger`, API calls | API key in .env |
+| Stripe | `stripe` + API | `listen`, `trigger`, API-вызовы | API key в .env |
 | Supabase | `supabase` | `init`, `link`, `db push`, `gen types` | `supabase login` |
 | Upstash | `upstash` | `redis create`, `redis get` | `upstash auth login` |
 | PlanetScale | `pscale` | `database create`, `branch create` | `pscale auth login` |
 | GitHub | `gh` | `repo create`, `pr create`, `secret set` | `gh auth login` |
-| Node | `npm`/`pnpm` | `install`, `run build`, `test`, `run dev` | N/A |
-| Xcode | `xcodebuild` | `-project`, `-scheme`, `build`, `test` | N/A |
+| Node | `npm`/`pnpm` | `install`, `run build`, `test`, `run dev` | Н/Д |
+| Xcode | `xcodebuild` | `-project`, `-scheme`, `build`, `test` | Н/Д |
 | Convex | `npx convex` | `dev`, `deploy`, `env set`, `env get` | `npx convex login` |
 
-## Environment Variable Automation
+## Автоматизация переменных окружения
 
-**Env files:** Use Write/Edit tools. Never ask human to create .env manually.
+**Env-файлы:** Использовать инструменты Write/Edit. Никогда не просить человека создавать .env вручную.
 
-**Dashboard env vars via CLI:**
+**Переменные окружения на дашборде через CLI:**
 
-| Platform | CLI Command | Example |
+| Платформа | CLI-команда | Пример |
 |----------|-------------|---------|
 | Convex | `npx convex env set` | `npx convex env set OPENAI_API_KEY sk-...` |
 | Vercel | `vercel env add` | `vercel env add STRIPE_KEY production` |
@@ -411,365 +411,365 @@ I'll verify: vercel whoami returns your account
 | Fly | `fly secrets set` | `fly secrets set DATABASE_URL=...` |
 | Supabase | `supabase secrets set` | `supabase secrets set MY_SECRET=value` |
 
-**Secret collection pattern:**
+**Паттерн сбора секретов:**
 ```xml
-<!-- WRONG: Asking user to add env vars in dashboard -->
+<!-- НЕПРАВИЛЬНО: Просить пользователя добавить env vars через дашборд -->
 <task type="checkpoint:human-action">
-  <action>Add OPENAI_API_KEY to Convex dashboard</action>
-  <instructions>Go to dashboard.convex.dev → Settings → Environment Variables → Add</instructions>
+  <action>Добавить OPENAI_API_KEY в дашборд Convex</action>
+  <instructions>Перейдите на dashboard.convex.dev → Settings → Environment Variables → Add</instructions>
 </task>
 
-<!-- RIGHT: Claude asks for value, then adds via CLI -->
+<!-- ПРАВИЛЬНО: Claude запрашивает значение, затем добавляет через CLI -->
 <task type="checkpoint:human-action">
-  <action>Provide your OpenAI API key</action>
+  <action>Предоставьте ваш API-ключ OpenAI</action>
   <instructions>
-    I need your OpenAI API key for Convex backend.
-    Get it from: https://platform.openai.com/api-keys
-    Paste the key (starts with sk-)
+    Мне нужен ваш API-ключ OpenAI для бэкенда Convex.
+    Получите его на: https://platform.openai.com/api-keys
+    Вставьте ключ (начинается с sk-)
   </instructions>
-  <verification>I'll add it via `npx convex env set` and verify</verification>
-  <resume-signal>Paste your API key</resume-signal>
+  <verification>Я добавлю его через `npx convex env set` и проверю</verification>
+  <resume-signal>Вставьте ваш API-ключ</resume-signal>
 </task>
 
 <task type="auto">
-  <name>Configure OpenAI key in Convex</name>
-  <action>Run `npx convex env set OPENAI_API_KEY {user-provided-key}`</action>
-  <verify>`npx convex env get OPENAI_API_KEY` returns the key (masked)</verify>
+  <n>Настроить ключ OpenAI в Convex</n>
+  <action>Выполнить `npx convex env set OPENAI_API_KEY {ключ-от-пользователя}`</action>
+  <verify>`npx convex env get OPENAI_API_KEY` возвращает ключ (замаскированный)</verify>
 </task>
 ```
 
-## Dev Server Automation
+## Автоматизация Dev-серверов
 
-| Framework | Start Command | Ready Signal | Default URL |
+| Фреймворк | Команда запуска | Сигнал готовности | URL по умолчанию |
 |-----------|---------------|--------------|-------------|
-| Next.js | `npm run dev` | "Ready in" or "started server" | http://localhost:3000 |
-| Vite | `npm run dev` | "ready in" | http://localhost:5173 |
-| Convex | `npx convex dev` | "Convex functions ready" | N/A (backend only) |
-| Express | `npm start` | "listening on port" | http://localhost:3000 |
-| Django | `python manage.py runserver` | "Starting development server" | http://localhost:8000 |
+| Next.js | `npm run dev` | «Ready in» или «started server» | http://localhost:3000 |
+| Vite | `npm run dev` | «ready in» | http://localhost:5173 |
+| Convex | `npx convex dev` | «Convex functions ready» | Н/Д (только бэкенд) |
+| Express | `npm start` | «listening on port» | http://localhost:3000 |
+| Django | `python manage.py runserver` | «Starting development server» | http://localhost:8000 |
 
-**Server lifecycle:**
+**Жизненный цикл сервера:**
 ```bash
-# Run in background, capture PID
+# Запуск в фоне, захват PID
 npm run dev &
 DEV_SERVER_PID=$!
 
-# Wait for ready (max 30s)
+# Ожидание готовности (макс 30 сек)
 timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; done'
 ```
 
-**Port conflicts:** Kill stale process (`lsof -ti:3000 | xargs kill`) or use alternate port (`--port 3001`).
+**Конфликты портов:** Убить зависший процесс (`lsof -ti:3000 | xargs kill`) или использовать альтернативный порт (`--port 3001`).
 
-**Server stays running** through checkpoints. Only kill when plan complete, switching to production, or port needed for different service.
+**Сервер остаётся запущенным** на протяжении контрольных точек. Останавливать только по завершении плана, при переключении на продакшн или когда порт нужен другому сервису.
 
-## CLI Installation Handling
+## Обработка установки CLI
 
-| CLI | Auto-install? | Command |
+| CLI | Автоустановка? | Команда |
 |-----|---------------|---------|
-| npm/pnpm/yarn | No - ask user | User chooses package manager |
-| vercel | Yes | `npm i -g vercel` |
-| gh (GitHub) | Yes | `brew install gh` (macOS) or `apt install gh` (Linux) |
-| stripe | Yes | `npm i -g stripe` |
-| supabase | Yes | `npm i -g supabase` |
-| convex | No - use npx | `npx convex` (no install needed) |
-| fly | Yes | `brew install flyctl` or curl installer |
-| railway | Yes | `npm i -g @railway/cli` |
+| npm/pnpm/yarn | Нет — спросить пользователя | Пользователь выбирает пакетный менеджер |
+| vercel | Да | `npm i -g vercel` |
+| gh (GitHub) | Да | `brew install gh` (macOS) или `apt install gh` (Linux) |
+| stripe | Да | `npm i -g stripe` |
+| supabase | Да | `npm i -g supabase` |
+| convex | Нет — использовать npx | `npx convex` (установка не нужна) |
+| fly | Да | `brew install flyctl` или curl-установщик |
+| railway | Да | `npm i -g @railway/cli` |
 
-**Protocol:** Try command → "command not found" → auto-installable? → yes: install silently, retry → no: checkpoint asking user to install.
+**Протокол:** Попробовать команду → «command not found» → автоустановка возможна? → да: установить тихо, повторить → нет: контрольная точка с просьбой к пользователю установить.
 
-## Pre-Checkpoint Automation Failures
+## Сбои перед контрольной точкой
 
-| Failure | Response |
+| Сбой | Реакция |
 |---------|----------|
-| Server won't start | Check error, fix issue, retry (don't proceed to checkpoint) |
-| Port in use | Kill stale process or use alternate port |
-| Missing dependency | Run `npm install`, retry |
-| Build error | Fix the error first (bug, not checkpoint issue) |
-| Auth error | Create auth gate checkpoint |
-| Network timeout | Retry with backoff, then checkpoint if persistent |
+| Сервер не запускается | Проверить ошибку, исправить, повторить (не переходить к контрольной точке) |
+| Порт занят | Убить зависший процесс или использовать альтернативный порт |
+| Отсутствует зависимость | Выполнить `npm install`, повторить |
+| Ошибка сборки | Сначала исправить ошибку (баг, не проблема контрольной точки) |
+| Ошибка auth | Создать контрольную точку барьера auth |
+| Таймаут сети | Повторить с отступом, затем контрольная точка если проблема сохраняется |
 
-**Never present a checkpoint with broken verification environment.** If `curl localhost:3000` fails, don't ask user to "visit localhost:3000".
+**Никогда не показывать контрольную точку с неработающей средой верификации.** Если `curl localhost:3000` не работает, не просите пользователя «посетить localhost:3000».
 
 ```xml
-<!-- WRONG: Checkpoint with broken environment -->
+<!-- НЕПРАВИЛЬНО: Контрольная точка с неработающей средой -->
 <task type="checkpoint:human-verify">
-  <what-built>Dashboard (server failed to start)</what-built>
-  <how-to-verify>Visit http://localhost:3000...</how-to-verify>
+  <what-built>Дашборд (сервер не запустился)</what-built>
+  <how-to-verify>Откройте http://localhost:3000...</how-to-verify>
 </task>
 
-<!-- RIGHT: Fix first, then checkpoint -->
+<!-- ПРАВИЛЬНО: Сначала исправить, потом контрольная точка -->
 <task type="auto">
-  <name>Fix server startup issue</name>
-  <action>Investigate error, fix root cause, restart server</action>
-  <verify>curl http://localhost:3000 returns 200</verify>
+  <n>Исправить проблему запуска сервера</n>
+  <action>Исследовать ошибку, устранить причину, перезапустить сервер</action>
+  <verify>curl http://localhost:3000 возвращает 200</verify>
 </task>
 
 <task type="checkpoint:human-verify">
-  <what-built>Dashboard - server running at http://localhost:3000</what-built>
-  <how-to-verify>Visit http://localhost:3000/dashboard...</how-to-verify>
+  <what-built>Дашборд — сервер запущен на http://localhost:3000</what-built>
+  <how-to-verify>Откройте http://localhost:3000/dashboard...</how-to-verify>
 </task>
 ```
 
-## Automatable Quick Reference
+## Краткий справочник автоматизации
 
-| Action | Automatable? | Claude does it? |
+| Действие | Автоматизируемо? | Claude делает сам? |
 |--------|--------------|-----------------|
-| Deploy to Vercel | Yes (`vercel`) | YES |
-| Create Stripe webhook | Yes (API) | YES |
-| Write .env file | Yes (Write tool) | YES |
-| Create Upstash DB | Yes (`upstash`) | YES |
-| Run tests | Yes (`npm test`) | YES |
-| Start dev server | Yes (`npm run dev`) | YES |
-| Add env vars to Convex | Yes (`npx convex env set`) | YES |
-| Add env vars to Vercel | Yes (`vercel env add`) | YES |
-| Seed database | Yes (CLI/API) | YES |
-| Click email verification link | No | NO |
-| Enter credit card with 3DS | No | NO |
-| Complete OAuth in browser | No | NO |
-| Visually verify UI looks correct | No | NO |
-| Test interactive user flows | No | NO |
+| Развернуть на Vercel | Да (`vercel`) | ДА |
+| Создать Stripe webhook | Да (API) | ДА |
+| Записать .env файл | Да (Write tool) | ДА |
+| Создать Upstash БД | Да (`upstash`) | ДА |
+| Запустить тесты | Да (`npm test`) | ДА |
+| Запустить dev-сервер | Да (`npm run dev`) | ДА |
+| Добавить env vars в Convex | Да (`npx convex env set`) | ДА |
+| Добавить env vars в Vercel | Да (`vercel env add`) | ДА |
+| Заполнить базу данных | Да (CLI/API) | ДА |
+| Кликнуть ссылку подтверждения email | Нет | НЕТ |
+| Ввести кредитную карту с 3DS | Нет | НЕТ |
+| Завершить OAuth в браузере | Нет | НЕТ |
+| Визуально проверить корректность UI | Нет | НЕТ |
+| Протестировать интерактивные потоки | Нет | НЕТ |
 
 </automation_reference>
 
 <writing_guidelines>
 
-**DO:**
-- Automate everything with CLI/API before checkpoint
-- Be specific: "Visit https://myapp.vercel.app" not "check deployment"
-- Number verification steps
-- State expected outcomes: "You should see X"
-- Provide context: why this checkpoint exists
+**ДЕЛАЙТЕ:**
+- Автоматизировать всё через CLI/API перед контрольной точкой
+- Быть конкретным: «Откройте https://myapp.vercel.app» а не «проверьте развертывание»
+- Нумеровать шаги верификации
+- Указывать ожидаемые результаты: «Вы должны увидеть X»
+- Давать контекст: зачем существует эта контрольная точка
 
-**DON'T:**
-- Ask human to do work Claude can automate ❌
-- Assume knowledge: "Configure the usual settings" ❌
-- Skip steps: "Set up database" (too vague) ❌
-- Mix multiple verifications in one checkpoint ❌
+**НЕ ДЕЛАЙТЕ:**
+- Просить человека делать работу которую Claude может автоматизировать ❌
+- Предполагать знания: «Настройте стандартные параметры» ❌
+- Пропускать шаги: «Настройте базу данных» (слишком размыто) ❌
+- Смешивать несколько верификаций в одной контрольной точке ❌
 
-**Placement:**
-- **After automation completes** - not before Claude does the work
-- **After UI buildout** - before declaring phase complete
-- **Before dependent work** - decisions before implementation
-- **At integration points** - after configuring external services
+**Размещение:**
+- **После завершения автоматизации** — не до того как Claude выполнит работу
+- **После создания UI** — до объявления фазы завершённой
+- **Перед зависимой работой** — решения до реализации
+- **В точках интеграции** — после настройки внешних сервисов
 
-**Bad placement:** Before automation ❌ | Too frequent ❌ | Too late (dependent tasks already needed the result) ❌
+**Плохое размещение:** До автоматизации ❌ | Слишком часто ❌ | Слишком поздно (зависимые задачи уже нуждались в результате) ❌
 </writing_guidelines>
 
 <examples>
 
-### Example 1: Database Setup (No Checkpoint Needed)
+### Пример 1: Настройка базы данных (Контрольная точка не нужна)
 
 ```xml
 <task type="auto">
-  <name>Create Upstash Redis database</name>
+  <n>Создать Upstash Redis базу данных</n>
   <files>.env</files>
   <action>
-    1. Run `upstash redis create myapp-cache --region us-east-1`
-    2. Capture connection URL from output
-    3. Write to .env: UPSTASH_REDIS_URL={url}
-    4. Verify connection with test command
+    1. Выполнить `upstash redis create myapp-cache --region us-east-1`
+    2. Захватить URL подключения из вывода
+    3. Записать в .env: UPSTASH_REDIS_URL={url}
+    4. Проверить подключение тестовой командой
   </action>
   <verify>
-    - upstash redis list shows database
-    - .env contains UPSTASH_REDIS_URL
-    - Test connection succeeds
+    - upstash redis list показывает базу данных
+    - .env содержит UPSTASH_REDIS_URL
+    - Тестовое подключение успешно
   </verify>
-  <done>Redis database created and configured</done>
+  <done>Redis база данных создана и настроена</done>
 </task>
 
-<!-- NO CHECKPOINT NEEDED - Claude automated everything and verified programmatically -->
+<!-- КОНТРОЛЬНАЯ ТОЧКА НЕ НУЖНА — Claude всё автоматизировал и проверил программно -->
 ```
 
-### Example 2: Full Auth Flow (Single checkpoint at end)
+### Пример 2: Полный поток Auth (Одна контрольная точка в конце)
 
 ```xml
 <task type="auto">
-  <name>Create user schema</name>
+  <n>Создать схему пользователя</n>
   <files>src/db/schema.ts</files>
-  <action>Define User, Session, Account tables with Drizzle ORM</action>
-  <verify>npm run db:generate succeeds</verify>
+  <action>Определить таблицы User, Session, Account с Drizzle ORM</action>
+  <verify>npm run db:generate завершается успешно</verify>
 </task>
 
 <task type="auto">
-  <name>Create auth API routes</name>
+  <n>Создать API-маршруты auth</n>
   <files>src/app/api/auth/[...nextauth]/route.ts</files>
-  <action>Set up NextAuth with GitHub provider, JWT strategy</action>
-  <verify>TypeScript compiles, no errors</verify>
+  <action>Настроить NextAuth с провайдером GitHub, стратегия JWT</action>
+  <verify>TypeScript компилируется, ошибок нет</verify>
 </task>
 
 <task type="auto">
-  <name>Create login UI</name>
+  <n>Создать UI логина</n>
   <files>src/app/login/page.tsx, src/components/LoginButton.tsx</files>
-  <action>Create login page with GitHub OAuth button</action>
-  <verify>npm run build succeeds</verify>
+  <action>Создать страницу логина с кнопкой GitHub OAuth</action>
+  <verify>npm run build завершается успешно</verify>
 </task>
 
 <task type="auto">
-  <name>Start dev server for auth testing</name>
-  <action>Run `npm run dev` in background, wait for ready signal</action>
-  <verify>curl http://localhost:3000 returns 200</verify>
-  <done>Dev server running at http://localhost:3000</done>
+  <n>Запустить dev-сервер для тестирования auth</n>
+  <action>Выполнить `npm run dev` в фоне, дождаться сигнала готовности</action>
+  <verify>curl http://localhost:3000 возвращает 200</verify>
+  <done>Dev-сервер запущен на http://localhost:3000</done>
 </task>
 
-<!-- ONE checkpoint at end verifies the complete flow -->
+<!-- ОДНА контрольная точка в конце проверяет весь поток -->
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>Complete authentication flow - dev server running at http://localhost:3000</what-built>
+  <what-built>Полный поток аутентификации — dev-сервер запущен на http://localhost:3000</what-built>
   <how-to-verify>
-    1. Visit: http://localhost:3000/login
-    2. Click "Sign in with GitHub"
-    3. Complete GitHub OAuth flow
-    4. Verify: Redirected to /dashboard, user name displayed
-    5. Refresh page: Session persists
-    6. Click logout: Session cleared
+    1. Откройте: http://localhost:3000/login
+    2. Нажмите «Войти через GitHub»
+    3. Завершите поток OAuth GitHub
+    4. Проверьте: Перенаправление на /dashboard, имя пользователя отображается
+    5. Обновите страницу: Сессия сохраняется
+    6. Нажмите выход: Сессия очищена
   </how-to-verify>
-  <resume-signal>Type "approved" or describe issues</resume-signal>
+  <resume-signal>Напишите «одобрено» или опишите проблемы</resume-signal>
 </task>
 ```
 </examples>
 
 <anti_patterns>
 
-### ❌ BAD: Asking user to start dev server
+### ❌ ПЛОХО: Просить пользователя запустить dev-сервер
 
 ```xml
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>Dashboard component</what-built>
+  <what-built>Компонент дашборда</what-built>
   <how-to-verify>
-    1. Run: npm run dev
-    2. Visit: http://localhost:3000/dashboard
-    3. Check layout is correct
+    1. Выполните: npm run dev
+    2. Откройте: http://localhost:3000/dashboard
+    3. Проверьте корректность верстки
   </how-to-verify>
 </task>
 ```
 
-**Why bad:** Claude can run `npm run dev`. User should only visit URLs, not execute commands.
+**Почему плохо:** Claude может выполнить `npm run dev`. Пользователь должен только посещать URL, а не выполнять команды.
 
-### ✅ GOOD: Claude starts server, user visits
+### ✅ ХОРОШО: Claude запускает сервер, пользователь посещает
 
 ```xml
 <task type="auto">
-  <name>Start dev server</name>
-  <action>Run `npm run dev` in background</action>
-  <verify>curl localhost:3000 returns 200</verify>
+  <n>Запустить dev-сервер</n>
+  <action>Выполнить `npm run dev` в фоне</action>
+  <verify>curl localhost:3000 возвращает 200</verify>
 </task>
 
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>Dashboard at http://localhost:3000/dashboard (server running)</what-built>
+  <what-built>Дашборд на http://localhost:3000/dashboard (сервер запущен)</what-built>
   <how-to-verify>
-    Visit http://localhost:3000/dashboard and verify:
-    1. Layout matches design
-    2. No console errors
+    Откройте http://localhost:3000/dashboard и проверьте:
+    1. Верстка соответствует дизайну
+    2. Нет ошибок в консоли
   </how-to-verify>
 </task>
 ```
 
-### ❌ BAD: Asking human to deploy / ✅ GOOD: Claude automates
+### ❌ ПЛОХО: Просить человека развернуть / ✅ ХОРОШО: Claude автоматизирует
 
 ```xml
-<!-- BAD: Asking user to deploy via dashboard -->
+<!-- ПЛОХО: Просить пользователя развернуть через дашборд -->
 <task type="checkpoint:human-action" gate="blocking">
-  <action>Deploy to Vercel</action>
-  <instructions>Visit vercel.com/new → Import repo → Click Deploy → Copy URL</instructions>
+  <action>Развернуть на Vercel</action>
+  <instructions>Перейдите на vercel.com/new → Импортировать репо → Нажать Deploy → Скопировать URL</instructions>
 </task>
 
-<!-- GOOD: Claude deploys, user verifies -->
+<!-- ХОРОШО: Claude разворачивает, пользователь проверяет -->
 <task type="auto">
-  <name>Deploy to Vercel</name>
-  <action>Run `vercel --yes`. Capture URL.</action>
-  <verify>vercel ls shows deployment, curl returns 200</verify>
+  <n>Развернуть на Vercel</n>
+  <action>Выполнить `vercel --yes`. Захватить URL.</action>
+  <verify>vercel ls показывает deployment, curl возвращает 200</verify>
 </task>
 
 <task type="checkpoint:human-verify">
-  <what-built>Deployed to {url}</what-built>
-  <how-to-verify>Visit {url}, check homepage loads</how-to-verify>
-  <resume-signal>Type "approved"</resume-signal>
-</task>
-```
-
-### ❌ BAD: Too many checkpoints / ✅ GOOD: Single checkpoint
-
-```xml
-<!-- BAD: Checkpoint after every task -->
-<task type="auto">Create schema</task>
-<task type="checkpoint:human-verify">Check schema</task>
-<task type="auto">Create API route</task>
-<task type="checkpoint:human-verify">Check API</task>
-<task type="auto">Create UI form</task>
-<task type="checkpoint:human-verify">Check form</task>
-
-<!-- GOOD: One checkpoint at end -->
-<task type="auto">Create schema</task>
-<task type="auto">Create API route</task>
-<task type="auto">Create UI form</task>
-
-<task type="checkpoint:human-verify">
-  <what-built>Complete auth flow (schema + API + UI)</what-built>
-  <how-to-verify>Test full flow: register, login, access protected page</how-to-verify>
-  <resume-signal>Type "approved"</resume-signal>
+  <what-built>Развернуто на {url}</what-built>
+  <how-to-verify>Откройте {url}, проверьте загрузку главной страницы</how-to-verify>
+  <resume-signal>Напишите «одобрено»</resume-signal>
 </task>
 ```
 
-### ❌ BAD: Vague verification / ✅ GOOD: Specific steps
+### ❌ ПЛОХО: Слишком много контрольных точек / ✅ ХОРОШО: Одна контрольная точка
 
 ```xml
-<!-- BAD -->
+<!-- ПЛОХО: Контрольная точка после каждой задачи -->
+<task type="auto">Создать схему</task>
+<task type="checkpoint:human-verify">Проверить схему</task>
+<task type="auto">Создать API-маршрут</task>
+<task type="checkpoint:human-verify">Проверить API</task>
+<task type="auto">Создать UI-форму</task>
+<task type="checkpoint:human-verify">Проверить форму</task>
+
+<!-- ХОРОШО: Одна контрольная точка в конце -->
+<task type="auto">Создать схему</task>
+<task type="auto">Создать API-маршрут</task>
+<task type="auto">Создать UI-форму</task>
+
 <task type="checkpoint:human-verify">
-  <what-built>Dashboard</what-built>
-  <how-to-verify>Check it works</how-to-verify>
+  <what-built>Полный поток auth (схема + API + UI)</what-built>
+  <how-to-verify>Протестировать полный цикл: регистрация, логин, доступ к защищённой странице</how-to-verify>
+  <resume-signal>Напишите «одобрено»</resume-signal>
+</task>
+```
+
+### ❌ ПЛОХО: Расплывчатая верификация / ✅ ХОРОШО: Конкретные шаги
+
+```xml
+<!-- ПЛОХО -->
+<task type="checkpoint:human-verify">
+  <what-built>Дашборд</what-built>
+  <how-to-verify>Проверьте что работает</how-to-verify>
 </task>
 
-<!-- GOOD -->
+<!-- ХОРОШО -->
 <task type="checkpoint:human-verify">
-  <what-built>Responsive dashboard - server running at http://localhost:3000</what-built>
+  <what-built>Адаптивный дашборд — сервер запущен на http://localhost:3000</what-built>
   <how-to-verify>
-    Visit http://localhost:3000/dashboard and verify:
-    1. Desktop (>1024px): Sidebar visible, content area fills remaining space
-    2. Tablet (768px): Sidebar collapses to icons
-    3. Mobile (375px): Sidebar hidden, hamburger menu in header
-    4. No horizontal scroll at any size
+    Откройте http://localhost:3000/dashboard и проверьте:
+    1. Десктоп (>1024px): Боковая панель видна, область контента заполняет оставшееся пространство
+    2. Планшет (768px): Боковая панель сворачивается в иконки
+    3. Мобильный (375px): Боковая панель скрыта, гамбургер-меню в шапке
+    4. Нет горизонтальной прокрутки при любом размере
   </how-to-verify>
-  <resume-signal>Type "approved" or describe layout issues</resume-signal>
+  <resume-signal>Напишите «одобрено» или опишите проблемы с версткой</resume-signal>
 </task>
 ```
 
-### ❌ BAD: Asking user to run CLI commands
+### ❌ ПЛОХО: Просить пользователя выполнять CLI-команды
 
 ```xml
 <task type="checkpoint:human-action">
-  <action>Run database migrations</action>
-  <instructions>Run: npx prisma migrate deploy && npx prisma db seed</instructions>
+  <action>Запустить миграции базы данных</action>
+  <instructions>Выполните: npx prisma migrate deploy && npx prisma db seed</instructions>
 </task>
 ```
 
-**Why bad:** Claude can run these commands. User should never execute CLI commands.
+**Почему плохо:** Claude может выполнить эти команды. Пользователь никогда не должен выполнять CLI-команды.
 
-### ❌ BAD: Asking user to copy values between services
+### ❌ ПЛОХО: Просить пользователя копировать значения между сервисами
 
 ```xml
 <task type="checkpoint:human-action">
-  <action>Configure webhook URL in Stripe</action>
-  <instructions>Copy deployment URL → Stripe Dashboard → Webhooks → Add endpoint → Copy secret → Add to .env</instructions>
+  <action>Настроить URL вебхука в Stripe</action>
+  <instructions>Скопировать URL развертывания → Stripe Dashboard → Webhooks → Add endpoint → Скопировать секрет → Добавить в .env</instructions>
 </task>
 ```
 
-**Why bad:** Stripe has an API. Claude should create the webhook via API and write to .env directly.
+**Почему плохо:** У Stripe есть API. Claude должен создать вебхук через API и записать в .env напрямую.
 
 </anti_patterns>
 
 <summary>
 
-Checkpoints formalize human-in-the-loop points for verification and decisions, not manual work.
+Контрольные точки формализуют моменты участия человека для верификации и принятия решений, а не для ручной работы.
 
-**The golden rule:** If Claude CAN automate it, Claude MUST automate it.
+**Золотое правило:** Если Claude МОЖЕТ автоматизировать — Claude ОБЯЗАН автоматизировать.
 
-**Checkpoint priority:**
-1. **checkpoint:human-verify** (90%) - Claude automated everything, human confirms visual/functional correctness
-2. **checkpoint:decision** (9%) - Human makes architectural/technology choices
-3. **checkpoint:human-action** (1%) - Truly unavoidable manual steps with no API/CLI
+**Приоритет контрольных точек:**
+1. **checkpoint:human-verify** (90%) — Claude всё автоматизировал, человек подтверждает визуальную/функциональную корректность
+2. **checkpoint:decision** (9%) — Человек принимает архитектурные/технологические решения
+3. **checkpoint:human-action** (1%) — Действительно неизбежные ручные шаги без API/CLI
 
-**When NOT to use checkpoints:**
-- Things Claude can verify programmatically (tests, builds)
-- File operations (Claude can read files)
-- Code correctness (tests and static analysis)
-- Anything automatable via CLI/API
+**Когда НЕ использовать контрольные точки:**
+- Вещи которые Claude может проверить программно (тесты, сборки)
+- Файловые операции (Claude может читать файлы)
+- Корректность кода (тесты и статический анализ)
+- Всё что автоматизируется через CLI/API
 </summary>

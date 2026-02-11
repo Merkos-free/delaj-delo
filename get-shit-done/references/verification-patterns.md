@@ -1,84 +1,84 @@
-# Verification Patterns
+# Паттерны верификации
 
-How to verify different types of artifacts are real implementations, not stubs or placeholders.
+Как проверить что различные типы артефактов являются реальными реализациями, а не заглушками или плейсхолдерами.
 
 <core_principle>
-**Existence ≠ Implementation**
+**Существование ≠ Реализация**
 
-A file existing does not mean the feature works. Verification must check:
-1. **Exists** - File is present at expected path
-2. **Substantive** - Content is real implementation, not placeholder
-3. **Wired** - Connected to the rest of the system
-4. **Functional** - Actually works when invoked
+Наличие файла не означает что функция работает. Верификация должна проверять:
+1. **Существует** — Файл присутствует по ожидаемому пути
+2. **Содержательный** — Контент является реальной реализацией, а не плейсхолдером
+3. **Связан** — Подключён к остальной системе
+4. **Функционирует** — Действительно работает при вызове
 
-Levels 1-3 can be checked programmatically. Level 4 often requires human verification.
+Уровни 1-3 можно проверить программно. Уровень 4 часто требует человеческой верификации.
 </core_principle>
 
 <stub_detection>
 
-## Universal Stub Patterns
+## Универсальные паттерны заглушек
 
-These patterns indicate placeholder code regardless of file type:
+Эти паттерны указывают на плейсхолдерный код вне зависимости от типа файла:
 
-**Comment-based stubs:**
+**Заглушки на основе комментариев:**
 ```bash
-# Grep patterns for stub comments
+# Grep-паттерны для комментариев-заглушек
 grep -E "(TODO|FIXME|XXX|HACK|PLACEHOLDER)" "$file"
 grep -E "implement|add later|coming soon|will be" "$file" -i
 grep -E "// \.\.\.|/\* \.\.\. \*/|# \.\.\." "$file"
 ```
 
-**Placeholder text in output:**
+**Плейсхолдерный текст в выводе:**
 ```bash
-# UI placeholder patterns
+# Паттерны плейсхолдеров в UI
 grep -E "placeholder|lorem ipsum|coming soon|under construction" "$file" -i
 grep -E "sample|example|test data|dummy" "$file" -i
-grep -E "\[.*\]|<.*>|\{.*\}" "$file"  # Template brackets left in
+grep -E "\[.*\]|<.*>|\{.*\}" "$file"  # Оставленные шаблонные скобки
 ```
 
-**Empty or trivial implementations:**
+**Пустые или тривиальные реализации:**
 ```bash
-# Functions that do nothing
+# Функции которые ничего не делают
 grep -E "return null|return undefined|return \{\}|return \[\]" "$file"
-grep -E "pass$|\.\.\.|\bnothing\b" "$file"
-grep -E "console\.(log|warn|error).*only" "$file"  # Log-only functions
+grep -E "pass$|\.\.\.\b|\bnothing\b" "$file"
+grep -E "console\.(log|warn|error).*only" "$file"  # Функции только с логированием
 ```
 
-**Hardcoded values where dynamic expected:**
+**Хардкод значений где ожидаются динамические:**
 ```bash
-# Hardcoded IDs, counts, or content
-grep -E "id.*=.*['\"].*['\"]" "$file"  # Hardcoded string IDs
-grep -E "count.*=.*\d+|length.*=.*\d+" "$file"  # Hardcoded counts
-grep -E "\\\$\d+\.\d{2}|\d+ items" "$file"  # Hardcoded display values
+# Захардкоженные ID, счётчики или контент
+grep -E "id.*=.*['\"].*['\"]" "$file"  # Захардкоженные строковые ID
+grep -E "count.*=.*\d+|length.*=.*\d+" "$file"  # Захардкоженные счётчики
+grep -E "\\\$\d+\.\d{2}|\d+ items" "$file"  # Захардкоженные отображаемые значения
 ```
 
 </stub_detection>
 
 <react_components>
 
-## React/Next.js Components
+## React/Next.js компоненты
 
-**Existence check:**
+**Проверка существования:**
 ```bash
-# File exists and exports component
+# Файл существует и экспортирует компонент
 [ -f "$component_path" ] && grep -E "export (default |)function|export const.*=.*\(" "$component_path"
 ```
 
-**Substantive check:**
+**Проверка содержательности:**
 ```bash
-# Returns actual JSX, not placeholder
+# Возвращает реальный JSX, не плейсхолдер
 grep -E "return.*<" "$component_path" | grep -v "return.*null" | grep -v "placeholder" -i
 
-# Has meaningful content (not just wrapper div)
+# Имеет содержательный контент (не просто обёрточный div)
 grep -E "<[A-Z][a-zA-Z]+|className=|onClick=|onChange=" "$component_path"
 
-# Uses props or state (not static)
+# Использует props или state (не статический)
 grep -E "props\.|useState|useEffect|useContext|\{.*\}" "$component_path"
 ```
 
-**Stub patterns specific to React:**
+**Паттерны заглушек специфичные для React:**
 ```javascript
-// RED FLAGS - These are stubs:
+// КРАСНЫЕ ФЛАГИ — Это заглушки:
 return <div>Component</div>
 return <div>Placeholder</div>
 return <div>{/* TODO */}</div>
@@ -86,134 +86,134 @@ return <p>Coming soon</p>
 return null
 return <></>
 
-// Also stubs - empty handlers:
+// Тоже заглушки — пустые обработчики:
 onClick={() => {}}
 onChange={() => console.log('clicked')}
-onSubmit={(e) => e.preventDefault()}  // Only prevents default, does nothing
+onSubmit={(e) => e.preventDefault()}  // Только предотвращает стандартное поведение, ничего не делает
 ```
 
-**Wiring check:**
+**Проверка связанности:**
 ```bash
-# Component imports what it needs
+# Компонент импортирует что ему нужно
 grep -E "^import.*from" "$component_path"
 
-# Props are actually used (not just received)
-# Look for destructuring or props.X usage
+# Props реально используются (не просто получены)
+# Ищем деструктуризацию или использование props.X
 grep -E "\{ .* \}.*props|\bprops\.[a-zA-Z]+" "$component_path"
 
-# API calls exist (for data-fetching components)
+# API-вызовы существуют (для компонентов загружающих данные)
 grep -E "fetch\(|axios\.|useSWR|useQuery|getServerSideProps|getStaticProps" "$component_path"
 ```
 
-**Functional verification (human required):**
-- Does the component render visible content?
-- Do interactive elements respond to clicks?
-- Does data load and display?
-- Do error states show appropriately?
+**Функциональная верификация (требуется человек):**
+- Отображает ли компонент видимый контент?
+- Реагируют ли интерактивные элементы на клики?
+- Загружаются ли данные и отображаются?
+- Правильно ли показываются состояния ошибок?
 
 </react_components>
 
 <api_routes>
 
-## API Routes (Next.js App Router / Express / etc.)
+## API-маршруты (Next.js App Router / Express / и т.д.)
 
-**Existence check:**
+**Проверка существования:**
 ```bash
-# Route file exists
+# Файл маршрута существует
 [ -f "$route_path" ]
 
-# Exports HTTP method handlers (Next.js App Router)
+# Экспортирует обработчики HTTP-методов (Next.js App Router)
 grep -E "export (async )?(function|const) (GET|POST|PUT|PATCH|DELETE)" "$route_path"
 
-# Or Express-style handlers
+# Или обработчики в стиле Express
 grep -E "\.(get|post|put|patch|delete)\(" "$route_path"
 ```
 
-**Substantive check:**
+**Проверка содержательности:**
 ```bash
-# Has actual logic, not just return statement
-wc -l "$route_path"  # More than 10-15 lines suggests real implementation
+# Имеет реальную логику, не просто оператор return
+wc -l "$route_path"  # Более 10-15 строк указывает на реальную реализацию
 
-# Interacts with data source
+# Взаимодействует с источником данных
 grep -E "prisma\.|db\.|mongoose\.|sql|query|find|create|update|delete" "$route_path" -i
 
-# Has error handling
+# Имеет обработку ошибок
 grep -E "try|catch|throw|error|Error" "$route_path"
 
-# Returns meaningful response
+# Возвращает содержательный ответ
 grep -E "Response\.json|res\.json|res\.send|return.*\{" "$route_path" | grep -v "message.*not implemented" -i
 ```
 
-**Stub patterns specific to API routes:**
+**Паттерны заглушек специфичные для API-маршрутов:**
 ```typescript
-// RED FLAGS - These are stubs:
+// КРАСНЫЕ ФЛАГИ — Это заглушки:
 export async function POST() {
   return Response.json({ message: "Not implemented" })
 }
 
 export async function GET() {
-  return Response.json([])  // Empty array with no DB query
+  return Response.json([])  // Пустой массив без запроса к БД
 }
 
 export async function PUT() {
-  return new Response()  // Empty response
+  return new Response()  // Пустой ответ
 }
 
-// Console log only:
+// Только логирование в консоль:
 export async function POST(req) {
   console.log(await req.json())
   return Response.json({ ok: true })
 }
 ```
 
-**Wiring check:**
+**Проверка связанности:**
 ```bash
-# Imports database/service clients
+# Импортирует клиент базы данных/сервиса
 grep -E "^import.*prisma|^import.*db|^import.*client" "$route_path"
 
-# Actually uses request body (for POST/PUT)
+# Реально использует тело запроса (для POST/PUT)
 grep -E "req\.json\(\)|req\.body|request\.json\(\)" "$route_path"
 
-# Validates input (not just trusting request)
+# Валидирует ввод (не просто доверяет запросу)
 grep -E "schema\.parse|validate|zod|yup|joi" "$route_path"
 ```
 
-**Functional verification (human or automated):**
-- Does GET return real data from database?
-- Does POST actually create a record?
-- Does error response have correct status code?
-- Are auth checks actually enforced?
+**Функциональная верификация (человек или автоматическая):**
+- Возвращает ли GET реальные данные из базы?
+- Создаёт ли POST действительно запись?
+- Имеет ли ответ об ошибке правильный код статуса?
+- Применяются ли проверки auth на самом деле?
 
 </api_routes>
 
 <database_schema>
 
-## Database Schema (Prisma / Drizzle / SQL)
+## Схема базы данных (Prisma / Drizzle / SQL)
 
-**Existence check:**
+**Проверка существования:**
 ```bash
-# Schema file exists
+# Файл схемы существует
 [ -f "prisma/schema.prisma" ] || [ -f "drizzle/schema.ts" ] || [ -f "src/db/schema.sql" ]
 
-# Model/table is defined
+# Модель/таблица определена
 grep -E "^model $model_name|CREATE TABLE $table_name|export const $table_name" "$schema_path"
 ```
 
-**Substantive check:**
+**Проверка содержательности:**
 ```bash
-# Has expected fields (not just id)
+# Имеет ожидаемые поля (не только id)
 grep -A 20 "model $model_name" "$schema_path" | grep -E "^\s+\w+\s+\w+"
 
-# Has relationships if expected
+# Имеет связи если ожидаются
 grep -E "@relation|REFERENCES|FOREIGN KEY" "$schema_path"
 
-# Has appropriate field types (not all String)
+# Имеет подходящие типы полей (не все String)
 grep -A 20 "model $model_name" "$schema_path" | grep -E "Int|DateTime|Boolean|Float|Decimal|Json"
 ```
 
-**Stub patterns specific to schemas:**
+**Паттерны заглушек специфичные для схем:**
 ```prisma
-// RED FLAGS - These are stubs:
+// КРАСНЫЕ ФЛАГИ — Это заглушки:
 model User {
   id String @id
   // TODO: add fields
@@ -221,29 +221,29 @@ model User {
 
 model Message {
   id        String @id
-  content   String  // Only one real field
+  content   String  // Только одно реальное поле
 }
 
-// Missing critical fields:
+// Отсутствуют критичные поля:
 model Order {
   id     String @id
-  // No: userId, items, total, status, createdAt
+  // Нет: userId, items, total, status, createdAt
 }
 ```
 
-**Wiring check:**
+**Проверка связанности:**
 ```bash
-# Migrations exist and are applied
-ls prisma/migrations/ 2>/dev/null | wc -l  # Should be > 0
+# Миграции существуют и применены
+ls prisma/migrations/ 2>/dev/null | wc -l  # Должно быть > 0
 npx prisma migrate status 2>/dev/null | grep -v "pending"
 
-# Client is generated
+# Клиент сгенерирован
 [ -d "node_modules/.prisma/client" ]
 ```
 
-**Functional verification:**
+**Функциональная верификация:**
 ```bash
-# Can query the table (automated)
+# Можно запросить таблицу (автоматически)
 npx prisma db execute --stdin <<< "SELECT COUNT(*) FROM $table_name"
 ```
 
@@ -251,29 +251,29 @@ npx prisma db execute --stdin <<< "SELECT COUNT(*) FROM $table_name"
 
 <hooks_utilities>
 
-## Custom Hooks and Utilities
+## Пользовательские хуки и утилиты
 
-**Existence check:**
+**Проверка существования:**
 ```bash
-# File exists and exports function
+# Файл существует и экспортирует функцию
 [ -f "$hook_path" ] && grep -E "export (default )?(function|const)" "$hook_path"
 ```
 
-**Substantive check:**
+**Проверка содержательности:**
 ```bash
-# Hook uses React hooks (for custom hooks)
+# Хук использует React-хуки (для пользовательских хуков)
 grep -E "useState|useEffect|useCallback|useMemo|useRef|useContext" "$hook_path"
 
-# Has meaningful return value
+# Имеет содержательное возвращаемое значение
 grep -E "return \{|return \[" "$hook_path"
 
-# More than trivial length
+# Более чем тривиальная длина
 [ $(wc -l < "$hook_path") -gt 10 ]
 ```
 
-**Stub patterns specific to hooks:**
+**Паттерны заглушек специфичные для хуков:**
 ```typescript
-// RED FLAGS - These are stubs:
+// КРАСНЫЕ ФЛАГИ — Это заглушки:
 export function useAuth() {
   return { user: null, login: () => {}, logout: () => {} }
 }
@@ -283,18 +283,18 @@ export function useCart() {
   return { items, addItem: () => console.log('add'), removeItem: () => {} }
 }
 
-// Hardcoded return:
+// Захардкоженный возврат:
 export function useUser() {
   return { name: "Test User", email: "test@example.com" }
 }
 ```
 
-**Wiring check:**
+**Проверка связанности:**
 ```bash
-# Hook is actually imported somewhere
+# Хук действительно импортируется где-то
 grep -r "import.*$hook_name" src/ --include="*.tsx" --include="*.ts" | grep -v "$hook_path"
 
-# Hook is actually called
+# Хук действительно вызывается
 grep -r "$hook_name()" src/ --include="*.tsx" --include="*.ts" | grep -v "$hook_path"
 ```
 
@@ -302,43 +302,43 @@ grep -r "$hook_name()" src/ --include="*.tsx" --include="*.ts" | grep -v "$hook_
 
 <environment_config>
 
-## Environment Variables and Configuration
+## Переменные окружения и конфигурация
 
-**Existence check:**
+**Проверка существования:**
 ```bash
-# .env file exists
+# .env файл существует
 [ -f ".env" ] || [ -f ".env.local" ]
 
-# Required variable is defined
+# Требуемая переменная определена
 grep -E "^$VAR_NAME=" .env .env.local 2>/dev/null
 ```
 
-**Substantive check:**
+**Проверка содержательности:**
 ```bash
-# Variable has actual value (not placeholder)
+# Переменная имеет реальное значение (не плейсхолдер)
 grep -E "^$VAR_NAME=.+" .env .env.local 2>/dev/null | grep -v "your-.*-here|xxx|placeholder|TODO" -i
 
-# Value looks valid for type:
-# - URLs should start with http
-# - Keys should be long enough
-# - Booleans should be true/false
+# Значение выглядит корректным для типа:
+# - URL должны начинаться с http
+# - Ключи должны быть достаточной длины
+# - Булевы должны быть true/false
 ```
 
-**Stub patterns specific to env:**
+**Паттерны заглушек специфичные для env:**
 ```bash
-# RED FLAGS - These are stubs:
+# КРАСНЫЕ ФЛАГИ — Это заглушки:
 DATABASE_URL=your-database-url-here
 STRIPE_SECRET_KEY=sk_test_xxx
 API_KEY=placeholder
-NEXT_PUBLIC_API_URL=http://localhost:3000  # Still pointing to localhost in prod
+NEXT_PUBLIC_API_URL=http://localhost:3000  # Всё ещё указывает на localhost в проде
 ```
 
-**Wiring check:**
+**Проверка связанности:**
 ```bash
-# Variable is actually used in code
+# Переменная реально используется в коде
 grep -r "process\.env\.$VAR_NAME|env\.$VAR_NAME" src/ --include="*.ts" --include="*.tsx"
 
-# Variable is in validation schema (if using zod/etc for env)
+# Переменная в схеме валидации (если используется zod/и т.д. для env)
 grep -E "$VAR_NAME" src/env.ts src/env.mjs 2>/dev/null
 ```
 
@@ -346,267 +346,267 @@ grep -E "$VAR_NAME" src/env.ts src/env.mjs 2>/dev/null
 
 <wiring_verification>
 
-## Wiring Verification Patterns
+## Паттерны верификации связанности
 
-Wiring verification checks that components actually communicate. This is where most stubs hide.
+Верификация связанности проверяет что компоненты действительно взаимодействуют. Именно здесь большинство заглушек прячутся.
 
-### Pattern: Component → API
+### Паттерн: Компонент → API
 
-**Check:** Does the component actually call the API?
+**Проверка:** Вызывает ли компонент действительно API?
 
 ```bash
-# Find the fetch/axios call
+# Найти вызов fetch/axios
 grep -E "fetch\(['\"].*$api_path|axios\.(get|post).*$api_path" "$component_path"
 
-# Verify it's not commented out
+# Убедиться что не закомментировано
 grep -E "fetch\(|axios\." "$component_path" | grep -v "^.*//.*fetch"
 
-# Check the response is used
+# Проверить что ответ используется
 grep -E "await.*fetch|\.then\(|setData|setState" "$component_path"
 ```
 
-**Red flags:**
+**Красные флаги:**
 ```typescript
-// Fetch exists but response ignored:
-fetch('/api/messages')  // No await, no .then, no assignment
+// Fetch существует но ответ игнорируется:
+fetch('/api/messages')  // Нет await, нет .then, нет присвоения
 
-// Fetch in comment:
+// Fetch в комментарии:
 // fetch('/api/messages').then(r => r.json()).then(setMessages)
 
-// Fetch to wrong endpoint:
-fetch('/api/message')  // Typo - should be /api/messages
+// Fetch на неправильный эндпоинт:
+fetch('/api/message')  // Опечатка — должно быть /api/messages
 ```
 
-### Pattern: API → Database
+### Паттерн: API → База данных
 
-**Check:** Does the API route actually query the database?
+**Проверка:** Делает ли API-маршрут действительно запрос к базе данных?
 
 ```bash
-# Find the database call
+# Найти вызов базы данных
 grep -E "prisma\.$model|db\.query|Model\.find" "$route_path"
 
-# Verify it's awaited
+# Убедиться что await используется
 grep -E "await.*prisma|await.*db\." "$route_path"
 
-# Check result is returned
+# Проверить что результат возвращается
 grep -E "return.*json.*data|res\.json.*result" "$route_path"
 ```
 
-**Red flags:**
+**Красные флаги:**
 ```typescript
-// Query exists but result not returned:
+// Запрос существует но результат не возвращается:
 await prisma.message.findMany()
-return Response.json({ ok: true })  // Returns static, not query result
+return Response.json({ ok: true })  // Возвращает статику, не результат запроса
 
-// Query not awaited:
-const messages = prisma.message.findMany()  // Missing await
-return Response.json(messages)  // Returns Promise, not data
+// Запрос без await:
+const messages = prisma.message.findMany()  // Пропущен await
+return Response.json(messages)  // Возвращает Promise, не данные
 ```
 
-### Pattern: Form → Handler
+### Паттерн: Форма → Обработчик
 
-**Check:** Does the form submission actually do something?
+**Проверка:** Делает ли отправка формы действительно что-то?
 
 ```bash
-# Find onSubmit handler
+# Найти обработчик onSubmit
 grep -E "onSubmit=\{|handleSubmit" "$component_path"
 
-# Check handler has content
+# Проверить что обработчик содержит логику
 grep -A 10 "onSubmit.*=" "$component_path" | grep -E "fetch|axios|mutate|dispatch"
 
-# Verify not just preventDefault
+# Убедиться что не только preventDefault
 grep -A 5 "onSubmit" "$component_path" | grep -v "only.*preventDefault" -i
 ```
 
-**Red flags:**
+**Красные флаги:**
 ```typescript
-// Handler only prevents default:
+// Обработчик только предотвращает стандартное поведение:
 onSubmit={(e) => e.preventDefault()}
 
-// Handler only logs:
+// Обработчик только логирует:
 const handleSubmit = (data) => {
   console.log(data)
 }
 
-// Handler is empty:
+// Обработчик пустой:
 onSubmit={() => {}}
 ```
 
-### Pattern: State → Render
+### Паттерн: Состояние → Отображение
 
-**Check:** Does the component render state, not hardcoded content?
+**Проверка:** Отображает ли компонент состояние, а не захардкоженный контент?
 
 ```bash
-# Find state usage in JSX
+# Найти использование состояния в JSX
 grep -E "\{.*messages.*\}|\{.*data.*\}|\{.*items.*\}" "$component_path"
 
-# Check map/render of state
+# Проверить map/render состояния
 grep -E "\.map\(|\.filter\(|\.reduce\(" "$component_path"
 
-# Verify dynamic content
-grep -E "\{[a-zA-Z_]+\." "$component_path"  # Variable interpolation
+# Проверить динамический контент
+grep -E "\{[a-zA-Z_]+\." "$component_path"  # Интерполяция переменных
 ```
 
-**Red flags:**
+**Красные флаги:**
 ```tsx
-// Hardcoded instead of state:
+// Захардкожено вместо состояния:
 return <div>
   <p>Message 1</p>
   <p>Message 2</p>
 </div>
 
-// State exists but not rendered:
+// Состояние существует но не отображается:
 const [messages, setMessages] = useState([])
-return <div>No messages</div>  // Always shows "no messages"
+return <div>No messages</div>  // Всегда показывает «нет сообщений»
 
-// Wrong state rendered:
+// Отображается не то состояние:
 const [messages, setMessages] = useState([])
-return <div>{otherData.map(...)}</div>  // Uses different data
+return <div>{otherData.map(...)}</div>  // Использует другие данные
 ```
 
 </wiring_verification>
 
 <verification_checklist>
 
-## Quick Verification Checklist
+## Быстрый чек-лист верификации
 
-For each artifact type, run through this checklist:
+Для каждого типа артефакта пройдите этот чек-лист:
 
-### Component Checklist
-- [ ] File exists at expected path
-- [ ] Exports a function/const component
-- [ ] Returns JSX (not null/empty)
-- [ ] No placeholder text in render
-- [ ] Uses props or state (not static)
-- [ ] Event handlers have real implementations
-- [ ] Imports resolve correctly
-- [ ] Used somewhere in the app
+### Чек-лист компонента
+- [ ] Файл существует по ожидаемому пути
+- [ ] Экспортирует функциональный/const компонент
+- [ ] Возвращает JSX (не null/пустой)
+- [ ] Нет плейсхолдерного текста в рендере
+- [ ] Использует props или state (не статический)
+- [ ] Обработчики событий имеют реальные реализации
+- [ ] Импорты разрешаются корректно
+- [ ] Используется где-то в приложении
 
-### API Route Checklist
-- [ ] File exists at expected path
-- [ ] Exports HTTP method handlers
-- [ ] Handlers have more than 5 lines
-- [ ] Queries database or service
-- [ ] Returns meaningful response (not empty/placeholder)
-- [ ] Has error handling
-- [ ] Validates input
-- [ ] Called from frontend
+### Чек-лист API-маршрута
+- [ ] Файл существует по ожидаемому пути
+- [ ] Экспортирует обработчики HTTP-методов
+- [ ] Обработчики содержат более 5 строк
+- [ ] Запрашивает базу данных или сервис
+- [ ] Возвращает содержательный ответ (не пустой/плейсхолдер)
+- [ ] Имеет обработку ошибок
+- [ ] Валидирует ввод
+- [ ] Вызывается из фронтенда
 
-### Schema Checklist
-- [ ] Model/table defined
-- [ ] Has all expected fields
-- [ ] Fields have appropriate types
-- [ ] Relationships defined if needed
-- [ ] Migrations exist and applied
-- [ ] Client generated
+### Чек-лист схемы
+- [ ] Модель/таблица определена
+- [ ] Имеет все ожидаемые поля
+- [ ] Поля имеют подходящие типы
+- [ ] Связи определены если необходимо
+- [ ] Миграции существуют и применены
+- [ ] Клиент сгенерирован
 
-### Hook/Utility Checklist
-- [ ] File exists at expected path
-- [ ] Exports function
-- [ ] Has meaningful implementation (not empty returns)
-- [ ] Used somewhere in the app
-- [ ] Return values consumed
+### Чек-лист хука/утилиты
+- [ ] Файл существует по ожидаемому пути
+- [ ] Экспортирует функцию
+- [ ] Имеет содержательную реализацию (не пустые возвраты)
+- [ ] Используется где-то в приложении
+- [ ] Возвращаемые значения потребляются
 
-### Wiring Checklist
-- [ ] Component → API: fetch/axios call exists and uses response
-- [ ] API → Database: query exists and result returned
-- [ ] Form → Handler: onSubmit calls API/mutation
-- [ ] State → Render: state variables appear in JSX
+### Чек-лист связанности
+- [ ] Компонент → API: вызов fetch/axios существует и использует ответ
+- [ ] API → База данных: запрос существует и результат возвращается
+- [ ] Форма → Обработчик: onSubmit вызывает API/мутацию
+- [ ] Состояние → Отображение: переменные состояния появляются в JSX
 
 </verification_checklist>
 
 <automated_verification_script>
 
-## Automated Verification Approach
+## Подход к автоматической верификации
 
-For the verification subagent, use this pattern:
+Для суб-агента верификации используйте этот паттерн:
 
 ```bash
-# 1. Check existence
+# 1. Проверка существования
 check_exists() {
   [ -f "$1" ] && echo "EXISTS: $1" || echo "MISSING: $1"
 }
 
-# 2. Check for stub patterns
+# 2. Проверка на паттерны заглушек
 check_stubs() {
   local file="$1"
   local stubs=$(grep -c -E "TODO|FIXME|placeholder|not implemented" "$file" 2>/dev/null || echo 0)
   [ "$stubs" -gt 0 ] && echo "STUB_PATTERNS: $stubs in $file"
 }
 
-# 3. Check wiring (component calls API)
+# 3. Проверка связанности (компонент вызывает API)
 check_wiring() {
   local component="$1"
   local api_path="$2"
   grep -q "$api_path" "$component" && echo "WIRED: $component → $api_path" || echo "NOT_WIRED: $component → $api_path"
 }
 
-# 4. Check substantive (more than N lines, has expected patterns)
+# 4. Проверка содержательности (более N строк, содержит ожидаемые паттерны)
 check_substantive() {
   local file="$1"
   local min_lines="$2"
   local pattern="$3"
   local lines=$(wc -l < "$file" 2>/dev/null || echo 0)
   local has_pattern=$(grep -c -E "$pattern" "$file" 2>/dev/null || echo 0)
-  [ "$lines" -ge "$min_lines" ] && [ "$has_pattern" -gt 0 ] && echo "SUBSTANTIVE: $file" || echo "THIN: $file ($lines lines, $has_pattern matches)"
+  [ "$lines" -ge "$min_lines" ] && [ "$has_pattern" -gt 0 ] && echo "SUBSTANTIVE: $file" || echo "THIN: $file ($lines строк, $has_pattern совпадений)"
 }
 ```
 
-Run these checks against each must-have artifact. Aggregate results into VERIFICATION.md.
+Запускайте эти проверки для каждого обязательного артефакта. Агрегируйте результаты в VERIFICATION.md.
 
 </automated_verification_script>
 
 <human_verification_triggers>
 
-## When to Require Human Verification
+## Когда требовать человеческую верификацию
 
-Some things can't be verified programmatically. Flag these for human testing:
+Некоторые вещи нельзя проверить программно. Помечайте их для тестирования человеком:
 
-**Always human:**
-- Visual appearance (does it look right?)
-- User flow completion (can you actually do the thing?)
-- Real-time behavior (WebSocket, SSE)
-- External service integration (Stripe, email sending)
-- Error message clarity (is the message helpful?)
-- Performance feel (does it feel fast?)
+**Всегда человек:**
+- Внешний вид (выглядит ли правильно?)
+- Завершение пользовательского потока (можно ли реально сделать действие?)
+- Поведение в реальном времени (WebSocket, SSE)
+- Интеграция с внешними сервисами (Stripe, отправка email)
+- Ясность сообщений об ошибках (понятно ли сообщение?)
+- Ощущение производительности (кажется ли быстрым?)
 
-**Human if uncertain:**
-- Complex wiring that grep can't trace
-- Dynamic behavior depending on state
-- Edge cases and error states
-- Mobile responsiveness
-- Accessibility
+**Человек при неопределённости:**
+- Сложная связанность которую grep не может отследить
+- Динамическое поведение зависящее от состояния
+- Граничные случаи и состояния ошибок
+- Мобильная адаптивность
+- Доступность
 
-**Format for human verification request:**
+**Формат запроса человеческой верификации:**
 ```markdown
-## Human Verification Required
+## Требуется человеческая верификация
 
-### 1. Chat message sending
-**Test:** Type a message and click Send
-**Expected:** Message appears in list, input clears
-**Check:** Does message persist after refresh?
+### 1. Отправка сообщения в чат
+**Тест:** Введите сообщение и нажмите Отправить
+**Ожидание:** Сообщение появляется в списке, поле ввода очищается
+**Проверка:** Сохраняется ли сообщение после обновления страницы?
 
-### 2. Error handling
-**Test:** Disconnect network, try to send
-**Expected:** Error message appears, message not lost
-**Check:** Can retry after reconnect?
+### 2. Обработка ошибок
+**Тест:** Отключите сеть, попробуйте отправить
+**Ожидание:** Появляется сообщение об ошибке, сообщение не потеряно
+**Проверка:** Можно ли повторить после восстановления соединения?
 ```
 
 </human_verification_triggers>
 
 <checkpoint_automation_reference>
 
-## Pre-Checkpoint Automation
+## Автоматизация перед контрольными точками
 
-For automation-first checkpoint patterns, server lifecycle management, CLI installation handling, and error recovery protocols, see:
+Для паттернов контрольных точек с приоритетом автоматизации, управления жизненным циклом серверов, обработки установки CLI и протоколов восстановления после ошибок, см.:
 
-**@~/.claude/get-shit-done/references/checkpoints.md** → `<automation_reference>` section
+**@~/.claude/get-shit-done/references/checkpoints.md** → секция `<automation_reference>`
 
-Key principles:
-- Claude sets up verification environment BEFORE presenting checkpoints
-- Users never run CLI commands (visit URLs only)
-- Server lifecycle: start before checkpoint, handle port conflicts, keep running for duration
-- CLI installation: auto-install where safe, checkpoint for user choice otherwise
-- Error handling: fix broken environment before checkpoint, never present checkpoint with failed setup
+Ключевые принципы:
+- Claude настраивает среду верификации ДО представления контрольных точек
+- Пользователи никогда не выполняют CLI-команды (только посещают URL)
+- Жизненный цикл серверов: запустить перед контрольной точкой, обработать конфликты портов, оставить запущенным на время
+- Установка CLI: автоустановка где безопасно, контрольная точка для выбора пользователя в остальных случаях
+- Обработка ошибок: исправить неработающую среду перед контрольной точкой, никогда не показывать контрольную точку с неудавшейся настройкой
 
 </checkpoint_automation_reference>
